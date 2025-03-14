@@ -1,0 +1,115 @@
+:root {
+    --font--size: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #bcbcbc;
+}
+
+.form {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#loginForm {
+    display: block;
+}
+
+#signUpForm {
+    display: none;
+}
+
+#resetPasswordForm {
+    display: none;
+}
+
+.form__input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form__button,
+.navigate__form--link {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-size: var(--font--size);
+}
+
+.form__button:active,
+.navigate__form--link:active {
+    opacity: 0.9;
+}
+.form__forgot__password__label {
+    color: #007bff; /* Màu xanh */
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-block; /* Hiển thị trên cùng một dòng */
+    text-decoration: none;
+}
+
+.form__forgot__password__label:hover {
+    color: #0056b3; /* Đổi màu xanh đậm khi hover */
+    text-decoration: underline; /* Gạch chân khi hover */
+}
+
+.form__back__login {
+    color: #007bff; /* Màu xanh */
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-block; /* Hiển thị trên cùng một dòng */
+    text-decoration: none;
+}
+
+.form__back__login:hover {
+    color: #0056b3; /* Đổi màu xanh đậm khi hover */
+    text-decoration: underline; /* Gạch chân khi hover */
+}
+
+.form__resend__code {
+    color: #007bff; /* Màu xanh */
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-block; /* Hiển thị trên cùng một dòng */
+    text-decoration: none;
+    width: 100%;
+    padding: 5px;
+}
+
+.form__resend__code:hover {
+    color: #0056b3; /* Đổi màu xanh đậm khi hover */
+    text-decoration: underline; /* Gạch chân khi hover */
+}
+
+.privacy__confirmation {
+    font-size: 12px;
+}
+
+.form__input--resetPassword {
+    border: none;
+}

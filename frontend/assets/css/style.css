@@ -1,0 +1,366 @@
+:root {
+    --max-user-show: 8;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+input:focus {
+    outline: none;
+}
+
+/* Toàn bộ thanh cuộn */
+::-webkit-scrollbar {
+    width: 8px; /* Độ rộng thanh cuộn dọc */
+    height: 8px; /* Độ cao thanh cuộn ngang */
+}
+
+/* Phần track (nền của thanh cuộn) */
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+/* Phần thumb (thanh cuộn chính) */
+::-webkit-scrollbar-thumb {
+    background: #cfcfcf;
+    border-radius: 10px;
+}
+
+/* Hover vào thanh cuộn */
+::-webkit-scrollbar-thumb:hover {
+    background: #c8c8c8;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 96vh;
+    background: #f0f0f0;
+    justify-content: space-between;
+    padding: 15px 0 0 0;
+}
+
+.setting--bar {
+    height: 100%;
+    width: 65px;
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 25px 0;
+}
+
+.setting--bar__setting,
+.setting--bar__account {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: rgb(227, 227, 227);
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin: 10px 0;
+    position: relative;
+}
+
+.setting--bar__account--blur {
+    display: none;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    position: absolute;
+}
+
+.setting--bar__setting--img {
+    width: 60%;
+    margin: auto;
+}
+
+.setting--bar__account--img {
+    width: 100%;
+    border-radius: 50%;
+}
+
+.setting--bar__setting:hover {
+    background-color: rgb(215, 215, 215);
+}
+
+.setting--bar__account:hover
+.setting--bar__account--blur {
+    display: block;
+}
+
+.setting--bar__account--box {
+    position: absolute;
+    width: 250px;
+    height: 100px;
+    background-color: #f1f1f1;
+    left: calc(100% - 5px);
+    bottom: calc(100% - 5px);
+    z-index: 1001;
+    border-radius: 15px;
+    padding: 0 25px;
+    display: none;
+    border: none;
+}
+
+.setting--bar__account--box--btn:first-child {
+    border-radius: 15px 15px 0 0;
+}
+
+.setting--bar__account--box--btn {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #b6b6b6;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
+.setting--bar__account--box--btn--logo {
+    width: 25px;
+    height: 25px;
+    background-color: #f1f1f1;
+    display: flex;
+    border-radius: 50%;
+}
+
+.setting--bar__account--box--btn--img {
+    scale: 0.6;
+}
+
+.setting--bar__account--box--btn--description {
+    margin: 0 auto;
+}
+
+
+
+.chat--info {
+    height: 100%;
+    width: 28%;
+    display: block;
+    background-color: white;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.chat--info h1 {
+    font-size: 2rem;
+    margin: 15px 0 15px 15px;
+
+}
+
+.friend__box {
+    height: calc(100% - 80px);
+    width: 100%;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 8px;
+}
+
+.friend__box--friend {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    background-color: white;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.blur--layer {
+    display: none;
+    background: rgba(0, 0, 0, 0.05);
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    position: absolute;
+    border-radius: 8px;
+}
+
+.friend__box--friend:not(.friend__box--friend__choosen):hover
+.blur--layer {
+    display: block;
+}
+
+.friend__box--friend__choosen {
+    background-color: rgb(230, 230, 230);
+}
+
+.friend__box--friend__avatar {
+    height: 60%;
+    border-radius: 50%;
+    margin: 10px;
+}
+
+.friend__box--friend__more {
+    display: flex;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    align-content: center;
+    text-align: center;
+}
+
+.friend__box--friend__more--logo {
+    scale: 1.5;
+    opacity: 0.6;
+}
+
+.friend__box--friend:hover .friend__box--friend__more {
+    display: block;
+    right: 30px;
+}
+
+.friend__box--friend__more:hover {
+    background-color: rgb(215, 215, 215);
+}
+
+.friend__box--friend__more--box {
+    position: absolute;
+    top: 150%;
+    right: 0;
+    width: 240px;
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 10px 0;
+    border:  1px solid black;
+    display: none;
+}
+
+.friend__box--friend__more--box__btn {
+    width: 90%;
+    display: flex;
+    padding: 10px 15px;
+    justify-content: space-between;
+    border: none;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.friend__box--friend__more--box__btn:nth-child(2n) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.friend__box--friend__more--box__btn:hover {
+    background-color: rgb(241, 241, 241);
+}
+
+.chat__container {
+    background-image: linear-gradient(to right top,
+    #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1,
+    #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff,
+    #46eefa, #5ffbf1);
+    width: 65%;
+
+    position: relative;
+    border-radius: 15px;
+    display: block;
+}
+
+.chat__container--name {
+    width: 100%;
+    height: 70px;
+    border-bottom: 1px solid rgb(227, 227, 227);
+    display: flex;
+}
+.chat__container--name__avatar {
+    border-radius: 50%;
+    height: 70%;
+    margin: auto 10px;
+}
+
+.chat__container--name__user {
+    margin: auto;
+    size: 60px;
+}
+
+.chat__container--message__box {
+    background-color: #aa8fd8;
+    height: calc(100% - 70px - 70px);
+    width: 100%;
+    padding:30px;
+    list-style-type: none;
+    display: block;
+    overflow-y: scroll;
+}
+
+.chat__container--message__box--message__area {
+    width:  fit-content;
+    height: fit-content;
+    max-width: 40%;
+    display: flex;
+    background-color: white;
+    border: 1px solid black;
+    padding: 15px;
+    border-radius: 15px;
+    align-items: center;
+    margin: 15px;
+    border: none;
+}
+
+.chat__container--message__box--message__area--content {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.message--sent {
+    justify-content: flex-end;
+    justify-self: flex-end;
+}
+
+
+.chat__container--sending__box {
+    height: 70px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    background-color: rgb(241, 141, 141);
+    border-radius: 0 0 10px 10px;
+    position: relative;
+    justify-content: space-evenly;
+}
+
+#fMessage {
+    height: 35px;
+    width: calc(100% - 80px);
+    border-radius: 15px;
+    border: none;
+    margin: auto 0;
+    padding: 0 10px;
+}
+
+.chat__container--sending__box--label {
+    height: 100%;
+    align-content: center;
+    display: flex;
+}
+
+.chat__container--sending__box--label:last-of-type {
+    width: calc(100% - 100px);
+}
+
+.chat__container--sending__box--label:last-of-type button {
+    width: 28px;
+    height: 28px;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    padding: 0;
+    margin: auto 0;
+    margin-left: 30px;
+}

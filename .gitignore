@@ -1,0 +1,37 @@
+# 🛑 Ignore node_modules
+node_modules/
+database/
+
+# 🛑 Ignore environment files
+.env
+*.env
+
+# 🛑 Ignore log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 🛑 Ignore IDE/Editor files
+.vscode/
+.idea/
+*.swp
+
+# 🛑 Ignore build files
+dist/
+build/
+
+# 🛑 Ignore dependency lock files (chỉ khi không muốn khóa phiên bản)
+package-lock.json
+yarn.lock
+
+# 🛑 Ignore frontend build files
+frontend/assets/js/*.min.js
+frontend/assets/css/*.min.css
+frontend/dist/
+frontend/node_modules/
+
+# 🛑 Ignore Firebase service account key nếu có
+firebase-key.json
+frontend/config/firebaseConfig.js
