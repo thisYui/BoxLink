@@ -93,7 +93,7 @@ body {
 
 .form__resend__code {
     color: #007bff; /* Màu xanh */
-    font-size: 14px;
+    font-size: var(--font--size);
     cursor: pointer;
     display: inline-block; /* Hiển thị trên cùng một dòng */
     text-decoration: none;
@@ -103,7 +103,6 @@ body {
 
 .form__resend__code:hover {
     color: #0056b3; /* Đổi màu xanh đậm khi hover */
-    text-decoration: underline; /* Gạch chân khi hover */
 }
 
 .privacy__confirmation {

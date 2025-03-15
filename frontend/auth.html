@@ -20,6 +20,8 @@
         <div class="form" id="signUpForm">
             <form class="form__sign--up" id="inputSignUpForm">
                 <h1 class="form__title">Đăng ký</h1>
+                <label for="display_name"></label>
+                <input class="form__input" id="display_name" type="text" name="displayName" placeholder="Nhập tên người dùng" required>
                 <label for="inputYourEmail"></label>
                 <input class="form__input" type="text" name="email" placeholder="Nhập địa chỉ Email" required id="inputYourEmail">
                 <label for="inputYourPassword"></label>
@@ -33,7 +35,7 @@
             <form class="form__confirm--sign--up" style="display: none" id="confirmSignUpForm">
                 <h1 class="form__title">Nhập mã xác nhận</h1>
                 <label for="confirmSignUp"></label>
-                <input class="form__input" type="text" name="confirmation code" placeholder="Nhập mã xác nhận" required id="confirmSignUp" autocomplete="off">
+                <input class="form__input" type="text" name="confirmationCode" placeholder="Nhập mã xác nhận" required id="confirmSignUp" autocomplete="off">
                 <button class="form__button" type="submit" id="confirmSigUpButton">Nhập mã xác nhận</button>
                 <label class="form__resend__code" onclick="resendCode()">Gửi lại mã xác nhận</label>
                 <label class="form__back__login" onclick="showOnly('logInForm')">Quay lại đăng nhập</label>
@@ -51,7 +53,7 @@
             <form class="form__input--resetPassword" style="display: none" id="confirmCodeForm">
                 <h1 class="form__title">Nhập mã xác nhận</h1>
                 <label for="confirmCode"></label>
-                <input class="form__input" type="text" name="confirmation code" placeholder="Nhập mã xác nhận" required id="confirmCode" autocomplete="off">
+                <input class="form__input" type="text" name="confirmationCode" placeholder="Nhập mã xác nhận" required id="confirmCode" autocomplete="off">
                 <button class="form__button" type="submit" id="confirmCodeButton">Nhập mã xác nhận</button>
                 <label class="form__resend__code" onclick="resendCode()">Gửi lại mã xác nhận</label>
                 <label class="form__back__login" onclick="showOnly('logInForm')">Quay lại đăng nhập</label>
@@ -59,9 +61,9 @@
             <form class="form__input--resetPassword" style="display: none" id="newPasswordForm">
                 <h1 class="form__title">Mật khẩu mới</h1>
                 <label for="newPassword"></label>
-                <input class="form__input" type="password" name="new password" placeholder="Mật khẩu mới" required id="newPassword">
+                <input class="form__input" type="password" name="newPassword" placeholder="Mật khẩu mới" required id="newPassword">
                 <label for="confirmNewPassword"></label>
-                <input class="form__input" type="password" name="confirm new password" placeholder="Nhập lại mật khẩu mới" required id="confirmNewPassword">
+                <input class="form__input" type="password" name="confirmNewPassword" placeholder="Nhập lại mật khẩu mới" required id="confirmNewPassword">
                 <button class="form__button" type="submit" id="newPasswordButton">Đặt lại mật khẩu</button>
                 <label class="form__back__login" onclick="showOnly('logInForm')">Quay lại đăng nhập</label>
             </form>
