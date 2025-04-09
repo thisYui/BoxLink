@@ -1,7 +1,9 @@
 require("dotenv").config({ path: '../.env' });
-const { config, db, admin } = require("./config/firebaseConfig.cjs");  // Import Firebase
 const { app, port } = require("./config/appConfig.cjs");  // Import Express
-require("./controllers/authController.cjs");  // Import controller
+const authRoutes = require("./routes/authRoutes.cjs");  // Import router
+
+// Gắn router vào prefix, ví dụ "/api"
+app.use("/api", authRoutes);  // Tức là endpoint sẽ là /api/signup, /api/confirm...
 
 // Khởi động server
 app.listen(port, () => {
