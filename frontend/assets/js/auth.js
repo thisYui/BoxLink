@@ -15,6 +15,7 @@ import {
     setDoc
 } from "../../config/firebaseConfig.js";
 
+
 // 🛠️ Hiển thị form tương ứng
 window.showOnly = function (id) {
     const listForm = ['logInForm', 'signUpForm', 'resetPasswordForm'];
@@ -44,8 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 await confirmCodeSignUp(formData);
                 break;
             case "inputEmailForm":
-                switchForm(); // Chuyển form trước
-                sendCode(formData).then(); // Không chờ đợi
+                sendCode(formData).then(result => {
+                    if (result) {
+                        switchForm();
+                    }
+                });
                 break;
             case "confirmCodeForm":
                 await confirmCode(formData);
@@ -59,13 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// 🛠️ Chuyển form đăng ký -> nhập mã xác nhận
+// Chuyển form đăng ký -> nhập mã xác nhận
 window.confirmSignUp = function () {
     document.getElementById('inputSignUpForm').style.display = 'none';
     document.getElementById('confirmSignUpForm').style.display = 'block';
 };
 
-// 🛠️ Chuyển form đặt lại mật khẩu
+// Chuyển form đặt lại mật khẩu
 window.switchForm = function () {
     const listFormResetPassword = ['inputEmailForm', 'confirmCodeForm', 'newPasswordForm'];
     for (let i = 0; i < listFormResetPassword.length; i++) {
@@ -79,14 +83,7 @@ window.switchForm = function () {
     }
 };
 
-window.checkEmailExists = async function (email) {
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty; // Trả về true nếu email đã tồn tại
-}
-
-// 🛠️ Đăng nhập
+// Đăng nhập
 window.logIn = async function (formData) {
     const email = formData.get("email");
     const password = formData.get("password");
@@ -94,8 +91,7 @@ window.logIn = async function (formData) {
     console.log(email, password);
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        alert(`Đăng nhập thành công! Chào mừng ${userCredential.user.email}`);
+        await signInWithEmailAndPassword(auth, email, password);
         window.location.href = "index.html";
     } catch (error) {
         if (error.code === "auth/wrong-password") {
@@ -120,24 +116,30 @@ window.requestSignUp = async function (formData) {
         return false;
     }
 
-    if (await checkEmailExists(email)) {
-        alert("Email đã được sử dụng!");
-        return false;
-    }
-
     try {
-        const user = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("User registered successfully:", user.user);
-
-        await setDoc(doc(db, "users", user.uid), {
-            uid: user.uid,  // Giữ UID ngay trong document
-            email: user.email,
-            displayName: displayName,
-            status: "online",
-            createdAt: new Date().toISOString()
+        // Gửi thông tin đăng ký đến server
+        const response = await fetch('http://localhost:3000/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
+            },
+            body: JSON.stringify({
+                email,
+                password,
+                displayName
+            }),
         });
 
-        sendCode(formData).then(); // Không chặn UI
+        // Kiểm tra nếu phản hồi từ server thành công
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Lỗi: " + errorData.message);
+            return false;
+        }
+
+        localStorage.setItem("email", email); // Lưu email vào localStorage
+
+        return true;
     } catch (error) {
         console.error("Lỗi đăng ký:", error.message);
         alert("Đăng ký thất bại: " + error.message);
@@ -146,9 +148,23 @@ window.requestSignUp = async function (formData) {
 
 // 🛠️ Xác nhận mã email đăng ký
 window.confirmCodeSignUp = async function (formData) {
+    const email = localStorage.getItem("email"); // Lấy email từ localStorage
     const code = formData.get("confirmationCode");
+
     try {
-        await applyActionCode(auth, code);
+        // Gửi thông tin đăng ký đến server
+        await fetch('http://localhost:3000/api/confirm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
+            },
+            body: JSON.stringify({
+                email,
+                code,
+                type: "signUp"
+            }),
+        });
+
         alert("Xác nhận thành công! Tài khoản đã được kích hoạt.");
         window.location.href = "auth.html";
     } catch (error) {
@@ -160,22 +176,65 @@ window.confirmCodeSignUp = async function (formData) {
 // 🛠️ Gửi mã đặt lại mật khẩu
 window.sendCode = async function (formData) {
     const email = formData.get("email");
+
+    if (!email) {
+        console.error("Email không được để trống!");
+        return false;
+    }
+
     try {
-        await sendPasswordResetEmail(auth, email);
-        alert("Mã đặt lại mật khẩu đã được gửi đến email của bạn.");
+        // Gửi yêu cầu xác thực
+        const response = await fetch('http://localhost:3000/api/request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
+            },
+            body: JSON.stringify({
+                email
+            }),
+        });
+
+        // Kiểm tra nếu phản hồi từ server thành công
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Lỗi: " + errorData.message);
+            return false;
+        }
+
+        localStorage.setItem("email", email); // Lưu email vào localStorage
+        return true;
     } catch (error) {
-        console.error("Lỗi gửi mã:", error.message);
-        alert("Không thể gửi mã. Vui lòng kiểm tra lại email.");
+        console.error("Lỗi khi gửi dữ liệu:", error);
+        alert("Lỗi kết nối đến server!");
     }
 };
 
+
 // 🛠️ Xác nhận mã reset mật khẩu
 window.confirmCode = async function (formData) {
+    const email = localStorage.getItem("email"); // Lấy email từ localStorage
     const code = formData.get("confirmationCode");
+
     try {
-        await verifyPasswordResetCode(auth, code);
-        alert("Mã hợp lệ! Vui lòng đặt lại mật khẩu mới.");
-        localStorage.setItem("resetCode", code); // 🔥 Lưu mã vào localStorage
+        const response = await fetch('http://localhost:3000/api/confirm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
+            },
+            body: JSON.stringify({
+                email,
+                code,
+                type: "resetPassword"
+            }),
+        });
+
+        // Kiểm tra nếu phản hồi từ server thành công
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Lỗi: " + errorData.message);
+            return false;
+        }
+
         switchForm(); // Chuyển sang form đặt mật khẩu
     } catch (error) {
         console.error("Lỗi xác nhận mã:", error.message);
@@ -183,10 +242,9 @@ window.confirmCode = async function (formData) {
     }
 };
 
-
 // 🛠️ Đặt lại mật khẩu
 window.confirmResetPassword = async function (formData) {
-    const code = formData.get("confirmationCode"); // 🔥 Cần lưu mã trước đó khi nhập
+    const email = localStorage.getItem("email"); // Lấy email từ localStorage
     const newPassword = formData.get("newPassword");
     const confirmPassword = formData.get("confirmNewPassword");
 
@@ -196,7 +254,24 @@ window.confirmResetPassword = async function (formData) {
     }
 
     try {
-        await confirmPasswordReset(auth, code, newPassword);
+        const response = await fetch('http://localhost:3000/api/resetPassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
+            },
+            body: JSON.stringify({
+                email,
+                newPassword,
+            }),
+        });
+
+        // Kiểm tra nếu phản hồi từ server thành công
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Lỗi: " + errorData.message);
+            return false;
+        }
+
         alert("Đặt lại mật khẩu thành công!");
         window.location.href = "auth.html";
     } catch (error) {

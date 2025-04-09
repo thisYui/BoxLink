@@ -1,1 +1,5 @@
 npm install firebase-admin
+npm install -g ngrok
+npm install bcrypt      # for password hashing
+npm install @sendgrid/mail
+npm install cors
