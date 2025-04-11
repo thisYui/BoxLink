@@ -48,4 +48,21 @@ function sendOTP(to, subject, text, salt) {
     }
 }
 
-module.exports = { checkEmailExists, sendOTP };
+// Xác thực OTP
+async function verifyOTP(hashOTP, otp) {
+    try {
+        const match = await bcrypt.compare(otp.toString(), await hashOTP);
+
+        if (match) {
+            console.log('OTP xác thực thành công!');
+            return true;
+        } else {
+            console.log('OTP không hợp lệ!');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error verifying OTP: ', error);
+    }
+}
+
+module.exports = { checkEmailExists, sendOTP, verifyOTP };

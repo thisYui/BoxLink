@@ -1,10 +1,13 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
 const { app } = require("../config/appConfig.cjs");
+const { changePassword,
+    changeAvatar,
+    changeDisplayName,
+    unfriend,
+    acceptFriendRequest,
+} = require("../services/accountServices.cjs");
 
 // Thay đổi ảnh đại diện
-
-// Thay đổi mật khẩu
-
 
 // Thay đổi tên hiển thị
 
@@ -22,3 +25,15 @@ const { app } = require("../config/appConfig.cjs");
 
 // Xóa tài khoản
 
+module.exports = {
+    // changeAvatar,
+    //resetPassword,
+    // changeDisplayName,
+    // getFriendList,
+    // unfriend,
+    // searchFriend,
+    // sendFriendRequest,
+    // acceptFriendRequest,
+    // cancelFriendRequest,
+    // deleteAccount
+};

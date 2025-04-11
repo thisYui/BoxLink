@@ -1,22 +1,9 @@
 import {
     auth,
-    createUserWithEmailAndPassword,
-    applyActionCode,
     signInWithEmailAndPassword,
-    sendPasswordResetEmail,
-    verifyPasswordResetCode,
-    confirmPasswordReset,
-    collection,
-    query,
-    where,
-    db,
-    doc,
-    getDocs,
-    setDoc
 } from "../../config/firebaseConfig.js";
 
-
-// 🛠️ Hiển thị form tương ứng
+// Hiển thị form tương ứng
 window.showOnly = function (id) {
     const listForm = ['logInForm', 'signUpForm', 'resetPasswordForm'];
     listForm.forEach((form) => {
@@ -24,7 +11,7 @@ window.showOnly = function (id) {
     });
 };
 
-// 🛠️ Xử lý submit form
+// Xử lý submit form
 document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("submit", async function (event) {
         event.preventDefault();
