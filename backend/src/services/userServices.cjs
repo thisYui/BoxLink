@@ -1,13 +1,10 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
 
 // Thay đổi mật khẩu
-async function changePassword(email, newPassword) {
+async function setPassword(userUid, newPassword) {
     try {
-        // Tìm user từ email
-        const userRecord = await admin.auth().getUserByEmail(email);
-
         // Cập nhật mật khẩu mới
-        await admin.auth().updateUser(userRecord.uid, {
+        await admin.auth().updateUser(userUid, {
             password: newPassword,
         });
 
@@ -19,13 +16,10 @@ async function changePassword(email, newPassword) {
 }
 
 // Thay đổi tên hiển thị
-async function changeDisplayName(email, displayName) {
+async function setDisplayName(uid, displayName) {
     try {
-        // Tìm user từ email
-        const userRecord = await admin.auth().getUserByEmail(email);
-
         // Cập nhật tên hiển thị mới
-        await db.collection("users").doc(userRecord.uid).update({
+        await db.collection("users").doc(uid).update({
             displayName: displayName,
         });
 
@@ -37,13 +31,10 @@ async function changeDisplayName(email, displayName) {
 }
 
 // Thay đổi ảnh đại diện
-async function changeAvatar(email, avatar) {
+async function setAvatar(uid, avatar) {
     try {
-        // Tìm user từ email
-        const userRecord = await admin.auth().getUserByEmail(email);
-
         // Cập nhật tên hiển thị mới
-        await db.collection("users").doc(userRecord.uid).update({
+        await db.collection("users").doc(uid).update({
             avatar: avatar,
         });
 
@@ -55,14 +46,10 @@ async function changeAvatar(email, avatar) {
 }
 
 // Hủy kết bạn
-async function unfriend(email, friendId) {
+async function removeFriend(uid, friendId) {
     try {
-        // Lấy thông tin user từ email
-        const userRecord = await admin.auth().getUserByEmail(email);
-        const userId = userRecord.uid;
-
         // Truy cập document của user trong Firestore
-        const userRef = db.collection("users").doc(userId);
+        const userRef = db.collection("users").doc(uid);
 
         // Dùng arrayRemove để xóa friendId ra khỏi mảng friendList
         await userRef.update({
@@ -78,14 +65,10 @@ async function unfriend(email, friendId) {
 }
 
 // Chấp nhận lời mời kết bạn
-async function acceptFriendRequest(email, friendId) {
+async function acceptFriend(uid, friendId) {
     try {
-        // Lấy thông tin user từ email
-        const userRecord = await admin.auth().getUserByEmail(email);
-        const userId = userRecord.uid;
-
         // Truy cập document của user trong Firestore
-        const userRef = db.collection("users").doc(userId);
+        const userRef = db.collection("users").doc(uid);
 
         // Dùng arrayUnion để thêm friendId vào mảng friendList
         await userRef.update({
@@ -100,10 +83,53 @@ async function acceptFriendRequest(email, friendId) {
     }
 }
 
+// Tìm kiếm người dùng
+async function searchUser(email) {
+    try {
+        // Tìm user từ email
+        const userRecord = await admin.auth().getUserByEmail(email);
+
+        // Truy cập document của user trong Firestore
+        const userRef = db.collection("users").doc(userRecord.uid);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            console.log("Không tìm thấy người dùng.");
+            return null;
+        }
+
+        return userDoc.data();
+    } catch (error) {
+        console.error("Lỗi khi tìm kiếm người dùng:", error);
+        return null;
+    }
+}
+
+// Gửi lời mời kết bạn
+async function friendRequest(uid, friendId) {
+    try {
+        // Truy cập document của user trong Firestore
+        const userRef = db.collection("users").doc(uid);
+
+        // Dùng arrayUnion để thêm friendId vào mảng friendRequests
+        await userRef.update({
+            friendRequests: admin.firestore.FieldValue.arrayUnion(friendId)
+        });
+
+        console.log("Đã gửi lời mời kết bạn thành công.");
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi gửi lời mời kết bạn:", error);
+        return false;
+    }
+}
+
 module.exports = {
-    changePassword,
-    changeDisplayName,
-    changeAvatar,
-    unfriend,
-    acceptFriendRequest,
+    setPassword,
+    setDisplayName,
+    setAvatar,
+    removeFriend,
+    acceptFriend,
+    searchUser,
+    friendRequest,
 };

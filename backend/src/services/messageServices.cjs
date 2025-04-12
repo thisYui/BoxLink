@@ -1,3 +1,4 @@
+const {admin, db} = require("../config/firebaseConfig.cjs");
 
 // Format message
 
@@ -31,3 +32,4 @@ JSON Message
 
 *
 * */
+

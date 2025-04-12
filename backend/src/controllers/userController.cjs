@@ -1,39 +1,147 @@
-const { admin, db } = require("../config/firebaseConfig.cjs");
-const { app } = require("../config/appConfig.cjs");
-const { changePassword,
-    changeAvatar,
-    changeDisplayName,
-    unfriend,
-    acceptFriendRequest,
-} = require("../services/accountServices.cjs");
+const { setPassword,
+    setAvatar,
+    setDisplayName,
+    removeFriend,
+    acceptFriend,
+    searchUser,
+    friendRequest,
+} = require("../services/userServices.cjs");
+const { deleteAuth } = require("../services/firebaseServices.cjs");
+const logger = require("../config/logger.cjs");
+
+// Lấy thông tin người dùng từ email
+async function getUserInfo(req, res) {
+    const { uid, email } = req.body;
+    try {
+        const user = await searchUser(email);
+        if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Thay đổi ảnh đại diện
+async function changeAvatar(req, res) {
+    const { uid,  avatar } = req.body;
+    try {
+        const user = await setAvatar(uid, avatar);
+        if (!user) return res.status(404).json({ message: 'Cập nhật ảnh đại diện thất bại!' });
+        res.status(200).json({ message: 'Cập nhật ảnh đại diện thành công!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Thay đổi tên hiển thị
-
-// Lấy danh sách bạn bè
+async function changeDisplayName(req, res) {
+    const { uid, displayName } = req.body;
+    try {
+        const user = await setDisplayName(uid, displayName);
+        if (!user) return res.status(404).json({ message: 'Cập nhật tên hiển thị thất bại!' });
+        res.status(200).json({ message: 'Cập nhật tên hiển thị thành công!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Hủy kết bạn
+async function unfriend(req, res) {
+    const { uid, friendId } = req.body;
+    try {
+        const user = await removeFriend(uid, friendId);
+        if (!user) return res.status(404).json({ message: 'Hủy kết bạn thất bại!' });
+        res.status(200).json({ message: 'Đã hủy kết bạn!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Tìm kiếm bạn bè
+async function searchFriend(req, res) {
+    const { email } = req.body;
+    try {
+        const user = await searchUser(email);
+        if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Gửi lời mời kết bạn
+async function sendFriendRequest(req, res) {
+    const { uid, userId} = req.body;
+    try {
+        const user = await friendRequest(uid, userId);
+        if (!user) return res.status(404).json({ message: 'Gửi lời mời thất bại!' });
+        // Gửi lời mời kết bạn
+        res.status(200).json({ message: 'Lời mời kết bạn đã được gửi!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Xác nhận lời mời kết bạn
+async function acceptFriendRequest(req, res) {
+    const { uid, friendId } = req.body;
+    try {
+        const user = await acceptFriend(uid, friendId);
+        if (!user) return res.status(404).json({ message: 'Chấp nhận lời mời thất bại!' });
+        res.status(200).json({ message: 'Đã chấp nhận lời mời kết bạn!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Xóa lời mời kết bạn
+async function cancelFriendRequest(req, res) {
+    const { uid, friendId } = req.body;
+    try {
+        const user = await unfriend(uid, friendId);
+        if (!user) return res.status(404).json({ message: 'Hủy lời mời kết bạn thất bại!' });
+        res.status(200).json({ message: 'Đã hủy lời mời kết bạn!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Thay đổi mật khẩu
+async function resetPassword(req, res) {
+    const { uid, password } = req.body;
+
+    try {
+        const user = await setPassword(uid, password);
+        if (!user) return res.status(404).json({ message: 'Cập nhật mật khẩu thất bại!' });
+        logger.info('Cập nhật mật khẩu thành công!', { uid });
+        res.status(200).json({ message: 'Cập nhật mật khẩu thành công!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 // Xóa tài khoản
+async function deleteAccount(req, res) {
+    const { uid } = req.body;
+    try {
+        const user = await deleteAuth(uid);
+        if (!user) return res.status(404).json({ message: 'Xóa tài khoản thất bại!' });
+        logger.info('Xóa tài khoản thành công!', { uid });
+        res.status(200).json({ message: 'Tài khoản đã được xóa!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
 
 module.exports = {
-    // changeAvatar,
-    //resetPassword,
-    // changeDisplayName,
-    // getFriendList,
-    // unfriend,
-    // searchFriend,
-    // sendFriendRequest,
-    // acceptFriendRequest,
-    // cancelFriendRequest,
-    // deleteAccount
+    getUserInfo,
+    changeAvatar,
+    resetPassword,
+    changeDisplayName,
+    unfriend,
+    searchFriend,
+    sendFriendRequest,
+    acceptFriendRequest,
+    cancelFriendRequest,
+    deleteAccount,
 };

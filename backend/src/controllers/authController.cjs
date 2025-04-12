@@ -1,9 +1,11 @@
+const {admin} = require("../config/firebaseConfig.cjs");
 const { checkEmailExists, sendOTP , verifyOTP} = require("../services/emailServices.cjs");
-const { changePassword } = require("../services/accountServices.cjs");
+const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
 
 let users = []; // (email, displayName, hashOTP)
 let otps = [];  // (email, hashOTP)
+
 
 // Xử lý đăng ký tài khoản
 async function signUp(req, res) {
@@ -53,7 +55,8 @@ async function requestOTP(req, res) {
 // Xử lý đặt lại mật khẩu
 async function resetPassword(req, res) {
     const { email, password } = req.body;
-    changePassword(email, password).then( result => {
+    const user = await  admin.auth().getUserByEmail(email);
+    setPassword(user.uid, password).then( result => {
         if (result) {
             otps = otps.filter(u => u.email !== email);
             res.status(200).json({message: 'Đặt lại mật khẩu thành công!'});

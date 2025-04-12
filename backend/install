@@ -3,3 +3,6 @@ npm install -g ngrok
 npm install bcrypt      # for password hashing
 npm install @sendgrid/mail  # for email sending
 npm install cors   # for CORS
+npm install winston  # for logging
+npm install socket.io # for real-time communication
+npm install socket.io-client # for real-time communication

@@ -1,5 +1,7 @@
 
 
+// Tạo thông báo và yêu cầu
+
 // Thông báo tin nhắn
 
 // Thông báo lời mời kết bạn
