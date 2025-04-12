@@ -1,9 +1,4 @@
-# Introduction
-- Mô phỏng 1 application đơn giản có chức gửi nhận tin nhắn (text, image, file,...)
-- Dữ liệu được trao đổi dựa trên thời gian thực,có thể hiển thị trạng thái hoạt động
-- Có thể tạo tài khoản, có thể kết bạn, có thể tạo nhóm
-
-# Frontend: Python PyQt
+# Frontend: HTML + CSS + JS  
 - Giao diện đơn giản có thể làm tương tự messenger
           Area 1                 Area 2
     ┌─────────────────┐┌──────────────────────────┐
@@ -70,7 +65,7 @@
    │         send mess        │    │         resend           │    │          confirm         │
    └──────────────────────────┘    └──────────────────────────┘    └──────────────────────────┘
 
-# Backend : Electron (JavaScript) + WebSocket
+# Backend : Express (Node.js)
 ## Gửi nhận
 - Có thể gửi đc tin nhắn dạng văn bản (text)
 - phân biệt đc đg link và tự động gạch dưới có thể truy cập link
@@ -80,34 +75,3 @@
 - gửi nhận video (kích thước tối da giới hạn)
 - tin nhắn gửi đi có thể bị mã hóa, nếu mã hóa thì cần giải mã
 - có thể thiết kế việc thông báo có tin nhắn hay lời mời kb
-
-## Đăng nhập và đăng kí
-- kiểm tra username có bị trùng không
-- gửi code và xác nhận code đăng kí hay reset cho tài khoản
-- reset username hay password
-
-## số người sử dụng
-- project nhỏ ko cần thiết kế lưu lượng theo giờ cao điểm
-- không cần thiết kế tắt nghẽn
-
-## giao thức sử dụng 
-- tính sau
-
-# Database: MySQL (Firebase Realtime Database)
-## 1 tài khoản gồm có: 
-- username và password
-- std hay email xác nhận
-- danh sách bạn bè
-- mỗi đoạn chat với mỗi bạn bè
-- danh sách người chờ được kết bạn
-- danh sách người chờ xác nhận kết bạn
-- có thể có avatar
-- trạng thái onl off
-
-## thực thi
-- mỗi tin nhắn dc gửi đi gửi lên database ngay lập tức
-- các server sẽ gửi cho client liên quan khi có thông tin thay đổi hoặc các clinet sẽ gửi request để lấy (ưu tiên cách dầu)
-
-# Real-time: Node.js
-- cứ mỗi 1 khoảng thời gian thực hiện 1 lệnh ping tới máy chủ nếu không còn lệnh nào thì set là offline
-- với mỗi account thực hiện request thông tin onl/offline của bạn bè sau một khoảng thời gian

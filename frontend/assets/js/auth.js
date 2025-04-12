@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
             case "inputSignUpForm":
                 requestSignUp(formData).then(result => {
-                if (result) {
-                    confirmSignUp(); // Chuyển form trước
-                }});
+                    if (result) {
+                        confirmSignUp(); // Chuyển form trước
+                    }});
                 break;
             case "confirmSignUpForm":
                 await confirmCodeSignUp(formData);
@@ -35,8 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 sendCode(formData).then(result => {
                     if (result) {
                         switchForm();
-                    }
-                });
+                    }});
                 break;
             case "confirmCodeForm":
                 await confirmCode(formData);
@@ -75,10 +74,10 @@ window.logIn = async function (formData) {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    console.log(email, password);
-
     try {
         await signInWithEmailAndPassword(auth, email, password);
+        // Lưu thông tin đăng nhập vào localStorage
+        localStorage.setItem("email", email);
         window.location.href = "index.html";
     } catch (error) {
         if (error.code === "auth/wrong-password") {

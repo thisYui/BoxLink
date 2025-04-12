@@ -21,6 +21,7 @@ yarn-error.log*
 # 🛑 Ignore build files
 dist/
 build/
+test/
 
 # 🛑 Ignore dependency lock files (chỉ khi không muốn khóa phiên bản)
 package-lock.json
@@ -34,4 +35,5 @@ frontend/node_modules/
 
 # 🛑 Ignore Firebase service account key nếu có
 firebase-key.json
+serviceAccountKey.json
 frontend/config/firebaseConfig.js
