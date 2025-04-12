@@ -1,4 +1,8 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
+const { friendRequestNotification,
+    friendAcceptNotification,
+    otherNotification
+} = require("./notificationServices.cjs");
 
 // Thay đổi mật khẩu
 async function setPassword(userUid, newPassword) {
@@ -7,6 +11,9 @@ async function setPassword(userUid, newPassword) {
         await admin.auth().updateUser(userUid, {
             password: newPassword,
         });
+
+        // Thông báo cho biết đã thay đổi mật khẩu
+        await otherNotification(userUid, "Đã thay đổi mật khẩu");
 
         return true;
     } catch (error) {
@@ -23,6 +30,9 @@ async function setDisplayName(uid, displayName) {
             displayName: displayName,
         });
 
+        // Thông báo cho biết đã thay đổi tên hiển thị
+        await otherNotification(uid, "Đã thay đổi tên hiển thị");
+
         return true;
     } catch (error) {
         console.error("Lỗi khi cập nhật tên hiển thị:", error);
@@ -38,6 +48,9 @@ async function setAvatar(uid, avatar) {
             avatar: avatar,
         });
 
+        // Thông báo cho biết đã thay đổi ảnh đại diện
+        await otherNotification(uid, "Đã thay đổi ảnh đại diện");
+
         return true;
     } catch (error) {
         console.error("Lỗi khi cập nhật ảnh đại diện:", error);
@@ -46,14 +59,22 @@ async function setAvatar(uid, avatar) {
 }
 
 // Hủy kết bạn
-async function removeFriend(uid, friendId) {
+async function removeFriend(uid, emailFriend) {
     try {
+        const friend = await admin.auth().getUserByEmail(emailFriend);
+
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
+        const friendRef = db.collection("users").doc(friend.uid);
 
         // Dùng arrayRemove để xóa friendId ra khỏi mảng friendList
         await userRef.update({
-            friendList: admin.firestore.FieldValue.arrayRemove(friendId)
+            friendList: admin.firestore.FieldValue.arrayRemove(friend.uid)
+        });
+
+        // Dùng arrayRemove để xóa myId ra khỏi mảng friendList của friend
+        await friendRef.update({
+            friendList: admin.firestore.FieldValue.arrayRemove(uid)
         });
 
         console.log("Đã hủy kết bạn thành công.");
@@ -65,15 +86,26 @@ async function removeFriend(uid, friendId) {
 }
 
 // Chấp nhận lời mời kết bạn
-async function acceptFriend(uid, friendId) {
+async function acceptFriend(uid, emailFriend) {
     try {
+        const friend = await admin.auth().getUserByEmail(emailFriend);
+
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
+        const friendRef = db.collection("users").doc(friend.uid);
 
         // Dùng arrayUnion để thêm friendId vào mảng friendList
         await userRef.update({
-            friendList: admin.firestore.FieldValue.arrayUnion(friendId)
+            friendList: admin.firestore.FieldValue.arrayUnion(friend.uid)
         });
+
+        // Dùng arrayUnion để thêm myId vào mảng friendList của friend
+        await friendRef.update({
+            friendList: admin.firestore.FieldValue.arrayUnion(uid)
+        });
+
+        // Thông báo cháp nhận lời mời kết bạn
+        await friendAcceptNotification(uid, emailFriend);
 
         console.log("Đã chấp nhận lời mời kết bạn thành công.");
         return true;
@@ -98,7 +130,13 @@ async function searchUser(email) {
             return null;
         }
 
-        return userDoc.data();
+        const userData = userDoc.data();
+
+        return {
+            displayName: userData.displayName,
+            email: userRecord.email,
+            avatar: userData.avatar
+        }
     } catch (error) {
         console.error("Lỗi khi tìm kiếm người dùng:", error);
         return null;
@@ -106,15 +144,20 @@ async function searchUser(email) {
 }
 
 // Gửi lời mời kết bạn
-async function friendRequest(uid, friendId) {
+async function friendRequest(uid, emailFriend) {
     try {
+        const friend = await admin.auth().getUserByEmail(emailFriend);
+
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
 
         // Dùng arrayUnion để thêm friendId vào mảng friendRequests
         await userRef.update({
-            friendRequests: admin.firestore.FieldValue.arrayUnion(friendId)
+            friendRequests: admin.firestore.FieldValue.arrayUnion(friend.uid)
         });
+
+        // Gửi thông báo lời mời kết bạn
+        await friendRequestNotification(uid, emailFriend);
 
         console.log("Đã gửi lời mời kết bạn thành công.");
         return true;

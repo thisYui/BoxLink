@@ -1,6 +1,44 @@
 const {admin, db} = require("../config/firebaseConfig.cjs");
+const { messageNotification, otherNotification } = require("./notificationServices.cjs");
 
 // Format message
+async function formatMessage(uid, friendEmail, message) {
+    try {
+        // Lấy thông tin người gửi
+        const sender = await admin.auth().getUser(uid);
+        const senderEmail = sender.email;
+
+        // Lấy thông tin người nhận
+        const receiver = await admin.auth().getUserByEmail(friendEmail);
+        const receiverEmail = receiver.email;
+
+        /*// Tìm kiếm doccument ứng với 2 uid
+        await db.collection("users").doc(uid).where()
+            {
+
+            }
+        )
+
+        // Tạo đối tượng tin nhắn
+        const newMessage = {
+            chatId: ,
+            senderId: uid,
+            type: message.type,
+            content: message.content,
+            timestamp: new Date().toISOString(),
+            status: "sent",
+            replyTo: message.replyTo || null,
+        };*/
+
+        // Gửi thông báo cho người nhận
+        await messageNotification(uid, receiverEmail);
+
+        return newMessage;
+    } catch (error) {
+        console.error("Lỗi khi định dạng tin nhắn:", error);
+        throw error;
+    }
+}
 
 // Đưa tin nhắn lên Firebase
 
@@ -21,7 +59,7 @@ JSON Message
   "blocks": [
     { "type": "text", "text": "Xem thêm tại " },
     { "type": "link", "text": "Github", "url": "https://github.com" },
-    { "type": "emoji", "name": "rocket", "unicode": "🚀" }
+    { "type": "emoji", "name": "rocket", "unicode": "" }
   ]
 }
 "content": {

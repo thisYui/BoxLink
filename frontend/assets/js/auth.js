@@ -75,9 +75,16 @@ window.logIn = async function (formData) {
     const password = formData.get("password");
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
-        // Lưu thông tin đăng nhập vào localStorage
-        localStorage.setItem("email", email);
+        // Đăng nhập người dùng với email và password
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+        // Đăng nhập thành công, lấy user và UID
+        const user = userCredential.user;
+        const uid = user.uid;
+
+        // Lưu UID vào localStorage
+        localStorage.setItem("uid", uid);
+
         window.location.href = "index.html";
     } catch (error) {
         if (error.code === "auth/wrong-password") {

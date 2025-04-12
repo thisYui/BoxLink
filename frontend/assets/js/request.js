@@ -1,4 +1,3 @@
-
 // Lấy thông tin cần thiết khi đăng nhập thành công
 async function getUserInfo() {
     // Các thông tin cần thiết  bao gồm
@@ -11,7 +10,10 @@ async function getUserInfo() {
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid")
+        })
     });
 
     if (!response.ok) {
@@ -22,12 +24,15 @@ async function getUserInfo() {
 }
 
 // Tìm kiếm
-async function searchFriend() {
+async function searchFriend(emailFriend) {
     const response = await fetch("http://localhost:3000/api/search", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-        }
+        },
+        body: JSON.stringify({
+            emailFriend: emailFriend
+        })
     });
 
     if (!response.ok) {
@@ -37,13 +42,22 @@ async function searchFriend() {
     return await response.json();
 }
 
-// Gửi lời mời kết bạn
-async function sendFriendRequest(uid, userId) {
-    const response = await fetch("http://localhost:3000/api/friend-request", {
+// Tương tác bạn bè
+async function friend(uid, emailFriend, api){
+    // api = { friend-request : gửi lời mời kết bạn
+    //         accept-friend: đồng ý kết bạn
+    //         cancel-friend: hủy lời mời kết bạn
+    // }
+
+    const response = await fetch(`http://localhost:3000/api/${api}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-        }
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            emailFriend: emailFriend
+        })
     });
 
     if (!response.ok) {

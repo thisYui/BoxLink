@@ -2,10 +2,10 @@ const {admin} = require("../config/firebaseConfig.cjs");
 const { checkEmailExists, sendOTP , verifyOTP} = require("../services/emailServices.cjs");
 const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
+const server = require("../server.cjs");
 
 let users = []; // (email, displayName, hashOTP)
 let otps = [];  // (email, hashOTP)
-
 
 // Xử lý đăng ký tài khoản
 async function signUp(req, res) {

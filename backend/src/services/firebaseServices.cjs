@@ -21,8 +21,7 @@ async function createAuth(email, password, displayName) {
             auth: `users/${userRecord.uid}`,
             avatar: "default.png",
             friendList: [],
-            notifications: [],
-            friendRequest: [],
+            notifications: [] // <typeNotification, srcID, text>
         });
 
         console.log("Tạo tài khoản thành công và đã lưu Firestore.");

@@ -7,13 +7,14 @@ const { setPassword,
     friendRequest,
 } = require("../services/userServices.cjs");
 const { deleteAuth } = require("../services/firebaseServices.cjs");
+const { db } = require("../config/firebaseConfig.cjs");
 const logger = require("../config/logger.cjs");
 
 // Lấy thông tin người dùng từ email
 async function getUserInfo(req, res) {
-    const { uid, email } = req.body;
+    const { uid } = req.body;
     try {
-        const user = await searchUser(email);
+        const user = db.collection("users").doc(uid);
         if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
         res.status(200).json(user);
     } catch (error) {
@@ -47,9 +48,9 @@ async function changeDisplayName(req, res) {
 
 // Hủy kết bạn
 async function unfriend(req, res) {
-    const { uid, friendId } = req.body;
+    const { uid, emailFriend } = req.body;
     try {
-        const user = await removeFriend(uid, friendId);
+        const user = await removeFriend(uid, emailFriend);
         if (!user) return res.status(404).json({ message: 'Hủy kết bạn thất bại!' });
         res.status(200).json({ message: 'Đã hủy kết bạn!' });
     } catch (error) {
@@ -71,9 +72,9 @@ async function searchFriend(req, res) {
 
 // Gửi lời mời kết bạn
 async function sendFriendRequest(req, res) {
-    const { uid, userId} = req.body;
+    const { uid, emailFriend} = req.body;
     try {
-        const user = await friendRequest(uid, userId);
+        const user = await friendRequest(uid, emailFriend);
         if (!user) return res.status(404).json({ message: 'Gửi lời mời thất bại!' });
         // Gửi lời mời kết bạn
         res.status(200).json({ message: 'Lời mời kết bạn đã được gửi!' });
@@ -84,9 +85,9 @@ async function sendFriendRequest(req, res) {
 
 // Xác nhận lời mời kết bạn
 async function acceptFriendRequest(req, res) {
-    const { uid, friendId } = req.body;
+    const { uid, emailFriend } = req.body;
     try {
-        const user = await acceptFriend(uid, friendId);
+        const user = await acceptFriend(uid, emailFriend);
         if (!user) return res.status(404).json({ message: 'Chấp nhận lời mời thất bại!' });
         res.status(200).json({ message: 'Đã chấp nhận lời mời kết bạn!' });
     } catch (error) {
@@ -96,9 +97,9 @@ async function acceptFriendRequest(req, res) {
 
 // Xóa lời mời kết bạn
 async function cancelFriendRequest(req, res) {
-    const { uid, friendId } = req.body;
+    const { uid, emailFriend } = req.body;
     try {
-        const user = await unfriend(uid, friendId);
+        const user = await unfriend(uid, emailFriend);
         if (!user) return res.status(404).json({ message: 'Hủy lời mời kết bạn thất bại!' });
         res.status(200).json({ message: 'Đã hủy lời mời kết bạn!' });
     } catch (error) {
