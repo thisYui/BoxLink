@@ -1,8 +1,41 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
-const { friendRequestNotification,
-    friendAcceptNotification,
-    otherNotification
-} = require("./notificationServices.cjs");
+const { friendRequestNotification, friendAcceptNotification, otherNotification } = require("./notificationServices.cjs");
+
+// Lấy dữ liệu người dùng từ uid
+async function getInfo(uid) {
+    try {
+        const userRecord = await admin.auth().getUser(uid);
+        const chatList = await db.collection("users").doc(uid).get();
+        const chatListData = chatList.data();
+
+        let friendList = [];
+        for (let i = 0; i < chatListData.friendList.length; i++) {
+            const chat = await db.collection("chats").doc(chatListData.friendList[i]).get();
+            const friendID = chat.data().participants.filter(id => id !== uid)[0];
+            const friend = await admin.auth().getUser(friendID);
+
+            const friendData = {
+                displayName: friend.displayName,
+                email: friend.email,
+                avatar: chatListData.avatar,
+                lastMessage: chat.data().lassMesssage
+            }
+
+            friendList.push(friendData);
+        }
+
+        return {
+            displayName: userRecord.displayName,
+            email: userRecord.email,
+            avatar: chatListData.avatar,
+            friendList: friendList,
+        }
+
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng:", error);
+        return null;
+    }
+}
 
 // Thay đổi mật khẩu
 async function setPassword(userUid, newPassword) {
@@ -168,6 +201,7 @@ async function friendRequest(uid, emailFriend) {
 }
 
 module.exports = {
+    getInfo,
     setPassword,
     setDisplayName,
     setAvatar,

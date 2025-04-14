@@ -22,7 +22,6 @@ async function checkEmailExists(email) {
 function sendOTP(to, subject, text, salt) {
     try {
         const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 số
-    console.log(otp)
         const msg = {
           to: 'nguyenquangduy048@gmail.com',        // Người nhận
           from: process.env.SENDGRID_SERVER_EMAIL,         // Địa chỉ đã xác minh ở bước Single Sender

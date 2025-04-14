@@ -13,11 +13,12 @@ socket.on("disconnect", () => {
 socket.on("notifications", (data) => {
     console.log("Notifications received:", data);
     const notifDiv = document.getElementById("notifications");
-    notifDiv.innerHTML = `
-        <h3>Notifications for ${data.userId}</h3>
-        <ul>
-            ${data.notifications.map(n => `<li>${n}</li>`).join('')}
-        </ul>
-    `;
+
+    // Gán notifList thành biến toàn cục qua window
+    window.notifList = Array.from(document.querySelectorAll("#notifications li")).map(li => ({
+        typeNotification: li.dataset.type,
+        srcID: li.dataset.srcid,
+        text: li.textContent.trim()
+    }));
 });
 

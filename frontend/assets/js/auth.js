@@ -146,7 +146,7 @@ window.confirmCodeSignUp = async function (formData) {
 
     try {
         // Gửi thông tin đăng ký đến server
-        await fetch('http://localhost:3000/api/confirm', {
+        const response = await fetch('http://localhost:3000/api/confirm', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -158,7 +158,12 @@ window.confirmCodeSignUp = async function (formData) {
             }),
         });
 
-        alert("Xác nhận thành công! Tài khoản đã được kích hoạt.");
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert("Lỗi: " + errorData.message);
+            return false;
+        }
+
         window.location.href = "auth.html";
     } catch (error) {
         console.error("Lỗi xác nhận mã:", error.message);

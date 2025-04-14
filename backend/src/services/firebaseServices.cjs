@@ -12,13 +12,9 @@ async function createAuth(email, password, displayName) {
 
         // Ghi dữ liệu vào Firestore
         await db.collection("users").doc(userRecord.uid).set({
-            uid: userRecord.uid,
-            email: userRecord.email,
             displayName: displayName,
-            status: "online",
-            createdAt: new Date().toISOString(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
             chatList: [],
-            auth: `users/${userRecord.uid}`,
             avatar: "default.png",
             friendList: [],
             notifications: [] // <typeNotification, srcID, text>
@@ -50,25 +46,59 @@ async function deleteAuth(uid) {
 }
 
 // Tạo cuộc trò chuyện
-async function createChat(userId, friendId) {
+async function createChat(userId, emailFriend) {
     try {
+        // Lấy thông tin người bạn từ email
+        const friend = await admin.auth().getUserByEmail(emailFriend);
+
         // Tạo cuộc trò chuyện trong Firestore
         const chatRef = db.collection("chats").doc();
+        const timestamp = admin.firestore.FieldValue.serverTimestamp();
         await chatRef.set({
-            users: [
-              {userId: userId, lastMessageSeen: new Date().toISOString()},
-              {userId: friendId, lastMessageSeen: new Date().toISOString()}
-            ],
-            messages: [],
-            createdAt: new Date().toISOString(),
+            participants: [userId, friend.uid],
+            seen: {
+              [userId]: { lastMessageSeen: timestamp },
+              [friend.uid]: { lastMessageSeen: timestamp }
+            },
+            createdAt: timestamp,
+            lastMessage: {}
+        });
+
+        // Tạo subcollection "messages" trong document của chat
+        const messagesRef = chatRef.collection("messages");
+
+        const messageSystem = {
+              senderId: 0,           // ai gửi
+              type: "system",          // kiểu tin nhắn
+              content: {
+                  text: "Bây giờ bạn có thể trò chuyện với nhau!" // nội dung tin nhắn
+              },           // nội dung (thay đổi theo type)
+              timestamp: timestamp,  // thời gian gửi
+              replyTo: 0 // nếu có trả lời
+        }
+
+        // Bạn có thể thêm một tin nhắn đầu tiên (nếu cần)
+        await messagesRef.add(messageSystem);
+
+        // Cập nhật tin nhắn cuối cùng trong cuộc trò chuyện
+        await chatRef.update({
+            lastMessage: messageSystem
         });
 
         // Cập nhật danh sách trò chuyện của người dùng
         await db.collection("users").doc(userId).update({
             chatList: admin.firestore.FieldValue.arrayUnion(chatRef.id),
         });
-        await db.collection("users").doc(friendId).update({
+        await db.collection("users").doc(friend.uid).update({
             chatList: admin.firestore.FieldValue.arrayUnion(chatRef.id),
+        });
+
+        // Câp nhật danh sách bạn bè
+        await db.collection("users").doc(userId).update({
+            friendList: admin.firestore.FieldValue.arrayUnion(friend.uid),
+        });
+        await db.collection("users").doc(friend.uid).update({
+            friendList: admin.firestore.FieldValue.arrayUnion(userId),
         });
 
         console.log("Cuộc trò chuyện đã được tạo thành công.");

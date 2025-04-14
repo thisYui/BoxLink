@@ -1,4 +1,5 @@
-const { setPassword,
+const { getInfo,
+    setPassword,
     setAvatar,
     setDisplayName,
     removeFriend,
@@ -7,14 +8,13 @@ const { setPassword,
     friendRequest,
 } = require("../services/userServices.cjs");
 const { deleteAuth } = require("../services/firebaseServices.cjs");
-const { db } = require("../config/firebaseConfig.cjs");
 const logger = require("../config/logger.cjs");
 
 // Lấy thông tin người dùng từ email
 async function getUserInfo(req, res) {
     const { uid } = req.body;
     try {
-        const user = db.collection("users").doc(uid);
+        const user = await getInfo(uid);
         if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
         res.status(200).json(user);
     } catch (error) {

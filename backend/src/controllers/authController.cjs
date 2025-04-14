@@ -55,7 +55,7 @@ async function requestOTP(req, res) {
 // Xử lý đặt lại mật khẩu
 async function resetPassword(req, res) {
     const { email, password } = req.body;
-    const user = await  admin.auth().getUserByEmail(email);
+    const user = await admin.auth().getUserByEmail(email);
     setPassword(user.uid, password).then( result => {
         if (result) {
             otps = otps.filter(u => u.email !== email);

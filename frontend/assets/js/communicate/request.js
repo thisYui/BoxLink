@@ -66,3 +66,20 @@ async function friend(uid, emailFriend, api){
 
     return await response.json();
 }
+
+// Kiểm tra thông báo
+async function checkNotification(notifList) {
+    const response = await fetch("http://localhost:3000/api/notification", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to check notification");
+    }
+
+    return await response.json();
+}
