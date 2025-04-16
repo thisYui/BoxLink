@@ -12,7 +12,7 @@ socket.on("disconnect", () => {
 
 socket.on("notifications", (data) => {
     console.log("Notifications received:", data);
-    const notifDiv = document.getElementById("notifications");
+    //const notifDiv = document.getElementById("notifications");
 
     // Gán notifList thành biến toàn cục qua window
     window.notifList = Array.from(document.querySelectorAll("#notifications li")).map(li => ({

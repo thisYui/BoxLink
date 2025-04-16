@@ -1,8 +1,20 @@
 const {admin, db} = require("../config/firebaseConfig.cjs");
 const { messageNotification } = require("./notificationServices.cjs");
+const { uploadFile } = require("./fileServices.cjs");
+const mine = require("mime-types");
+const fs = require('fs');
+const { getWebsitePreview } = require("./utilityServices.cjs");
 
 let chatCurrent = null;  // Tại một thời điểm chỉ có một cuộc trò chuyện đang mở
 let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
+
+/*
+2. Cloud Firestore:
+  Dung lượng lưu trữ: 1 GiB
+  Số lượng đọc: 50.000 đọc tài liệu mỗi ngày
+  Số lượng ghi: 20.000 ghi tài liệu mỗi ngày
+  Số lượng xóa: 20.000 xóa tài liệu mỗi ngày
+*/
 
 /**
  * Định dạng tin nhắn tiêu chuẩn
@@ -20,28 +32,28 @@ let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
         "text": "Xin chào bạn"
     }
 
-    type: file => bao gồm cả ảnh, file, audio
+    type: file
     content {
         "fileName": "report.pdf",
+        "subtype": file, // file | audio
         "size": 28412,
-        "url": "https://cdn.domain.com/files/report.pdf"
+        "storagePath": "chatsID/report.pdf", // Đường dẫn trên Firebase Storage
     }
 
-    type: video
+    type: image
     content {
-        "videoName": "video.mp4",
+        "fileName": "image.jpg",
+        "subtype": image, // image | video
         "size": 28412,
-        "url": "https://cdn.domain.com/videos/video.mp4"
-        "thumbnail": "https://cdn.domain.com/videos/video_thumbnail.jpg"
-        "duration": 120 // thời gian video
+        "storagePath": "chatsID/image.jpg", // Đường dẫn trên Firebase Storage
     }
 
     type: link
     content {
         "title": "Link title",
-        "description": "Link description",
         "url": "https://example.com",
-        "image": "https://example.com/image.jpg"
+        "description": "Link description",
+        "thumbnail": "https://example.com/image.jpg"
     }
 
     type: rich_text
@@ -53,6 +65,36 @@ let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
       ]
     }
 */
+
+// Cấu trúc lại dữ liệu
+async function formatMessage(type, content) {
+    if (type === "text" || type === "system") {
+        return {
+            text: content,
+        };
+    }
+
+    if (type === "file" || type === "image") {
+        const filePath = `${chatCurrent}/${content.fileName}`;
+        await uploadFile(content, filePath); // Tải tệp lên Firebase Storage
+        return {
+            fileName: content,
+            subtype: mine.lookup(content), // Lấy loại mime từ tệp
+            size: fs.statSync(content),  // Lấy kích thước tệp
+            storagePath: filePath, // Đường dẫn trên Firebase Storage
+        };
+    }
+
+    if (type === "link") {
+        return getWebsitePreview(content);
+    }
+
+    if (type === "rich_text") {
+        // Xử lý rich text
+
+        return { };
+    }
+}
 
 //Tìm kiếm cuộc trò chuyện giữa hai người tạo phiên làm việc mới
 async function startChat(uid, friendEmail){
@@ -92,11 +134,13 @@ async function startChat(uid, friendEmail){
 // Gửi tin nhắn và đưa tin nhắn lên Firebase
 async function sendMessage(uid, friendEmail, type, content, replyTo) {
     try {
+        const formattedMessage = await formatMessage(type, content);
+
         // Định dạng tin nhắn
         const message = {
             senderId: uid,
             type: type,
-            content: content,
+            content: formattedMessage,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             replyTo: replyTo,
         };
@@ -158,7 +202,6 @@ async function loadMore(limit = 100) {
 
     return messages.reverse(); // Hiển thị từ cũ đến mới
 }
-
 
 module.exports = {
     startChat,
