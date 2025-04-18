@@ -1,12 +1,10 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
 
 // Thông báo tin nhắn
-async function messageNotification(srcId, desEmail) {
+async function messageNotification(srcId, desID) {
     try {
-        const des = await admin.auth().getUserByEmail(desEmail);
-
         // Thêm thông báo cho biết có tin nhắn mới
-        await db.collection("users").doc(des.uid).update({
+        await db.collection("users").doc(desID).update({
             notifications: admin.firestore.FieldValue.arrayUnion({
                 typeNotification: "message",
                 srcID: srcId,

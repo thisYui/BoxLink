@@ -13,7 +13,7 @@ const { getUserInfo,
 
 const router = express.Router();
 
-router.post("/getUserInfo", getUserInfo);
+router.post("/user-info", getUserInfo);
 router.post("/search", searchFriend);
 router.post("/friend-request", sendFriendRequest);
 router.post("/accept-friend", acceptFriendRequest);

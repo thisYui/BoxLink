@@ -60,9 +60,11 @@ async function unfriend(req, res) {
 
 // Tìm kiếm bạn bè
 async function searchFriend(req, res) {
-    const { email } = req.body;
+    const { uid, emailFriend } = req.body;
+    console.log(uid, emailFriend);
     try {
-        const user = await searchUser(email);
+        const user = await searchUser(uid, emailFriend);
+        console.log(user);
         if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
         res.status(200).json(user);
     } catch (error) {

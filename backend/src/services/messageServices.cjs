@@ -97,12 +97,8 @@ async function formatMessage(type, content) {
 }
 
 //Tìm kiếm cuộc trò chuyện giữa hai người tạo phiên làm việc mới
-async function startChat(uid, friendEmail){
+async function startChat(uid, friendID){
     try {
-        // Lấy thông tin người nhận
-        const receiver = await admin.auth().getUserByEmail(friendEmail);
-        const friendId = receiver.uid;
-
         // Tìm kiếm doccument chatList
         const userDoc = await db.collection("users").doc(uid).get();
         const chatList = userDoc.data().chatList || [];
@@ -116,7 +112,7 @@ async function startChat(uid, friendEmail){
             // So sánh bất kể thứ tự
             if (participants.length === 2 &&
                 participants.includes(uid) &&
-                participants.includes(friendId)) {
+                participants.includes(friendID)) {
                 // Gán giá trị cho chatCurrent
                 chatCurrent = chatDoc.id;
                 // Cập nhật thời gian trò chuyện
@@ -125,6 +121,8 @@ async function startChat(uid, friendEmail){
                 });
             }
         }
+
+
     } catch (error) {
         console.error("Lỗi khi tìm kiếm cuộc trò chuyện:", error);
         throw error;
@@ -132,7 +130,7 @@ async function startChat(uid, friendEmail){
 }
 
 // Gửi tin nhắn và đưa tin nhắn lên Firebase
-async function sendMessage(uid, friendEmail, type, content, replyTo) {
+async function sendMessage(uid, friendID, type, content, replyTo) {
     try {
         const formattedMessage = await formatMessage(type, content);
 
@@ -149,7 +147,7 @@ async function sendMessage(uid, friendEmail, type, content, replyTo) {
         await db.collection("chats").doc(chatCurrent).collection("messages").add(message);
 
         // Gửi thông báo đến người nhận
-        await messageNotification(uid, friendEmail);
+        await messageNotification(uid, friendID);
 
         // Cập nhật tin nhắn cuối cùng và thời gian gửi
         await db.collection("chats").doc(chatCurrent).update({
@@ -164,6 +162,7 @@ async function sendMessage(uid, friendEmail, type, content, replyTo) {
 }
 async function getMessages(limit = 100) {
     try {
+        chatCurrent = 'cYrNffuCIKvmHjSIwdfH';
         const messagesRef = db.collection("chats").doc(chatCurrent).collection("messages");
         const snapshot = await messagesRef.orderBy("timestamp", "desc").limit(limit).get();
 
@@ -174,7 +173,7 @@ async function getMessages(limit = 100) {
 
         lastVisible =  snapshot.docs[snapshot.docs.length - 1] || null; // Lưu lại tin nhắn cuối cùng để load thêm
 
-        return  messages.reverse(); // Hiển thị từ cũ đến mới
+        return messages.reverse(); // Hiển thị từ cũ đến mới
     } catch (error) {
         console.error("Lỗi khi lấy danh sách tin nhắn:", error);
         throw error;

@@ -16,7 +16,3 @@ app.use("/api", messageRoutes);  // Tức là endpoint sẽ là /api/message...
 server.listen(port, () => {
     console.log(`Server đang chạy trên http://localhost:${port}`);
 });
-/*
-
-const {createChat } = require("./services/firebaseServices.cjs");
-createChat("R340SWcxQFQS4HVbe2bXDezIHOF2", "test2@gmail.com").then();*/

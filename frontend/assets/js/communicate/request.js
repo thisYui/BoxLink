@@ -2,7 +2,7 @@
 async function getUserInfo() {
     // Các thông tin cần thiết  bao gồm
     // 1. Tên người dùng, ảnh đại diện và thông tin tài khoàn
-    // 2. Danh sách bạn bè
+    // 2. Danh sách bạn bè và tin nhắn cuối cùng cảu mỗi đoạn chat
     // 3. Danh sách lời mời kết bạn và các thông báo khác
 
     const response = await fetch("http://localhost:3000/api/user-info", {
@@ -31,20 +31,21 @@ async function searchFriend(emailFriend) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
             emailFriend: emailFriend
         })
     });
 
     if (!response.ok) {
-        throw new Error("Failed to search friend");
+        return {
+            displayName: "Không tìm thấy người dùng",
+            email: 'no-email',
+            avatar: "",
+            status: "Không tìm thấy người dùng",
+        }
     }
 
-    const data = await response.json();
-    // displayName: userData.displayName,
-    // email: userRecord.email,
-    // avatar: userData.avatar
-
-    // Che đi ô tìm kiếm và thay bằng account được tìm thấy
+    return await response.json();
 }
 
 // Tương tác bạn bè
@@ -99,4 +100,11 @@ async function checkNotification(notifList) {
     // srcID
     // text
     const listNotification = await response.json();
+}
+
+export {
+    getUserInfo,
+    searchFriend,
+    friend,
+    checkNotification
 }

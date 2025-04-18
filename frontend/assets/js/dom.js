@@ -1,4 +1,6 @@
-async function reload(api){
+import { searchFriend, getUserInfo } from "./communicate/request";
+
+window.reload = async function (api){
     /** API
      * reload-avatar: được gọi đến khi người dùng cập nhật ảnh đại diện
      * reload-chat: khi hai bên có bất kỳ tương tác nào đó reload lại khung chat
@@ -12,4 +14,35 @@ async function reload(api){
 
     */
 
+}
+
+window.searchBar = async function (){
+    const email = document.getElementById("search-input").value;
+    const user = await searchFriend(email);
+    // displayName: displayName,
+    // email: email,
+    // avatar: url
+    // status: friend / sender-request / none
+
+    if (user.email === 'no-email') {
+
+    }
+}
+
+window.getInformation = async function (){
+    const data = await getUserInfo();
+    /* {
+      displayName:
+      email:
+      avatar:
+      friendList: [
+        {
+          displayName:
+          email:
+          avatar:
+          lastMessage:
+        }
+        {}, {}, ...
+      ]
+    } */
 }

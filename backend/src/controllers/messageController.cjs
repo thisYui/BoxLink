@@ -4,9 +4,9 @@ const logger = require('../config/logger.cjs');
 
 // Tạo cuộc trò chuyện
 async function createNewChat(req, res) {
-    const { uid, emailFriend } = req.body;
+    const { uid, friendID } = req.body;
     try {
-        const chat = await createChat(uid, emailFriend);
+        const chat = await createChat(uid, friendID);
         res.status(200).json(chat);
     } catch (error) {
         logger.error('Lỗi khi tạo cuộc trò chuyện:', error);
@@ -28,11 +28,11 @@ async function removeChat(req, res) {
 
 // Tạo phiên
 async function startChatSession(req, res) {
-    const { userId, emailFriend } = req.body;
+    const { uid, friendID } = req.body;
     try {
         // Tạo phiên chat
-        await startChat(userId, emailFriend);
-        res.status(200).json({ message: `Phiên chat được mở với ${emailFriend}` });
+        await startChat(uid, friendID);
+        res.status(200).json({ message: `Phiên chat được mở với ${friendID}` });
     } catch (error) {
         logger.error('Lỗi khi tạo phiên chat:', error);
         res.status(500).json({ message: 'Lỗi hệ thống!' });
@@ -41,9 +41,10 @@ async function startChatSession(req, res) {
 
 // Lấy tin nhắn và gửi đến firebase
 async function sendMessages(req, res) {
-    const { emailFriend, type, content, replyTo} = req.params;
+    const { uid,  friendID, type, content, replyTo } = req.body;
+    console.log(req.body);
     try {
-        await sendMessage(emailFriend, type, content, replyTo);
+        await sendMessage(uid, friendID, type, content, replyTo);
         res.status(200).json({ message: 'Tin nhắn đã được gửi thành công!' });
     } catch (error) {
         logger.error('Lỗi khi lấy tin nhắn:', error);

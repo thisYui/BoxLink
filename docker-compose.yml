@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: boxlink-backend
+    ports:
+      - "3000:3000"  # Giả sử backend dùng port 3000
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/logs:/app/logs
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: boxlink-frontend
+    ports:
+      - "3000:80"  # Expose Nginx port 80 ra ngoài cổng 3000
+    restart: unless-stopped

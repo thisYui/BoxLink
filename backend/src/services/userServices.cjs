@@ -5,32 +5,49 @@ const { friendRequestNotification, friendAcceptNotification, otherNotification }
 async function getInfo(uid) {
     try {
         const userRecord = await admin.auth().getUser(uid);
-        const chatList = await db.collection("users").doc(uid).get();
-        const chatListData = chatList.data();
+        const user = await db.collection("users").doc(uid).get();
+        const userData = user.data();
 
         let friendList = [];
-        for (let i = 0; i < chatListData.friendList.length; i++) {
-            const chat = await db.collection("chats").doc(chatListData.friendList[i]).get();
-            const friendID = chat.data().participants.filter(id => id !== uid)[0];
-            const friend = await admin.auth().getUser(friendID);
+        for (const chatId of userData.chatList) {
+            const chatSnapshot = await db.collection("chats").doc(chatId).get();
+            const chatData = chatSnapshot.data();
 
-            const friendData = {
-                displayName: friend.displayName,
-                email: friend.email,
-                avatar: chatListData.avatar,
-                lastMessage: chat.data().lassMesssage
+            const friendID = chatData.participants.find(id => id !== uid);
+            const friend = await db.collection("users").doc(friendID).get();
+            const friendData = friend.data();
+
+            let lastMessage = null;
+            const type = chatData.lastMessage.type;
+
+            if (type === "text" || type === "system") {
+                lastMessage = chatData.lastMessage.content.text;
+            } else if (type === "image") {
+                lastMessage = `${friendData.displayName} đã gửi một ảnh`;
+            } else if (type === "video") {
+                lastMessage = `${friendData.displayName} đã gửi một video`;
+            } else if (type === "audio") {
+                lastMessage = `${friendData.displayName} đã gửi một audio`;
+            } else if (type === "file") {
+                lastMessage = `${friendData.displayName} đã gửi một tệp đính kèm`;
             }
 
-            friendList.push(friendData);
+            const data = {
+                displayName: friendData.displayName,
+                email: friendData.email,
+                avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
+                lastMessage: lastMessage,
+            };
+
+            friendList.push(data);
         }
 
         return {
-            displayName: userRecord.displayName,
+            displayName: userData.displayName,
             email: userRecord.email,
-            avatar: chatListData.avatar,
+            avatar: userData.avatar,
             friendList: friendList,
         }
-
     } catch (error) {
         console.error("Lỗi khi lấy thông tin người dùng:", error);
         return null;
@@ -149,7 +166,7 @@ async function acceptFriend(uid, emailFriend) {
 }
 
 // Tìm kiếm người dùng
-async function searchUser(email) {
+async function searchUser(uid, email) {
     try {
         // Tìm user từ email
         const userRecord = await admin.auth().getUserByEmail(email);
@@ -165,10 +182,26 @@ async function searchUser(email) {
 
         const userData = userDoc.data();
 
+        const user = await admin.auth().getUser(uid);
+        // Kiểm tra xem người dùng đã kết bạn hay chưa
+        const friendList = userData.friendList || [];  // List email
+        const friendRequests = userData.friendRequests || [];  // List email
+        const friendReceived = userData.friendReceived || [];  // List email
+
+        let status = "none"; // Trạng thái mặc định là không có gì
+        if (friendList.includes(email)) {
+            status = "friend"; // Đã kết bạn
+        } else if (friendRequests.includes(email)) {
+            status = "sender-request"; // Đã gửi lời mời kết bạn
+        } else if (friendReceived.includes(email)) {
+            status = "receiver-request"; // Đã nhận lời mời kết bạn
+        }
+
         return {
             displayName: userData.displayName,
             email: userRecord.email,
-            avatar: userData.avatar
+            avatar: userData.avatar,
+            status: status
         }
     } catch (error) {
         console.error("Lỗi khi tìm kiếm người dùng:", error);

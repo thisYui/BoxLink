@@ -18,7 +18,7 @@ trường Đại Học Khoa học Tự nhiên, ĐHQG-TPHCM. Tác giả bao gồm
 - Operating System: Linux / Windows
 - Programming Language: HTML, CSS, JavaScript for frontend, Node.js for backend and Firebase for database.
 - Dependencies: tải `Node.js` vào thử mục backend khi bạn clone project về máy tính của bạn. 
-- Sau đó, bạn cần cài đặt các thư viện cần thiết bằng cách chạy lệnh `npm install` trong thư mục backend. Bao gồm:
+Sau đó, bạn cần cài đặt các thư viện cần thiết bằng cách chạy lệnh `npm install` trong thư mục backend. Bao gồm:
 - `npm install firebase-admin          # for Firebase Admin SDK`
 - `npm install bcrypt                  # for password hashing `
 - `npm install @sendgrid/mail          # for email sending `

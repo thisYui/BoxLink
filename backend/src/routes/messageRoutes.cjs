@@ -10,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.post('/createChat', createNewChat);
-router.post('/removeChat', removeChat);
-router.post('/startChatSession', startChatSession);
-router.post('/sendMessages', sendMessages);
-router.get('/fetchMessages', fetchMessages);
-router.get('/loadMoreMessages', loadMoreMessages);
+router.post('/create-chat', createNewChat);
+router.post('/remove-chat', removeChat);
+router.post('/start-chat-session', startChatSession);
+router.post('/send-messages', sendMessages);
+router.get('/fetch-messages', fetchMessages);
+router.get('/load-more-messages', loadMoreMessages);
 
 module.exports = router;

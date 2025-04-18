@@ -1,12 +1,15 @@
 // Tạo phiên mới với user được chọn thông qua email
-async function startChatSession(email) {
+async function startChatSession(friendID) {
     try {
-        return (await fetch("/api/startChatSession", {
+        return (await fetch("http://localhost:3000/api/start-chat-session", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email })
+            body: JSON.stringify({
+                uid: 'R340SWcxQFQS4HVbe2bXDezIHOF2',//localStorage.getItem("uid"),  // Lấy uid từ localStorage
+                friendID: friendID
+            })
         })).ok;
     } catch (error) {
         console.error("Error starting chat session:", error);
@@ -16,7 +19,7 @@ async function startChatSession(email) {
 // Gửi yêu cầu lấy đoạn tin nhắn
 async function fetchMessages() {
     try {
-        const response = await fetch("/api/fetchMessages", {
+        const response = await fetch("http://localhost:3000/api/fetch-messages", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -34,17 +37,19 @@ async function fetchMessages() {
 }
 
 // Gửi yêu cầu gửi tin nhắn
-async function sendMessages(type, content, replyTo) {
+async function sendMessages(friendID, type, content, replyTo) {
     try {
-        return (await fetch("/api/sendMessages", {
+        return (await fetch("http://localhost:3000/api/send-messages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                type,
-                content,
-                replyTo
+                uid: 'R340SWcxQFQS4HVbe2bXDezIHOF2',//localStorage.getItem("uid"),  // Lấy uid từ localStorage
+                friendID: friendID,
+                type: type,
+                content: content,
+                replyTo: replyTo
             })
         })).ok;
     } catch (error) {
@@ -55,7 +60,7 @@ async function sendMessages(type, content, replyTo) {
 // Tải thêm tin nhắn
 async function loadMoreMessages() {
     try {
-        const response = await fetch("/api/loadMoreMessages", {
+        const response = await fetch("http://localhost:3000/api/load-more-messages", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"

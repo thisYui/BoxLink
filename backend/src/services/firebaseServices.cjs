@@ -15,9 +15,11 @@ async function createAuth(email, password, displayName) {
             displayName: displayName,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             chatList: [],
-            avatar: "default.png",
+            avatar: "https://firebasestorage.googleapis.com/v0/b/boxlink-1595e.firebasestorage.app/o/default-avatar.jpg?alt=media&token=363ceb62-e39c-42b5-a401-c9ad42c854b1",
             friendList: [],
-            notifications: [] // <typeNotification, srcID, text>
+            notifications: [], // <typeNotification, srcID, text>
+            friendRequests: [], // <email>
+            friendReceived: [], // <email>
         });
 
         console.log("Tạo tài khoản thành công và đã lưu Firestore.");
@@ -68,13 +70,13 @@ async function createChat(userId, emailFriend) {
         const messagesRef = chatRef.collection("messages");
 
         const messageSystem = {
-              senderId: 0,           // ai gửi
+              senderId: "",           // ai gửi
               type: "system",          // kiểu tin nhắn
               content: {
                   text: "Bây giờ bạn có thể trò chuyện với nhau!" // nội dung tin nhắn
               },           // nội dung (thay đổi theo type)
               timestamp: timestamp,  // thời gian gửi
-              replyTo: 0 // nếu có trả lời
+              replyTo: "" // nếu có trả lời
         }
 
         // Bạn có thể thêm một tin nhắn đầu tiên (nếu cần)
