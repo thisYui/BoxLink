@@ -1,14 +1,14 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
 
 // Thông báo tin nhắn
-async function messageNotification(srcId, desID) {
+async function messageNotification(srcId, desID, messID) {
     try {
         // Thêm thông báo cho biết có tin nhắn mới
         await db.collection("users").doc(desID).update({
             notifications: admin.firestore.FieldValue.arrayUnion({
                 typeNotification: "message",
                 srcID: srcId,
-                text: "Đã gửi tin nhắn",
+                text: messID, // Nội dung là id của document tin nhắn
             })
         });
 
@@ -59,12 +59,35 @@ async function friendAcceptNotification(srcId, desEmail) {
     }
 }
 
+async function updateAvatarNotification(srcId) {
+    try {
+        // Lấy danh sách bạn bè từ Firestore
+        const userDoc = await db.collection("users").doc(srcId).get();
+        const friendList = userDoc.data().friendList || [];
+
+        // Gửi thông báo đến từng người bạn
+        for (const friend of friendList) {
+            await db.collection("users").doc(friend).update({
+                notifications: admin.firestore.FieldValue.arrayUnion({
+                    typeNotification: "avatar-update",
+                    srcID: srcId,
+                    text: "Đã cập nhật ảnh đại diện"
+                })
+            });
+        }
+
+    } catch (error) {
+        console.error("Lỗi khi gửi thông báo cập nhật ảnh đại diện:", error);
+        throw error;
+    }
+}
+
 async function otherNotification(uid, notification) {
     try {
         await db.collection("users").doc(uid).update({
             notifications: admin.firestore.FieldValue.arrayRemove({
                 typeNotification: "other",
-                srcID: null,
+                srcID: "system",
                 text: notification
             })
         });
@@ -78,5 +101,6 @@ module.exports = {
     messageNotification,
     friendRequestNotification,
     friendAcceptNotification,
+    updateAvatarNotification,
     otherNotification
 }

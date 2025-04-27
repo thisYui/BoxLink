@@ -1,5 +1,7 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
-const { friendRequestNotification, friendAcceptNotification, otherNotification } = require("./notificationServices.cjs");
+const { friendRequestNotification, friendAcceptNotification,
+    updateAvatarNotification, otherNotification } = require("./notificationServices.cjs");
+const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 
 // Lấy dữ liệu người dùng từ uid
 async function getInfo(uid) {
@@ -17,26 +19,33 @@ async function getInfo(uid) {
             const friend = await db.collection("users").doc(friendID).get();
             const friendData = friend.data();
 
-            let lastMessage = null;
+            let text = null;
             const type = chatData.lastMessage.type;
 
             if (type === "text" || type === "system") {
-                lastMessage = chatData.lastMessage.content.text;
+                text = chatData.lastMessage.content.text;
             } else if (type === "image") {
-                lastMessage = `${friendData.displayName} đã gửi một ảnh`;
+               text = `${friendData.displayName} đã gửi một ảnh`;
             } else if (type === "video") {
-                lastMessage = `${friendData.displayName} đã gửi một video`;
+                text = `${friendData.displayName} đã gửi một video`;
             } else if (type === "audio") {
-                lastMessage = `${friendData.displayName} đã gửi một audio`;
+                text = `${friendData.displayName} đã gửi một audio`;
             } else if (type === "file") {
-                lastMessage = `${friendData.displayName} đã gửi một tệp đính kèm`;
+                text = `${friendData.displayName} đã gửi một tệp đính kèm`;
             }
+
+            const timeSeen = chatData.seen[friendID]?.lastMessageSeen || chatData.lastMessage.timestamp;
 
             const data = {
                 displayName: friendData.displayName,
                 email: friendData.email,
                 avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
-                lastMessage: lastMessage,
+                lastMessage: {
+                    text: text,
+                    timeSend: chatData.lastMessage.timestamp,
+                    timeSeen: timeSeen
+                },
+                lastOnline: friendData.lastOnline,
             };
 
             friendList.push(data);
@@ -93,18 +102,45 @@ async function setDisplayName(uid, displayName) {
 // Thay đổi ảnh đại diện
 async function setAvatar(uid, avatar) {
     try {
+        // Đưa hình ảnh lên Firebase Storage
+        await uploadFile(avatar, uid);  // lấy uid đặt tên file
+
+        // Lấy link tải về
+        const url = await getDownloadUrl(avatar);
+
         // Cập nhật tên hiển thị mới
         await db.collection("users").doc(uid).update({
-            avatar: avatar,
+            avatar: url,
         });
 
         // Thông báo cho biết đã thay đổi ảnh đại diện
         await otherNotification(uid, "Đã thay đổi ảnh đại diện");
 
+        // Cập nhật ảnh đại diện cho tất cả bạn bè
+        await updateAvatarNotification(uid);
+
         return true;
     } catch (error) {
         console.error("Lỗi khi cập nhật ảnh đại diện:", error);
         return false;
+    }
+}
+
+// Lấy link ảnh đại diện
+async function getAvatar(friendID) {
+    try {
+        const user = await db.collection("users").doc(friendID).get();
+        const userData = user.data();
+
+        if (!userData) {
+            console.log("Không tìm thấy người dùng.");
+            return null;
+        }
+
+        return userData.avatar;
+    } catch (error) {
+        console.error("Lỗi khi lấy ảnh đại diện:", error);
+        return null;
     }
 }
 
@@ -182,7 +218,6 @@ async function searchUser(uid, email) {
 
         const userData = userDoc.data();
 
-        const user = await admin.auth().getUser(uid);
         // Kiểm tra xem người dùng đã kết bạn hay chưa
         const friendList = userData.friendList || [];  // List email
         const friendRequests = userData.friendRequests || [];  // List email
@@ -233,13 +268,30 @@ async function friendRequest(uid, emailFriend) {
     }
 }
 
+// Cập nhật thời gian online
+async function updateLastOnline(uid) {
+    try {
+        // Cập nhật thời gian online
+        await db.collection("users").doc(uid).update({
+            lastOnline: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi cập nhật thời gian online:", error);
+        return false;
+    }
+}
+
 module.exports = {
     getInfo,
     setPassword,
     setDisplayName,
     setAvatar,
+    getAvatar,
     removeFriend,
     acceptFriend,
     searchUser,
     friendRequest,
+    updateLastOnline,
 };

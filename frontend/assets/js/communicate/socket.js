@@ -10,15 +10,51 @@ socket.on("disconnect", () => {
     console.log("Disconnected from server.");
 });
 
-socket.on("notifications", (data) => {
-    console.log("Notifications received:", data);
-    //const notifDiv = document.getElementById("notifications");
+socket.on("notifications", async (data) => {
+    const listNotif = data.notifications;  // Danh sách thông báo
+    console.log("Notifications received:", listNotif);
 
-    // Gán notifList thành biến toàn cục qua window
-    window.notifList = Array.from(document.querySelectorAll("#notifications li")).map(li => ({
-        typeNotification: li.dataset.type,
-        srcID: li.dataset.srcid,
-        text: li.textContent.trim()
-    }));
+    for (const notifDiv of listNotif) {
+        // Xử lí theo loại notification
+        const { typeNotification, srcID, text} = notifDiv;
+        console.log("Notification type:", typeNotification);
+        console.log("Notification srcID:", srcID);
+        console.log("Notification text:", text);
+
+        if (typeNotification === "message") {
+            // Theo srcID để tìm ra người gửi lấy thông tin
+            const msg = await socketGetSingleMessage(srcID, text);  // text chứa id document
+            //addMessage(dataMessage);  // Đưa tin nhắn vào chat
+            // viết đoạn sau thành hàm tương ứng
+            console.log("Message received:", msg);
+
+            const container = document.getElementById("chat-container");
+
+            const div = document.createElement("div");
+            const isCurrentUser = msg.senderId === localStorage.getItem("uid");
+
+            div.className = `message ${isCurrentUser ? 'right' : 'left'}`;
+            div.innerHTML = `<div class="bubble">${msg.content.text}</div>`;
+            container.appendChild(div);
+
+            // Đưa tin nhắn vào chat cho 2 trường hợp
+            // 1. Nếu chat là chat đang mở
+
+            // 2. Nếu chat không phải là chat đang mở
+
+        } else if (typeNotification === "friend-request") {
+            // Load lại thông báo
+            await socketFriend(srcID, localStorage.getItem("emailFriend"), "friend-request");
+        } else if (typeNotification === "friend-accept") {
+            // Load lại thông báo
+            await socketFriend(srcID, localStorage.getItem("emailFriend"), "accept-friend");
+        } else if (typeNotification === "update-avatar") {
+            // Lấy avatar mới từ srcID
+            const { avatar } = await socketGetAvatar(srcID);  // là 1 link url
+
+            // Cập nhật lại avatar
+        }
+    }
 });
+
 

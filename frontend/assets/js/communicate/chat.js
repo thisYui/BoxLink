@@ -7,7 +7,7 @@ async function startChatSession(friendID) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                uid: 'R340SWcxQFQS4HVbe2bXDezIHOF2',//localStorage.getItem("uid"),  // Lấy uid từ localStorage
+                uid: localStorage.getItem("uid"),  // Lấy uid từ localStorage
                 friendID: friendID
             })
         })).ok;
@@ -36,6 +36,31 @@ async function fetchMessages() {
     }
 }
 
+// Lấy 1 đoạn tin nhắn
+async function getSingleMessage(srcID, messageID) {
+    try {
+        const response = await fetch("http://localhost:3000/api/get-single-message", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                uid: localStorage.getItem("uid"),
+                srcID: srcID,
+                messageID: messageID
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        return await response.json();  // Danh sách tin nhắn
+    } catch (error) {
+        console.error("Error fetching single message:", error);
+    }
+}
+
 // Gửi yêu cầu gửi tin nhắn
 async function sendMessages(friendID, type, content, replyTo) {
     try {
@@ -45,7 +70,7 @@ async function sendMessages(friendID, type, content, replyTo) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                uid: 'R340SWcxQFQS4HVbe2bXDezIHOF2',//localStorage.getItem("uid"),  // Lấy uid từ localStorage
+                uid: localStorage.getItem("uid"),  // Lấy uid từ localStorage
                 friendID: friendID,
                 type: type,
                 content: content,
@@ -77,9 +102,13 @@ async function loadMoreMessages() {
     }
 }
 
+// Các funtion được gán vào win chỉ dùng cho socket
+window.socketGetSingleMessage = getSingleMessage;
+
 export {
     startChatSession,
     fetchMessages,
+    getSingleMessage,
     sendMessages,
     loadMoreMessages
 }

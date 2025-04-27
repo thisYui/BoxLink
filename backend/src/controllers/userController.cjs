@@ -1,11 +1,13 @@
 const { getInfo,
     setPassword,
     setAvatar,
+    getAvatar,
     setDisplayName,
     removeFriend,
     acceptFriend,
     searchUser,
     friendRequest,
+    updateLastOnline,
 } = require("../services/userServices.cjs");
 const { deleteAuth } = require("../services/firebaseServices.cjs");
 const logger = require("../config/logger.cjs");
@@ -29,6 +31,18 @@ async function changeAvatar(req, res) {
         const user = await setAvatar(uid, avatar);
         if (!user) return res.status(404).json({ message: 'Cập nhật ảnh đại diện thất bại!' });
         res.status(200).json({ message: 'Cập nhật ảnh đại diện thành công!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Lấy ảnh đại diện
+async function getAvatarUser(req, res) {
+    const { friendID } = req.body;
+    try {
+        const user = await getAvatar(friendID);
+        if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
+        res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Lỗi hệ thống!' });
     }
@@ -136,9 +150,21 @@ async function deleteAccount(req, res) {
     }
 }
 
+// Cập nhật thời gian online
+async function updateOnline(req, res) {
+    const { uid } = req.body;
+    try {
+        await updateLastOnline(uid);
+        res.status(200).json({ message: 'Cập nhật thời gian online thành công!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
     getUserInfo,
     changeAvatar,
+    getAvatarUser,
     resetPassword,
     changeDisplayName,
     unfriend,
@@ -147,4 +173,5 @@ module.exports = {
     acceptFriendRequest,
     cancelFriendRequest,
     deleteAccount,
+    updateOnline,
 };

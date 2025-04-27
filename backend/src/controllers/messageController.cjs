@@ -1,5 +1,5 @@
 const { createChat, deleteChat } = require('../services/firebaseServices.cjs');
-const { startChat, sendMessage, getMessages, loadMore } = require('../services/messageServices.cjs');
+const { startChat, sendMessage, getMessages, getSingle, loadMore } = require('../services/messageServices.cjs');
 const logger = require('../config/logger.cjs');
 
 // Tạo cuộc trò chuyện
@@ -63,6 +63,18 @@ async function fetchMessages(req, res) {
     }
 }
 
+// Lấy tin nhắn duy nhất
+async function getSingleMessage(req, res) {
+    const { uid, srcID, messageID } = req.body;
+    try {
+        const message = await getSingle(uid, srcID, messageID);
+        res.status(200).json(message);
+    } catch (error) {
+        logger.error('Lỗi khi lấy tin nhắn:', error);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 // Tải thêm tin nhắn
 async function loadMoreMessages(req, res) {
     try {
@@ -79,6 +91,7 @@ module.exports = {
     removeChat,
     startChatSession,
     sendMessages,
+    getSingleMessage,
     fetchMessages,
     loadMoreMessages
 }

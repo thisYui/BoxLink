@@ -1,4 +1,4 @@
-import { startChatSession, fetchMessages } from "./communicate/chat";
+import { startChatSession, fetchMessages, sendMessages } from "./communicate/chat";
 
 // Gọi hàm startChatSession khi người dùng nhấn vào 1 hộp chat
 window.startChat = async function () {
@@ -22,4 +22,7 @@ window.startChat = async function () {
     //    replyTo: String
     // }
     // chatData là 1 list có 100 phần tử
+}
+
+window.sendMessage = async function () {
 }

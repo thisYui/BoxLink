@@ -1,17 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Socket.IO Client Test</title>
+    <title>Chat Web</title>
+    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/style.css">
+    <script src="https://kit.fontawesome.com/05266ada08.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Socket.IO Client Connected</h1>
-    <div id="status">Connecting...</div>
-    <div id="notifications"></div>
 
-    <!-- Socket.IO CDN -->
+    <div id="menu" class="menu">
+        <div class="menu-bar">
+            <img id="mainAccountAvatar" src="images/avatar.jpg" onclick="showBox('logOutBox', 'mainAccountAvatar')">
+            <div id="logOutBox">
+                <div id="logOutButton" class="logOutBox-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <p>Log Out</p>
+                </div>
+                <div id="SettingButton" class="logOutBox-button">
+                    <i class="fas fa-cog"></i>
+                    <p>Setting</p>
+                </div>
+            </div>
+        </div>
+        <div class="menu-bar">
+            <div class="menu-bar-button display-option menu-bar-button-choosen" id="Home"  onclick="changeTab()">
+                <i class="fas fa-home"></i>
+                <p>Home</p>
+            </div>
+            <div class="menu-bar-button display-option" id="FriendList"  onclick="changeTab()">
+                <i class="fas fa-user-group"></i>
+                <p>Friend List</p>
+            </div>
+            <div class="menu-bar-button display-option" id="Searching"  onclick="changeTab()">
+                <i class="fas fa-magnifying-glass"></i>
+                <p>Searching</p>
+            </div>
+
+
+
+        </div>
+        <div class="menu-bar">
+            <div class="menu-bar-button" id="changeSizeButton" onclick="changeMenuSize()">
+                <i class="fas fa-regular fa-square-minus"></i>
+                <p>Change Size</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-container-header">
+            <h2 class="">Đoạn chat</h2>
+            <div class="chat-container-header-newchat">
+                <i class="fa-regular fa-pen-to-square"></i>
+            </div>
+        </div>
+        <div class="chat-container-body">
+            <div class="chat-container-body-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="chat-container-body-finding" placeholder="Nhập tìm kiếm">
+            </div>
+            <div class="chat-box-area">
+                <div class="chat-box-area-box chat-box-choosen">
+                    <img src="./images/avatar.jpg" alt="" class="chat-box-avatar">
+                    <div class="chat-box-contain">
+                        <h4 class="displayName">
+                            Đồ ngu đồ ăn hại
+                        </h4>
+                        <p class="lastest-chat">
+                            Xin chào ndwqu dadw  adwad wdawwd awdawdnuequj
+                        </p>
+                    </div>
+                </div>
+                <div class="chat-box-area-box">
+                    <img src="./images/avatar.jpg" alt="" class="chat-box-avatar">
+                    <div class="chat-box-contain">
+                        <h4 class="displayName">
+                            Đồ ngu đồ ăn hại
+                        </h4>
+                        <p class="lastest-chat">
+                            Xin chào ndwqu dadw  adwad wdawwd awdawdnuequj
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="message-container">
+        <div class="message-container-header">
+            <div class="chat-info">
+                <img src="" alt="" class="chat-info-avatar" id="messageContainerAvatar">
+                <div class="chat-info-display">
+                    <h4 class="chat-info-display-name">Đồ ngu đồ ăn hại</h4>
+                    <p class="chat-info-display-actived">Hoạt động 19 năm trước</p>
+                </div>
+            </div>
+            <div class="options">
+                <div class="options-button">
+                    <i class="fa-solid fa-phone"></i>
+                </div>
+                <div class="options-button">
+                    <i class="fa-solid fa-video"></i>
+                </div>
+                <div class="options-button">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </div>
+            </div>
+        </div>
+        <div class="message-container-body">
+            <div class="message-container-body-message-area" id="messageContainer">
+
+            </div>
+            <div class="message-container-body-sending-area">
+                <!-- <div id="previewFile">
+                    <img src="images/avatar.jpg" style="height: 30px;">
+                </div> -->
+                <form action="" id="messageForm" onsubmit="sendMessage(event)" enctype="multipart/form-data">
+                    <div class="form-file">
+                        <label for="attachment">
+                            <i class="fa-solid fa-file attachment-icon"></i>
+                        </label>
+                        <input type="file" id="attachment" accept="image/*,video/*,.doc,.docx,.txt,.pdf" multiple onkeypress="handleKeyPress(event)">
+                    </div>
+                    <div class="form-text">
+                        <label for="message-input"></label>
+                        <input type="text" id="message-input" placeholder="Aa" autocomplete="off" onkeypress="handleKeyPress(event)">
+                    </div>
+                    <button type="submit" id="send-button">
+                        <i class="fa-solid fa-paper-plane submit-icon"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Socket.IO CDN -->
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <!-- Link tới file JS riêng -->
-    <script src="assets/js/communicate/socket.js"></script>
+    <script type="module" defer src="assets/js/dom.js"></script>
+    <script type="module" defer src="test/dom.js"></script>
+    <script type="module" defer src="assets/js/communicate/socket.js"></script>
+    <script type="module" defer src="assets/js/script.js"></script>
+
 </body>
 </html>

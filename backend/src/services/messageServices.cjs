@@ -96,8 +96,8 @@ async function formatMessage(type, content) {
     }
 }
 
-//Tìm kiếm cuộc trò chuyện giữa hai người tạo phiên làm việc mới
-async function startChat(uid, friendID){
+// Tìm chat có sẵn
+async function findChat(uid, friendID) {
     try {
         // Tìm kiếm doccument chatList
         const userDoc = await db.collection("users").doc(uid).get();
@@ -113,15 +113,25 @@ async function startChat(uid, friendID){
             if (participants.length === 2 &&
                 participants.includes(uid) &&
                 participants.includes(friendID)) {
-                // Gán giá trị cho chatCurrent
-                chatCurrent = chatDoc.id;
-                // Cập nhật thời gian trò chuyện
-                await db.collection("chats").doc(chatDoc.id).update({
-                    [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp()
-                });
+                return chatDoc.id; // Trả về ID của cuộc trò chuyện
             }
         }
 
+        return false;
+    } catch (error) {
+        console.error("Lỗi khi tìm kiếm cuộc trò chuyện:", error);
+        throw error;
+    }
+}
+
+//Tìm kiếm cuộc trò chuyện giữa hai người tạo phiên làm việc mới
+async function startChat(uid, friendID){
+    try {
+        chatCurrent = await findChat(uid, friendID);
+        // Cập nhật thời gian trò chuyện
+        await db.collection("chats").doc(chatCurrent).update({
+            [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp()
+        });
 
     } catch (error) {
         console.error("Lỗi khi tìm kiếm cuộc trò chuyện:", error);
@@ -146,8 +156,12 @@ async function sendMessage(uid, friendID, type, content, replyTo) {
         // Thêm tin nhắn vào subcollection "messages"
         await db.collection("chats").doc(chatCurrent).collection("messages").add(message);
 
+        // Lây ra id của tin nhắn vừa gửi
+        const messageDoc = await db.collection("chats").doc(chatCurrent).collection("messages").orderBy("timestamp", "desc").limit(1).get();
+        const messID = messageDoc.docs[0].id;
+
         // Gửi thông báo đến người nhận
-        await messageNotification(uid, friendID);
+        await messageNotification(uid, friendID, messID);
 
         // Cập nhật tin nhắn cuối cùng và thời gian gửi
         await db.collection("chats").doc(chatCurrent).update({
@@ -160,9 +174,9 @@ async function sendMessage(uid, friendID, type, content, replyTo) {
         throw error;
     }
 }
+
 async function getMessages(limit = 100) {
     try {
-        chatCurrent = 'cYrNffuCIKvmHjSIwdfH';
         const messagesRef = db.collection("chats").doc(chatCurrent).collection("messages");
         const snapshot = await messagesRef.orderBy("timestamp", "desc").limit(limit).get();
 
@@ -176,6 +190,21 @@ async function getMessages(limit = 100) {
         return messages.reverse(); // Hiển thị từ cũ đến mới
     } catch (error) {
         console.error("Lỗi khi lấy danh sách tin nhắn:", error);
+        throw error;
+    }
+}
+
+// Lấy duy nhât một tin nhắn
+async function getSingle(uid, srcID, messageID) {
+    try {
+        // Tìm kiếm cuộc trò chuyện
+        const chatFind = await findChat(uid, srcID);
+        // Truy cập vào messages subcollection
+        const messageDoc = await db.collection("chats").doc(chatFind).collection("messages").doc(messageID).get();
+        return messageDoc.data();
+
+    } catch (error) {
+        console.error("Lỗi khi lấy tin nhắn:", error);
         throw error;
     }
 }
@@ -206,5 +235,6 @@ module.exports = {
     startChat,
     sendMessage,
     getMessages,
+    getSingle,
     loadMore,
 }

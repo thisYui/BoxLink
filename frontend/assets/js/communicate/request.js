@@ -48,6 +48,25 @@ async function searchFriend(emailFriend) {
     return await response.json();
 }
 
+// Lấy avatar của người dùng
+async function getAvatar(friendID) {
+    const response = await fetch("http://localhost:3000/api/get-avatar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            friendID: friendID
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch avatar");
+    }
+
+    return await response.json();
+}
+
 // Tương tác bạn bè
 async function friend(uid, emailFriend, api){
     // api = { friend-request : gửi lời mời kết bạn
@@ -79,32 +98,34 @@ async function friend(uid, emailFriend, api){
     }
 }
 
-// Kiểm tra thông báo
-async function checkNotification(notifList) {
-    const response = await fetch("http://localhost:3000/api/notifications", {
-        method: "GET",
+// Cập nhật thời gian online
+// Mỗi 1 phút 1 lần
+window.updateOnlineTime = async function () {
+    const response = await fetch("http://localhost:3000/api/update-online-time", {
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            notifList: notifList
+            uid: localStorage.getItem("uid")
         })
     });
 
     if (!response.ok) {
-        throw new Error("Failed to check notification");
+        throw new Error("Failed to update online time");
     }
 
-    // ListNotification JSON
-    // type
-    // srcID
-    // text
-    const listNotification = await response.json();
+    return await response.json();
 }
+
+// Các hàm dùng cho socket
+window.socketGetUserInfo = getUserInfo;
+window.socketFriend = friend;
+window.socketGetAvatar = getAvatar;
 
 export {
     getUserInfo,
     searchFriend,
+    getAvatar,
     friend,
-    checkNotification
 }
