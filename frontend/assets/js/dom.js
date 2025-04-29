@@ -41,7 +41,7 @@ window.loadPage = async function (){
       friendList: [
         {
             displayName:
-            email:
+            uid:
             avatar:
             lastMessage: {}
             lastOnline:
@@ -58,7 +58,7 @@ window.loadPage = async function (){
     const friendList = data.friendList; // Danh sách bạn bè
     for (const friend of friendList) {
         const friendName = friend.displayName; // Tên bạn bè
-        const friendEmail = friend.email; // Email bạn bè
+        const friendId = friend.uid; // ID bạn bè
         const friendAvatar = friend.avatar; // URL ảnh đại diện bạn bè
         const text = friend.lastMessage.text; // Tin nhắn cuối cùng
         const timeSend = friend.lastMessage.timeSend; // Thời gian gửi tin nhắn

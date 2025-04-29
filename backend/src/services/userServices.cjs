@@ -38,7 +38,7 @@ async function getInfo(uid) {
 
             const data = {
                 displayName: friendData.displayName,
-                email: friendData.email,
+                uid: friendID,
                 avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
                 lastMessage: {
                     text: text,
