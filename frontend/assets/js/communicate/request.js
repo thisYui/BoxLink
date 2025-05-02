@@ -6,7 +6,7 @@ async function getUserInfo() {
     // 3. Danh sách lời mời kết bạn và các thông báo khác
 
     const response = await fetch("http://localhost:3000/api/user-info", {
-        method: "GET",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
