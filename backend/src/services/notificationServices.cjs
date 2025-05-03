@@ -97,10 +97,57 @@ async function otherNotification(uid, notification) {
     }
 }
 
+// Xóa thông báo cụ thể
+async function deleteNotificationSpecific(uid, notification) {
+    try {
+        await db.collection("users").doc(uid).update({
+            notifications: admin.firestore.FieldValue.arrayRemove(notification)
+        });
+    } catch (error) {
+        console.error("Lỗi khi xóa thông báo:", error);
+        throw error;
+    }
+}
+
+// Xóa các tin nhắn đã được thông báo
+async function deleteMessageNotification(uid) {
+    try {
+        const userDoc = await db.collection("users").doc(uid).get();
+        const notifications = userDoc.data().notifications || [];
+
+        // Tạo một mảng các thông báo cần xóa
+        const messagesToDelete = notifications.filter(noti => noti.type === 'message');
+
+        // Nếu không có tin nhắn cần xóa, tức là messagesToDelete là null hoặc không có tin nhắn
+        if (messagesToDelete.length === 0) {
+            // Xóa toàn bộ thông báo nếu không có thông báo 'message' để xóa
+            db.collection("users").doc(uid).update({
+                notifications: []
+            }).then().catch((error) => {
+                console.error("Error deleting all notifications:", error);
+            });
+        } else {
+            // Cập nhật tất cả thông báo cần xóa trong một lần
+            db.collection("users").doc(uid).update({
+                notifications: db.firestore.FieldValue.arrayRemove(...messagesToDelete)
+            }).then().catch((error) => {
+                console.error("Error deleting messages:", error);
+            });
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi xóa thông báo tin nhắn:", error);
+        throw error;
+    }
+}
+
 module.exports = {
     messageNotification,
     friendRequestNotification,
     friendAcceptNotification,
     updateAvatarNotification,
-    otherNotification
+    otherNotification,
+    deleteNotificationSpecific,
+    deleteMessageNotification
 }

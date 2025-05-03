@@ -6,7 +6,7 @@ async function getUserInfo() {
     // 3. Danh sách lời mời kết bạn và các thông báo khác
 
     const response = await fetch("http://localhost:3000/api/user-info", {
-        method: "GET",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -41,7 +41,7 @@ async function searchFriend(emailFriend) {
             displayName: "Không tìm thấy người dùng",
             email: 'no-email',
             avatar: "",
-            status: "Không tìm thấy người dùng",
+            status: "none",
         }
     }
 
@@ -69,10 +69,9 @@ async function getAvatar(friendID) {
 
 // Tương tác bạn bè
 async function friend(uid, emailFriend, api){
-    // api = { friend-request : gửi lời mời kết bạn
-    //         accept-friend: đồng ý kết bạn
-    //         cancel-friend: hủy lời mời kết bạn
-    // }
+    // api =  friend-request : gửi lời mời kết bạn
+    //        accept-friend: đồng ý kết bạn
+    //        cancel-friend: hủy lời mời kết bạn
 
     const response = await fetch(`http://localhost:3000/api/${api}`, {
         method: "POST",
@@ -117,11 +116,6 @@ window.updateOnlineTime = async function () {
 
     return await response.json();
 }
-
-// Các hàm dùng cho socket
-window.socketGetUserInfo = getUserInfo;
-window.socketFriend = friend;
-window.socketGetAvatar = getAvatar;
 
 export {
     getUserInfo,

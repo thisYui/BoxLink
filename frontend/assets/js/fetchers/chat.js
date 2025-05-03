@@ -102,13 +102,34 @@ async function loadMoreMessages() {
     }
 }
 
-// Các funtion được gán vào win chỉ dùng cho socket
-window.socketGetSingleMessage = getSingleMessage;
+// Click vào file cần tải
+async function downloadFile(filePath) {
+    try {
+        const response = await fetch("http://localhost:3000/api/download-file", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                filePath: filePath
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        return await response.json();  // Danh sách tin nhắn
+    } catch (error) {
+        console.error("Error downloading file:", error);
+    }
+}
 
 export {
     startChatSession,
     fetchMessages,
     getSingleMessage,
     sendMessages,
-    loadMoreMessages
+    loadMoreMessages,
+    downloadFile
 }

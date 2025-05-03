@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const { admin, db } = require("../config/firebaseConfig.cjs");
+const { deleteMessageNotification } = require("./notificationServices.cjs");
 
 // Lắng nghe thay đổi Firestore
 function listenToUserNotifications(userId, onNotificationChange) {
@@ -14,29 +15,11 @@ function listenToUserNotifications(userId, onNotificationChange) {
 
         const notifications = doc.data()?.notifications || [];
 
-        // Tạo một mảng các thông báo cần xóa
-        const messagesToDelete = notifications.filter(noti => noti.type === 'message');
-
-        // Nếu không có tin nhắn cần xóa, tức là messagesToDelete là null hoặc không có tin nhắn
-        if (messagesToDelete.length === 0) {
-            // Xóa toàn bộ thông báo nếu không có thông báo 'message' để xóa
-            db.collection("users").doc(userId).update({
-                notifications: []
-            }).then(() => {
-                console.log("All notifications deleted");
-            }).catch((error) => {
-                console.error("Error deleting all notifications:", error);
-            });
-        } else {
-            // Cập nhật tất cả thông báo cần xóa trong một lần
-            db.collection("users").doc(userId).update({
-                notifications: db.firestore.FieldValue.arrayRemove(...messagesToDelete)
-            }).then(() => {
-                console.log("Successfully deleted messages");
-            }).catch((error) => {
-                console.error("Error deleting messages:", error);
-            });
-        }
+        deleteMessageNotification(userId).then(r => {
+            if (!r) {
+                console.log(`Firestore: user ${userId} not found.`);
+            }
+        });
 
         // Gọi callback để thông báo về client
         if (onNotificationChange) {
@@ -63,7 +46,6 @@ module.exports = function (server) {
             // Gọi hàm lắng nghe thay đổi từ Firestore
             listenToUserNotifications(uid, (notifications) => {
                 // Gửi thông báo cho đúng client
-                console.log(`Sending notifications to user ${uid}:`, notifications);
                 socket.emit("notifications", {
                     notifications
                 });
