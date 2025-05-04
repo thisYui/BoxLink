@@ -1,13 +1,10 @@
-window.lastClickedUser = null;
-
+window.lastClickedUser = sessionStorage.getItem("lastClickedUser") || null;
+console.log("Last clicked user: ",window.lastClickedUser);
 window.loadPage().then();
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
-    
-    
-    // Gắn sự kiện click vào một phần tử cha (ví dụ: document hoặc một container cụ thể)
-    const chatContainer = document; // Có thể thay bằng container cụ thể như document.querySelector(".chat-container")
-    
+
+    const chatContainer = document;
     chatContainer.addEventListener("click", (event) => {
         const element = event.target.closest(".chat-box-area-box");
         
@@ -23,14 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (window.lastClickedUser !== elementId) {
                 // Xóa class active khỏi phần tử được chọn trước đó
                 if (window.lastClickedUser) {
-                    document.getElementById(window.lastClickedUser)?.classList.remove("active");
+                    document.getElementById(window.lastClickedUser)?.classList.remove("chat-box-choosen");
                 }
-                
                 // Thêm class active cho phần tử hiện tại
-                element.classList.add("active");
+                element.classList.add("chat-box-choosen");
                 
                 window.lastClickedUser = elementId;
-                
+                sessionStorage.setItem("lastClickedUser", elementId);
                 try {
                     if (typeof loadChat === "function") {
                         loadChat();
