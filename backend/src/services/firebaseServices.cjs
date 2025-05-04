@@ -20,6 +20,7 @@ async function createAuth(email, password, displayName) {
             notifications: [], // <typeNotification, srcID, text>
             friendRequests: [], // <email>
             friendReceived: [], // <email>
+            lastOnline: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         console.log("Tạo tài khoản thành công và đã lưu Firestore.");

@@ -1,7 +1,7 @@
 import {
     auth,
     signInWithEmailAndPassword,
-} from "../../config/firebaseConfig.js";
+} from "./config/firebaseConfig.js";
 
 // Hiển thị form tương ứng
 window.showOnly = function (id) {

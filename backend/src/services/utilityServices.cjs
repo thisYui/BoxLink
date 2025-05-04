@@ -1,7 +1,7 @@
+const { admin, db } = require("firebase-admin");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const urlModule = require("url");
-const { downloadFile } = require("./fileServices.cjs");
 
 // Lấy thông tin url
 async function getWebsitePreview(url) {
@@ -45,19 +45,69 @@ async function getWebsitePreview(url) {
     }
 }
 
-// Button khi ấn vào file
-async function handleFileButtonClick(filePath) {
+// Tìm kiếm người dùng
+async function searchUser(uid, email) {
     try {
-        // Tải tệp từ Firebase Storage về thư mục Downloads
-        await downloadFile(filePath);
-        console.log(`File downloaded to: ${filePath}`);
+        // Tìm user từ email
+        const userRecord = await admin.auth().getUserByEmail(email);
+
+        // Truy cập document của user trong Firestore
+        const userRef = db.collection("users").doc(userRecord.uid);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            console.log("Không tìm thấy người dùng.");
+            return null;
+        }
+
+        const userData = userDoc.data();
+
+        // Kiểm tra xem người dùng đã kết bạn hay chưa
+        const friendList = userData.friendList || [];  // List email
+        const friendRequests = userData.friendRequests || [];  // List email
+        const friendReceived = userData.friendReceived || [];  // List email
+
+        let status = "none"; // Trạng thái mặc định là không có gì
+        if (friendList.includes(email)) {
+            status = "friend"; // Đã kết bạn
+        } else if (friendRequests.includes(email)) {
+            status = "sender-request"; // Đã gửi lời mời kết bạn
+        } else if (friendReceived.includes(email)) {
+            status = "receiver-request"; // Đã nhận lời mời kết bạn
+        }
+
+        return {
+            displayName: userData.displayName,
+            email: userRecord.email,
+            avatar: userData.avatar,
+            status: status
+        }
+    } catch (error) {
+        console.error("Lỗi khi tìm kiếm người dùng:", error);
+        return null;
     }
-    catch (error) {
-        console.error('Error downloading file:', error);
+}
+
+// Lấy link ảnh đại diện
+async function getAvatar(friendID) {
+    try {
+        const user = await db.collection("users").doc(friendID).get();
+        const userData = user.data();
+
+        if (!userData) {
+            console.log("Không tìm thấy người dùng.");
+            return null;
+        }
+
+        return userData.avatar;
+    } catch (error) {
+        console.error("Lỗi khi lấy ảnh đại diện:", error);
+        return null;
     }
 }
 
 module.exports = {
+    searchUser,
+    getAvatar,
     getWebsitePreview,
-    handleFileButtonClick,
 }

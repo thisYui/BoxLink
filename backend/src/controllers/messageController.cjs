@@ -1,5 +1,6 @@
 const { createChat, deleteChat } = require('../services/firebaseServices.cjs');
 const { startChat, sendMessage, getMessages, getSingle, loadMore } = require('../services/messageServices.cjs');
+const { downloadFile } = require('../services/fileServices.cjs');
 const logger = require('../config/logger.cjs');
 
 // Tạo cuộc trò chuyện
@@ -86,6 +87,18 @@ async function loadMoreMessages(req, res) {
     }
 }
 
+// Tải file từ firebase
+async function clickDownload(req, res) {
+    const { filePath } = req.body;
+    try {
+        const fileURL = await downloadFile(filePath);
+        res.status(200).json({ message: 'File đã được tải lên thành công!', fileURL });
+    } catch (error) {
+        logger.error('Lỗi khi tải file:', error);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
     createNewChat,
     removeChat,
@@ -93,5 +106,6 @@ module.exports = {
     sendMessages,
     getSingleMessage,
     fetchMessages,
-    loadMoreMessages
+    loadMoreMessages,
+    clickDownload,
 }

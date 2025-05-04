@@ -36,4 +36,4 @@ frontend/node_modules/
 # 🛑 Ignore Firebase service account key nếu có
 firebase-key.json
 serviceAccountKey.json
-frontend/config/firebaseConfig.js
+frontend/assets/js/config/firebaseConfig.js

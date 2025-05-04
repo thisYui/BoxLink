@@ -6,8 +6,10 @@ const {
     sendMessages,
     getSingleMessage,
     fetchMessages,
-    loadMoreMessages
+    loadMoreMessages,
+    clickDownload,
 } = require('../controllers/messageController.cjs');
+const {} = require('../controllers/indexController.cjs');
 
 const router = express.Router();
 
@@ -18,5 +20,7 @@ router.post('/send-messages', sendMessages);
 router.post('/get-single-message', getSingleMessage);
 router.get('/fetch-messages', fetchMessages);
 router.get('/load-more-messages', loadMoreMessages);
+router.post('/download-file', clickDownload);
+
 
 module.exports = router;
