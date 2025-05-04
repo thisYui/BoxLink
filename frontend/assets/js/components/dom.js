@@ -42,7 +42,7 @@ window.loadPage = async function (){
         lastOnline:
     },..]
     }*/
-
+    loadChat();
     const avatar = data.avatar; // URL của ảnh đại diện
     const name = data.displayName; // Tên người dùng
     const email = data.email; // Email người dùng
