@@ -1,29 +1,6 @@
-import { searchFriend, getUserInfo } from '../fetchers/request.js';
-import { startChatSession, sendMessages, fetchMessages } from '../fetchers/chat.js';
-
-window.searchBar = async function (){
-    const email = document.getElementById("search-input").value;
-    const user = await searchFriend(email);
-    // displayName: displayName,
-    // email: email,
-    // avatar: url
-    // status: friend / sender-request / receiver-request / none
-
-    if (user.email === 'no-email') {
-        // Không tìm thấy người dùng
-        // muốn hiện sao cũng đc
-    } else {
-        if (user.status === 'friend') {
-            // icon bạn bè
-        } else if (user.status === 'sender-request') {
-            // icon đã gửi lời mời
-        } else if (user.status === 'receiver-request') {
-            // icon đã nhận lời mời
-        } else {
-            // icon mũi tên ấn vào thì gửi lời mời
-        }
-    }
-}
+import { getUserInfo } from '../fetchers/request.js';
+import { startChatSession,  fetchMessages } from '../fetchers/chatFetcher.js';
+import { addMessageToChatBoxServer } from '../utils/renderMessage.js';
 
 
 window.loadPage = async function (){
@@ -42,7 +19,6 @@ window.loadPage = async function (){
         lastOnline:
     },..]
     }*/
-    loadChat();
     const avatar = data.avatar; // URL của ảnh đại diện
     const name = data.displayName; // Tên người dùng
     const email = data.email; // Email người dùng
@@ -102,22 +78,7 @@ window.loadChat = async function () {
 
     container.innerHTML = "";
     chatData.forEach(msg => {
-        const div = document.createElement("div");
-        const p = document.createElement("p");
-        const isCurrentUser = msg.senderId === currentUserId;
-
-        div.classList.add("message-content", "messageText");
-        if (isCurrentUser) {
-          div.classList.add("sender");
-        }
-
-        p.textContent = msg.content.text;
-        div.appendChild(p);
-        container.appendChild(div);
-
-        if (msg.type === "system") {
-          div.classList.add("systemMessage");
-        }
+        addMessageToChatBoxServer(msg);
     });
     container.scrollTop = container.scrollHeight;
 }

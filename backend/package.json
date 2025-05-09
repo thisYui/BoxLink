@@ -7,12 +7,14 @@
     "cheerio": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "emoji.json": "^15.1.0",
     "express": "^4.21.2",
+    "ffprobe-static": "^3.1.0",
     "firebase-admin": "^13.2.0",
     "mime-types": "^3.0.1",
     "nodemailer": "^6.10.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
   }
 }

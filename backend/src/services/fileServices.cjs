@@ -2,6 +2,7 @@ const { bucket } = require("../config/firebaseConfig.cjs");
 const fs = require('fs');
 const path = require('path');
 const mime = require('mime-types');
+const logger = require("../config/logger.cjs");
 
 /*
 3. Firebase Storage:
@@ -17,19 +18,33 @@ const downloadFolder = process.platform === 'win32'
   ? path.join(process.env.USERPROFILE, 'Downloads') // Đối với Windows
   : path.join(process.env.HOME, 'Downloads'); // Đối với macOS/Linux
 
-// Hàm đưa tệp từ URL lên firebase Storage
-async function uploadFile(filePath, storagePath) {
+// Hàm tải lên dữ liệu nhị phân trực tiếp từ data lên Firebase Storage
+async function uploadFile(data, storagePath) {
     try {
-        await bucket.upload(filePath, {
-            destination: storagePath,  // ChatID/filename
+        // Tạo một đối tượng file blob trong Firebase Storage
+        const file = bucket.file(storagePath);
+
+        // Tạo một stream ghi dữ liệu lên Firebase Storage
+        const blobStream = file.createWriteStream({
             metadata: {
-                contentType: mime.lookup(filePath), // Lấy loại mime từ tệp
+                contentType: mime.lookup(storagePath),  // Xác định loại MIME từ đường dẫn
             },
         });
 
-        console.log(`${filePath} đã được tải lên ${storagePath}`);
+        // Khi quá trình tải lên hoàn thành
+        blobStream.on('finish', () => {
+            logger.info(`${storagePath} đã được tải lên Firebase Storage thành công`);
+        });
+
+        // Nếu có lỗi xảy ra
+        blobStream.on('error', (error) => {
+            logger.error('Lỗi khi tải tệp lên:', error);
+        });
+
+        // Ghi dữ liệu nhị phân vào stream
+        blobStream.end(data);
     } catch (error) {
-        console.error('Lỗi khi tải tệp lên:', error);
+        logger.error('Lỗi khi tải tệp lên:', error);
     }
 }
 
@@ -47,17 +62,17 @@ async function downloadFile(filePath) {
             // Ghi buffer vào tệp trên thư mục Downloads
             fs.writeFile(destination, contents, (err) => {
                 if (err) {
-                    console.error('Error saving file:', err);
+                    logger.error('Error saving file:', err);
                 } else {
-                    console.log('File saved successfully at:', destination);
+                    logger.debug('File saved successfully at:', destination);
                 }
             });
         })
         .catch((err) => {
-            console.error('Error downloading file:', err);
+            logger.error('Error downloading file:', err);
         });
     } catch (error) {
-        console.error('Error downloading file:', error);
+        logger.error('Error downloading file:', error);
     }
 }
 
@@ -80,12 +95,10 @@ async function getDownloadUrl(filePath) {
         }
 
         // Tạo link theo định dạng chuẩn
-        const url = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filePath)}?alt=media&token=${token}`;
-        console.log("Download URL:", url);
-        return url;
+        return `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filePath)}?alt=media&token=${token}`;
 
     } catch (error) {
-        console.error("Error getting URL:", error);
+        logger.error("Error getting URL:", error);
         return null;
     }
 }

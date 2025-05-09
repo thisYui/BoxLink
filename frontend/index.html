@@ -112,19 +112,16 @@
 
             </div>
             <div class="message-container-body-sending-area">
-                <!-- <div id="previewFile">
-                    <img src="images/avatar.jpg" style="height: 30px;">
-                </div> -->
-                <form action="" id="messageForm" onsubmit="sendMessage(event)" enctype="multipart/form-data">
+                <form action="" id="messageForm" enctype="multipart/form-data">
                     <div class="form-file">
                         <label for="attachment">
                             <i class="fa-solid fa-file attachment-icon"></i>
                         </label>
-                        <input type="file" id="attachment" accept="image/*,video/*,.doc,.docx,.txt,.pdf" multiple onkeypress="handleKeyPress(event)">
+                        <input type="file" id="attachment" accept="image/*,video/*,.doc,.docx,.txt,.pdf" multiple>
                     </div>
                     <div class="form-text">
                         <label for="message-input"></label>
-                        <input type="text" id="message-input" placeholder="Aa" autocomplete="off" onkeypress="handleKeyPress(event)">
+                        <input type="text" id="message-input" placeholder="Aa" autocomplete="off">
                     </div>
                     <button type="submit" id="send-button">
                         <i class="fa-solid fa-paper-plane submit-icon"></i>
@@ -137,8 +134,8 @@
     <!-- Socket.IO CDN -->
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <!-- Link tới file JS riêng -->
-    <script type="module" defer src="assets/js/utils/socket.js"></script>
-    <script type="module" defer src="assets/js/utils/process.js"></script>
+    <script type="module" defer src="assets/js/config/socketClient.js"></script>
+    <script type="module" defer src="assets/js/utils/renderMessage.js"></script>
     <script type="module" defer src="assets/js/components/dom.js"></script>
     <script type="module" defer src="assets/js/components/button.js"></script>
     <script type="module" defer src="assets/js/script.js"></script>

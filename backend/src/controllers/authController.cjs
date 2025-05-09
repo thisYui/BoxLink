@@ -2,7 +2,7 @@ const {admin} = require("../config/firebaseConfig.cjs");
 const { checkEmailExists, sendOTP , verifyOTP} = require("../services/emailServices.cjs");
 const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
-const server = require("../server.cjs");
+const logger = require('../config/logger.cjs');
 
 let users = []; // (email, displayName, hashOTP)
 let otps = [];  // (email, hashOTP)
@@ -22,6 +22,7 @@ async function signUp(req, res) {
         await createAuth(email, password, displayName);
         res.status(200).json({ message: 'Chờ mã xác nhận!' });
     } catch {
+        logger.error('Lỗi khi tạo tài khoản:', error);
         res.status(500).json({ message: 'Lỗi hệ thống!' });
     }
 }
@@ -62,6 +63,7 @@ async function resetPassword(req, res) {
             res.status(200).json({message: 'Đặt lại mật khẩu thành công!'});
 
         } else {
+            logger.error('Lỗi khi đặt lại mật khẩu:');
             res.status(500).json({message: 'Lỗi hệ thống!'});
         }
     });

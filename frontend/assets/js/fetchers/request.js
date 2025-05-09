@@ -99,7 +99,7 @@ async function friend(uid, emailFriend, api){
 
 // Cập nhật thời gian online
 // Mỗi 1 phút 1 lần
-window.updateOnlineTime = async function () {
+async function updateOnlineTime() {
     const response = await fetch("http://localhost:3000/api/update-online-time", {
         method: "POST",
         headers: {
@@ -117,9 +117,30 @@ window.updateOnlineTime = async function () {
     return await response.json();
 }
 
+// Lấy các thông tin của 1 hyperlink
+async function getHyperlinkInfo(url) {
+    const response = await fetch("http://localhost:3000/api/get-website-info", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            url: url
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch hyperlink info");
+    }
+
+    return await response.json();
+}
+
 export {
     getUserInfo,
     searchFriend,
     getAvatar,
     friend,
+    updateOnlineTime,
+    getHyperlinkInfo,
 }

@@ -1,4 +1,5 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
+const logger = require("../config/logger.cjs");
 const { friendRequestNotification, friendAcceptNotification,
     updateAvatarNotification, otherNotification } = require("./notificationServices.cjs");
 const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
@@ -58,7 +59,7 @@ async function getInfo(uid) {
             friendList: friendList,
         }
     } catch (error) {
-        console.error("Lỗi khi lấy thông tin người dùng:", error);
+        logger.error("Lỗi khi lấy thông tin người dùng:", error);
         return null;
     }
 }
@@ -76,7 +77,7 @@ async function setPassword(userUid, newPassword) {
 
         return true;
     } catch (error) {
-        console.error("Lỗi khi cập nhật mật khẩu:", error);
+        logger.error("Lỗi khi cập nhật mật khẩu:", error);
         return false;
     }
 }
@@ -94,7 +95,7 @@ async function setDisplayName(uid, displayName) {
 
         return true;
     } catch (error) {
-        console.error("Lỗi khi cập nhật tên hiển thị:", error);
+        logger.error("Lỗi khi cập nhật tên hiển thị:", error);
         return false;
     }
 }
@@ -121,7 +122,7 @@ async function setAvatar(uid, avatar) {
 
         return true;
     } catch (error) {
-        console.error("Lỗi khi cập nhật ảnh đại diện:", error);
+        logger.error("Lỗi khi cập nhật ảnh đại diện:", error);
         return false;
     }
 }
@@ -145,10 +146,10 @@ async function removeFriend(uid, emailFriend) {
             friendList: admin.firestore.FieldValue.arrayRemove(uid)
         });
 
-        console.log("Đã hủy kết bạn thành công.");
+        logger.debug("Đã hủy kết bạn thành công.");
         return true;
     } catch (error) {
-        console.error("Lỗi khi hủy kết bạn:", error);
+        logger.error("Lỗi khi hủy kết bạn:", error);
         return false;
     }
 }
@@ -175,10 +176,10 @@ async function acceptFriend(uid, emailFriend) {
         // Thông báo cháp nhận lời mời kết bạn
         await friendAcceptNotification(uid, emailFriend);
 
-        console.log("Đã chấp nhận lời mời kết bạn thành công.");
+        logger.debug("Đã chấp nhận lời mời kết bạn thành công.");
         return true;
     } catch (error) {
-        console.error("Lỗi khi chấp nhận lời mời kết bạn:", error);
+        logger.error("Lỗi khi chấp nhận lời mời kết bạn:", error);
         return false;
     }
 }
@@ -199,10 +200,10 @@ async function friendRequest(uid, emailFriend) {
         // Gửi thông báo lời mời kết bạn
         await friendRequestNotification(uid, emailFriend);
 
-        console.log("Đã gửi lời mời kết bạn thành công.");
+        logger.debug("Đã gửi lời mời kết bạn thành công.");
         return true;
     } catch (error) {
-        console.error("Lỗi khi gửi lời mời kết bạn:", error);
+        logger.error("Lỗi khi gửi lời mời kết bạn:", error);
         return false;
     }
 }
@@ -217,7 +218,7 @@ async function updateLastOnline(uid) {
 
         return true;
     } catch (error) {
-        console.error("Lỗi khi cập nhật thời gian online:", error);
+        logger.error("Lỗi khi cập nhật thời gian online:", error);
         return false;
     }
 }

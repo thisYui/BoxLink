@@ -8,5 +8,8 @@ npm install socket.io-client        # for real-time communication
 npm install @google-cloud/storage   # for Google Cloud Storage
 npm install mime-types              # for MIME type handling
 npm install axios cheerio           # for web scraping
+npm install ffprobe-static          # for media file analysis
+npm install htmlparser2             # for HTML parsing
+npm install emoji.json              # for emoji support
 
 npm install -g ngrok

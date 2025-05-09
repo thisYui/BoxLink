@@ -1,4 +1,5 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
+const logger = require("../config/logger.cjs");
 
 // Thông báo tin nhắn
 async function messageNotification(srcId, desID, messID) {
@@ -13,7 +14,7 @@ async function messageNotification(srcId, desID, messID) {
         });
 
     } catch (error) {
-        console.error("Lỗi khi gửi thông báo tin nhắn:", error);
+        logger.error("Lỗi khi gửi thông báo tin nhắn:", error);
         throw error;
     }
 }
@@ -33,7 +34,7 @@ async function friendRequestNotification(srcId, desEmail) {
         });
 
     } catch (error) {
-        console.error("Lỗi khi gửi lời mời kết bạn:", error);
+        logger.error("Lỗi khi gửi lời mời kết bạn:", error);
         throw error;
     }
 }
@@ -54,7 +55,7 @@ async function friendAcceptNotification(srcId, desEmail) {
         });
 
     } catch (error) {
-        console.error("Lỗi khi gửi thông báo chấp nhận lời mời:", error);
+        logger.error("Lỗi khi gửi thông báo chấp nhận lời mời:", error);
         throw error;
     }
 }
@@ -77,7 +78,7 @@ async function updateAvatarNotification(srcId) {
         }
 
     } catch (error) {
-        console.error("Lỗi khi gửi thông báo cập nhật ảnh đại diện:", error);
+        logger.error("Lỗi khi gửi thông báo cập nhật ảnh đại diện:", error);
         throw error;
     }
 }
@@ -92,7 +93,7 @@ async function otherNotification(uid, notification) {
             })
         });
     } catch (error) {
-        console.error("Lỗi khi xóa thông báo:", error);
+        logger.error("Lỗi khi xóa thông báo:", error);
         throw error;
     }
 }
@@ -104,7 +105,7 @@ async function deleteNotificationSpecific(uid, notification) {
             notifications: admin.firestore.FieldValue.arrayRemove(notification)
         });
     } catch (error) {
-        console.error("Lỗi khi xóa thông báo:", error);
+        logger.error("Lỗi khi xóa thông báo:", error);
         throw error;
     }
 }
@@ -124,20 +125,20 @@ async function deleteMessageNotification(uid) {
             db.collection("users").doc(uid).update({
                 notifications: []
             }).then().catch((error) => {
-                console.error("Error deleting all notifications:", error);
+                logger.error("Error deleting all notifications:", error);
             });
         } else {
             // Cập nhật tất cả thông báo cần xóa trong một lần
             db.collection("users").doc(uid).update({
                 notifications: db.firestore.FieldValue.arrayRemove(...messagesToDelete)
             }).then().catch((error) => {
-                console.error("Error deleting messages:", error);
+                logger.error("Error deleting messages:", error);
             });
         }
 
         return true;
     } catch (error) {
-        console.error("Lỗi khi xóa thông báo tin nhắn:", error);
+        logger.error("Lỗi khi xóa thông báo tin nhắn:", error);
         throw error;
     }
 }

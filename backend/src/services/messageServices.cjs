@@ -1,9 +1,9 @@
-const {admin, db} = require("../config/firebaseConfig.cjs");
+const { admin, db } = require("../config/firebaseConfig.cjs");
+const logger = require("../config/logger.cjs");
 const { messageNotification } = require("./notificationServices.cjs");
-const { uploadFile } = require("./fileServices.cjs");
+const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 const mine = require("mime-types");
-const fs = require('fs');
-const { getWebsitePreview } = require("./utilityServices.cjs");
+const { getWebsitePreview, getVideoDuration,formatRichTextFromPlain } = require("./utilityServices.cjs");
 
 let chatCurrent = null;  // Tại một thời điểm chỉ có một cuộc trò chuyện đang mở
 let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
@@ -43,9 +43,18 @@ let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
     type: image
     content {
         "fileName": "image.jpg",
-        "subtype": image, // image | video
         "size": 28412,
+        "url": "https://example.com/image.jpg", // Đường dẫn đến ảnh
         "storagePath": "chatsID/image.jpg", // Đường dẫn trên Firebase Storage
+    }
+
+    type: video
+    content {
+        "fileName": "video.mp4",
+        "duration": 120, // Thời gian video (giây)
+        "size": 28412,
+        "url": "https://example.com/video.mp4", // Đường dẫn đến video
+        "storagePath": "chatsID/video.mp4", // Đường dẫn trên Firebase Storage
     }
 
     type: link
@@ -56,14 +65,41 @@ let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
         "thumbnail": "https://example.com/image.jpg"
     }
 
-    type: rich_text
-    "content": {
-      "blocks": [
-        { "type": "text", "text": "Xem thêm tại " },
-        { "type": "link", "text": "Github", "url": "https://github.com" },
-        { "type": "emoji", "name": "rocket", "unicode": "" }
-      ]
-    }
+    type: rich-text
+    "content": [
+      {
+        "type": "text",
+        "text": "Hãy xem "
+      },
+      {
+        "type": "link",
+        "text": "https://example.com",
+        "url": "https://example.com"
+      },
+      {
+        "type": "text",
+        "text": " trang này và "
+      },
+      {
+        "type": "link",
+        "text": "https://github.com",
+        "url": "https://github.com"
+      },
+      {
+        "type": "text",
+        "text": " Github nhé! "
+      },
+      {
+        "type": "emoji",
+        "name": "rocket",
+        "unicode": "🚀"
+      },
+      {
+        "type": "emoji",
+        "name": "fire",
+        "unicode": "🔥"
+      }
+    ]
 */
 
 // Cấu trúc lại dữ liệu
@@ -74,25 +110,45 @@ async function formatMessage(type, content) {
         };
     }
 
-    if (type === "file" || type === "image") {
-        const filePath = `${chatCurrent}/${content.fileName}`;
-        await uploadFile(content, filePath); // Tải tệp lên Firebase Storage
-        return {
-            fileName: content,
-            subtype: mine.lookup(content), // Lấy loại mime từ tệp
-            size: fs.statSync(content),  // Lấy kích thước tệp
-            storagePath: filePath, // Đường dẫn trên Firebase Storage
-        };
-    }
-
     if (type === "link") {
         return getWebsitePreview(content);
     }
 
-    if (type === "rich_text") {
-        // Xử lý rich text
+    if (type === "rich-text") {
+        return formatRichTextFromPlain(content);
+    }
 
-        return { };
+    // Chỉ còn lại các loại dữ liệu dạng file
+    const filePath = `${chatCurrent}/${content.fileName}`;
+    await uploadFile(content.date, filePath); // Tải ảnh lên Firebase Storage
+
+    if (type === "image") {
+
+        return {
+            fileName: content.fileName,
+            size: content.size,  // Lấy kích thước tệp
+            url: await getDownloadUrl(filePath), // Lấy URL tải xuống từ Firebase Storage
+            storagePath: filePath, // Đường dẫn trên Firebase Storage
+        };
+    }
+
+    if (type === "video") {
+        return {
+            fileName: content.fileName,
+            size: content.size,  // Lấy kích thước tệp
+            duration: await getVideoDuration(content.fileName), // Lấy thời gian video
+            url: await getDownloadUrl(filePath), // Lấy URL tải xuống từ Firebase Storage
+            storagePath: filePath, // Đường dẫn trên Firebase Storage
+        };
+    }
+
+    if (type === "file") {
+        return {
+            fileName: content.fileName,
+            subtype: mine.lookup(filePath), // Lấy loại mime từ tệp
+            size: content.size,  // Lấy kích thước tệp
+            storagePath: filePath, // Đường dẫn trên Firebase Storage
+        };
     }
 }
 
@@ -119,7 +175,7 @@ async function findChat(uid, friendID) {
 
         return false;
     } catch (error) {
-        console.error("Lỗi khi tìm kiếm cuộc trò chuyện:", error);
+        logger.error("Lỗi khi tìm kiếm cuộc trò chuyện:", error);
         throw error;
     }
 }
@@ -134,7 +190,7 @@ async function startChat(uid, friendID){
         });
 
     } catch (error) {
-        console.error("Lỗi khi tìm kiếm cuộc trò chuyện:", error);
+        logger.error("Lỗi khi bắt đầu trò chuyện:", error);
         throw error;
     }
 }
@@ -170,7 +226,7 @@ async function sendMessage(uid, friendID, type, content, replyTo) {
         });
 
     } catch (error) {
-        console.error("Lỗi khi gửi tin nhắn:", error);
+        logger.error("Lỗi khi gửi tin nhắn:", error);
         throw error;
     }
 }
@@ -189,7 +245,7 @@ async function getMessages(limit = 100) {
 
         return messages.reverse(); // Hiển thị từ cũ đến mới
     } catch (error) {
-        console.error("Lỗi khi lấy danh sách tin nhắn:", error);
+        logger.error("Lỗi khi lấy tin nhắn:", error);
         throw error;
     }
 }
@@ -204,7 +260,7 @@ async function getSingle(uid, srcID, messageID) {
         return messageDoc.data();
 
     } catch (error) {
-        console.error("Lỗi khi lấy tin nhắn:", error);
+        logger.error("Lỗi khi lấy tin nhắn:", error);
         throw error;
     }
 }

@@ -23,7 +23,7 @@ async function createAuth(email, password, displayName) {
             lastOnline: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        console.log("Tạo tài khoản thành công và đã lưu Firestore.");
+        logger.log("Tạo tài khoản thành công và đã lưu Firestore.");
     } catch (error) {
         logger.error("Lỗi khi tạo tài khoản:", error);
         throw error;
@@ -41,7 +41,7 @@ async function deleteAuth(uid) {
 
         // Xóa gửi cho bạn bè biết rằng tk ko còn tồn tại
 
-        console.log("Xóa tài khoản thành công.");
+        logger.info("Xóa tài khoản thành công.");
     } catch (error) {
         logger.error("Lỗi khi xóa tài khoản:", error);
         throw error;
@@ -104,7 +104,7 @@ async function createChat(userId, emailFriend) {
             friendList: admin.firestore.FieldValue.arrayUnion(userId),
         });
 
-        console.log("Cuộc trò chuyện đã được tạo thành công.");
+        logger.debug("Cuộc trò chuyện đã được tạo thành công.");
     } catch (error) {
         logger.error("Lỗi khi tạo cuộc trò chuyện:", error);
         throw error;
@@ -117,7 +117,7 @@ async function deleteChat(chatId) {
         // Xóa cuộc trò chuyện trong Firestore
         await db.collection("chats").doc(chatId).delete();
 
-        console.log("Cuộc trò chuyện đã được xóa thành công.");
+        logger.debug("Cuộc trò chuyện đã được xóa thành công.");
     } catch (error) {
         logger.error("Lỗi khi xóa cuộc trò chuyện:", error);
         throw error;
