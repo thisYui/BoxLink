@@ -24,7 +24,7 @@ async function getUserInfo() {
 }
 
 // Tìm kiếm
-async function searchFriend(emailFriend) {
+async function searchFriendByEmail(emailFriend) {
     const response = await fetch("http://localhost:3000/api/search", {
         method: "POST",
         headers: {
@@ -32,7 +32,8 @@ async function searchFriend(emailFriend) {
         },
         body: JSON.stringify({
             uid: localStorage.getItem("uid"),
-            emailFriend: emailFriend
+            emailFriend: emailFriend,
+            friendID: "no-id"
         })
     });
 
@@ -48,70 +49,26 @@ async function searchFriend(emailFriend) {
     return await response.json();
 }
 
-// Lấy avatar của người dùng
-async function getAvatar(friendID) {
-    const response = await fetch("http://localhost:3000/api/get-avatar", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            friendID: friendID
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch avatar");
-    }
-
-    return await response.json();
-}
-
-// Tương tác bạn bè
-async function friend(uid, emailFriend, api){
-    // api =  friend-request : gửi lời mời kết bạn
-    //        accept-friend: đồng ý kết bạn
-    //        cancel-friend: hủy lời mời kết bạn
-
-    const response = await fetch(`http://localhost:3000/api/${api}`, {
+async function searchFriendByID(friendID) {
+    const response = await fetch("http://localhost:3000/api/search", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
             uid: localStorage.getItem("uid"),
-            emailFriend: emailFriend
+            emailFriend: "no-email",
+            friendID: friendID
         })
     });
 
     if (!response.ok) {
-        throw new Error("Failed to send friend request");
-    }
-
-    if (api === "friend-request") {
-        // Vô hiệu hóa button gửi lời mời kết bạn
-    }  else if (api === "accept-friend") {
-        // Tạo ngay một chat mới nằm ngay trên đầu danh sách
-    } else if (api === "cancel-friend") {
-        // Xóa lời mời kết bạn và xóa thông báo
-    }
-}
-
-// Cập nhật thời gian online
-// Mỗi 1 phút 1 lần
-async function updateOnlineTime() {
-    const response = await fetch("http://localhost:3000/api/update-online-time", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            uid: localStorage.getItem("uid")
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to update online time");
+        return {
+            displayName: "Không tìm thấy người dùng",
+            email: 'no-email',
+            avatar: "",
+            status: "none",
+        }
     }
 
     return await response.json();
@@ -136,11 +93,51 @@ async function getHyperlinkInfo(url) {
     return await response.json();
 }
 
+// Xóa thông báo
+async function deleteNotification(notification) {
+    const response = await fetch("http://localhost:3000/api/delete-notification", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            notification: notification
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete notification");
+    }
+
+    return await response.json();
+}
+
+// Lấy trạng thái online ucar bạn bè
+async function getFriendStatus(friendID) {
+    const response = await fetch("http://localhost:3000/api/get-friend-status", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            friendID: friendID
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch friend status");
+    }
+
+    return await response.json();
+}
+
 export {
     getUserInfo,
-    searchFriend,
-    getAvatar,
-    friend,
-    updateOnlineTime,
+    searchFriendByEmail,
+    searchFriendByID,
     getHyperlinkInfo,
+    deleteNotification,
+    getFriendStatus,
 }

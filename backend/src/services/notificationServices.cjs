@@ -10,6 +10,7 @@ async function messageNotification(srcId, desID, messID) {
                 typeNotification: "message",
                 srcID: srcId,
                 text: messID, // Nội dung là id của document tin nhắn
+                timeSend: new Date(),
             })
         });
 
@@ -20,16 +21,17 @@ async function messageNotification(srcId, desID, messID) {
 }
 
 // Gửi đi thông báo lời mời kết bạn
-async function friendRequestNotification(srcId, desEmail) {
+async function friendRequestNotification(srcId, desID) {
     try {
-         const des = await admin.auth().getUserByEmail(desEmail);
+         const des = await admin.auth().getUser(desID);
 
          // Thêm thông báo cho biết có lời mời kết bạn
         await db.collection("users").doc(des.uid).update({
             notifications: admin.firestore.FieldValue.arrayUnion({
                 typeNotification: "friend-request",
                 srcID: srcId,
-                text: "Đã gửi lời mời kết bạn"
+                text: "Đã gửi lời mời kết bạn",
+                timeSend: new Date(),
             })
         });
 
@@ -40,9 +42,9 @@ async function friendRequestNotification(srcId, desEmail) {
 }
 
 // Thông báo lời mời được chấp nhận
-async function friendAcceptNotification(srcId, desEmail) {
+async function friendAcceptNotification(srcId, desID) {
     try {
-        const des = await admin.auth().getUserByEmail(desEmail);
+        const des = await admin.auth().getUser(desID);
         const src = await admin.auth().getUser(srcId);
 
         // Thêm thông báo cho biết đã chấp nhận lời mời kết bạn
@@ -50,7 +52,8 @@ async function friendAcceptNotification(srcId, desEmail) {
             notifications: admin.firestore.FieldValue.arrayUnion({
                 typeNotification: "friend-accept",
                 srcID: src.uid,
-                text: "Đã chấp nhận lời mời kết bạn"
+                text: "Đã chấp nhận lời mời kết bạn",
+                timeSend: new Date(),
             })
         });
 
@@ -60,7 +63,10 @@ async function friendAcceptNotification(srcId, desEmail) {
     }
 }
 
-async function updateAvatarNotification(srcId) {
+async function updateUserNotification(srcId, typeNotification) {
+    // Cập nhật thông báo cho bạn bè
+    // Có 2 loại: avatar-update và display-name-update
+
     try {
         // Lấy danh sách bạn bè từ Firestore
         const userDoc = await db.collection("users").doc(srcId).get();
@@ -70,9 +76,10 @@ async function updateAvatarNotification(srcId) {
         for (const friend of friendList) {
             await db.collection("users").doc(friend).update({
                 notifications: admin.firestore.FieldValue.arrayUnion({
-                    typeNotification: "avatar-update",
+                    typeNotification: typeNotification,
                     srcID: srcId,
-                    text: "Đã cập nhật ảnh đại diện"
+                    text: "Đã cập nhật ảnh đại diện",
+                    timeSend: new Date(),
                 })
             });
         }
@@ -89,7 +96,8 @@ async function otherNotification(uid, notification) {
             notifications: admin.firestore.FieldValue.arrayRemove({
                 typeNotification: "other",
                 srcID: "system",
-                text: notification
+                text: notification,
+                timeSend: new Date(),
             })
         });
     } catch (error) {
@@ -147,7 +155,7 @@ module.exports = {
     messageNotification,
     friendRequestNotification,
     friendAcceptNotification,
-    updateAvatarNotification,
+    updateUserNotification,
     otherNotification,
     deleteNotificationSpecific,
     deleteMessageNotification

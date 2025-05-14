@@ -16,7 +16,7 @@ const auth = admin.auth();
 
 // Các biến cấu hình khác nếu cần
 const config = {
-  PORT: process.env.PORT,
+    PORT: process.env.PORT,
 };
 
 const bucket = admin.storage().bucket(`gs://${process.env.FIREBASE_STORAGE_BUCKET}`); // Khởi tạo bucket

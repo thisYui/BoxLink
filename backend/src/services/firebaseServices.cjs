@@ -15,7 +15,11 @@ async function createAuth(email, password, displayName) {
             displayName: displayName,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             chatList: [],
-            avatar: "https://firebasestorage.googleapis.com/v0/b/boxlink-1595e.firebasestorage.app/o/default-avatar.jpg?alt=media&token=363ceb62-e39c-42b5-a401-c9ad42c854b1",
+            avatar: "assets/images/default-avatar.png",
+            biography: "",
+            gender: "",
+            birthday: "",
+            socialLinks: {},  // <linkName: link>
             friendList: [],
             notifications: [], // <typeNotification, srcID, text>
             friendRequests: [], // <email>

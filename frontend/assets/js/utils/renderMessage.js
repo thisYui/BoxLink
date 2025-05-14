@@ -1,4 +1,5 @@
 import { getHyperlinkInfo } from '../fetchers/request.js';
+import { addMessageToChatBoxList } from './chatProcessor.js';
 
 // Chỉ dùng cho server
 function addMessageToChatBoxServer(message) {
@@ -38,7 +39,11 @@ function addMessageToChatBoxServer(message) {
         const richText = convertContentToString(content);  // Chuyển đổi nội dung rich text thành chuỗi
         addRichTextMessageToChatBox(richText, senderID, timeSend, reply);  // Thêm tin nhắn rich text vào chat box
 
+    } else {
+        console.warn("Loại tin nhắn không xác định:", type);
     }
+
+    addMessageToChatBoxList(message);
 }
 
 // Chỉ dùng cho client
@@ -47,8 +52,7 @@ function addMessageToChatBoxClient(type, content, replyTo) {
     const senderID = localStorage.getItem("uid");  // ID người gửi
 
     if (type === "text") {
-        const textMessage = content.text;  // Nội dung tin nhắn văn bản
-        addTextMessageToChatBox(textMessage, senderID);  // Thêm tin nhắn vào chat box
+        addTextMessageToChatBox(content, senderID);  // Thêm tin nhắn vào chat box
 
     } else if (type === "image") {
         const files = document.getElementById('attachment').files;
@@ -78,10 +82,24 @@ function addMessageToChatBoxClient(type, content, replyTo) {
             const url = data.url;  // Đường dẫn đến trang web
             addLinkMessageToChatBox(title, description, thumbnail, url, senderID, timeSend, replyTo);  // Thêm tin nhắn link vào chat box
         });
+
     } else if (type === "rich-text") {
         addRichTextMessageToChatBox(content, senderID, timeSend, replyTo);  // Thêm tin nhắn rich text vào chat box
+
+    } else {
+        console.warn("Loại tin nhắn không xác định:", type);
     }
-    document.getElementById("message-input").value = '';
+
+    const tempMessage = {
+        senderID: senderID,
+        timeSend: new Date().toDateString(),
+        type: type,
+        replyTo: "",
+        content: content
+    }
+
+    addMessageToChatBoxList(tempMessage);  // Thêm tin nhắn vào danh sách chat box
+    document.getElementById( "message-input").value = '';
 }
 
 // Thêm 1 tin nhắn vào đoạn chat
@@ -253,7 +271,6 @@ function addLinkMessageToChatBox(title, description, thumbnail, url, senderID, t
     messageContainer.appendChild(div);
 }
 
-
 function addRichTextMessageToChatBox(rich_text, senderID, timeSend, reply) {
     const messageContainer = document.querySelector('.message-container-body-message-area'); // Chọn nơi hiển thị message
 
@@ -308,6 +325,7 @@ function isRichText(inputText) {
 export {
     addMessageToChatBoxClient,
     addMessageToChatBoxServer,
+    addMessageToChatBoxList,
     isRichText
 };
 

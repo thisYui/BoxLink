@@ -1,11 +1,13 @@
 import { sendMessages } from '../fetchers/chatFetcher.js';
-import { searchFriend  } from '../fetchers/request.js';
+import { searchFriendByEmail, deleteNotification  } from '../fetchers/request.js';
 import { addMessageToChatBoxClient } from '../utils/renderMessage.js';
 import { getDataFromDocument } from '../utils/renderData.js';
+import { removeNotificationFromList } from '../user/notificationProcessor.js';
+import { getMyProfile, getProfileFriend, setAvatar, setDisplayName, } from '../user/personalProfile.js';
 
-window.sendMessage = async function (event, type) {
+window.sendMessage = async function (typeInput) {
     // Xử lí dữ liệu trước khi gửi
-    const { type, content, replyTo } = await getDataFromDocument(type);
+    const { type, content, replyTo } = await getDataFromDocument(typeInput);
 
     if (content.length > 0) {
         addMessageToChatBoxClient(type, content, replyTo); // Thêm tin nhắn vào chat box
@@ -22,7 +24,7 @@ window.clickRequestFriend = async function (friendID) {
 
 window.searchBar = async function (){
     const email = document.getElementById("search-input").value;
-    const user = await searchFriend(email);
+    const user = await searchFriendByEmail(email);
     // displayName: displayName,
     // email: email,
     // avatar: url
@@ -41,5 +43,33 @@ window.searchBar = async function (){
         } else {
             // icon mũi tên ấn vào thì gửi lời mời
         }
+    }
+}
+
+// Đánh dấu 1 thông báo là đã đọc
+window.readNotification = async function (event) {
+    // removeNotificationFromList(notificationID); // Xóa thông báo khỏi danh sách
+    // deleteNotification(notificationID); // Xóa thông báo khỏi database
+}
+
+// Thay đổi ảnh đại diện
+window.updateAvatar = async function (event) {
+
+}
+
+// Thay đổi tên hiển thị
+window.updateDisplayName = async function (event) {
+
+}
+
+// Hiển thị profile cá nhân
+window.showProfile = async function (event, type) {
+    if (type === 'myProfile') {
+        const profile = await getMyProfile();
+        loadProfile(profile);
+        showSettingMyProfile();
+    } else {
+        const profile = await getProfileFriend();
+        loadProfile(profile);
     }
 }

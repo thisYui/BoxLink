@@ -1,7 +1,7 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
 const logger = require("../config/logger.cjs");
 const { friendRequestNotification, friendAcceptNotification,
-    updateAvatarNotification, otherNotification } = require("./notificationServices.cjs");
+    updateUserNotification, otherNotification } = require("./notificationServices.cjs");
 const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 
 // Lấy dữ liệu người dùng từ uid
@@ -93,6 +93,9 @@ async function setDisplayName(uid, displayName) {
         // Thông báo cho biết đã thay đổi tên hiển thị
         await otherNotification(uid, "Đã thay đổi tên hiển thị");
 
+        // Cập nhật tên hiển thị cho tất cả bạn bè
+        await updateUserNotification(uid, "display-name-update");
+
         return true;
     } catch (error) {
         logger.error("Lỗi khi cập nhật tên hiển thị:", error);
@@ -118,7 +121,7 @@ async function setAvatar(uid, avatar) {
         await otherNotification(uid, "Đã thay đổi ảnh đại diện");
 
         // Cập nhật ảnh đại diện cho tất cả bạn bè
-        await updateAvatarNotification(uid);
+        await updateUserNotification(uid, "avatar-update");
 
         return true;
     } catch (error) {
@@ -128,9 +131,10 @@ async function setAvatar(uid, avatar) {
 }
 
 // Hủy kết bạn
-async function removeFriend(uid, emailFriend) {
+async function removeFriend(uid, friendID) {
     try {
-        const friend = await admin.auth().getUserByEmail(emailFriend);
+        // Lấy thông tin bạn bè từ uid
+        const friend = await admin.auth().getUser(friendID);
 
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
@@ -155,9 +159,10 @@ async function removeFriend(uid, emailFriend) {
 }
 
 // Chấp nhận lời mời kết bạn
-async function acceptFriend(uid, emailFriend) {
+async function acceptFriend(uid, friendID) {
     try {
-        const friend = await admin.auth().getUserByEmail(emailFriend);
+        // Lấy thông tin bạn bè từ uid
+        const friend = await admin.auth().getUser(friendID);
 
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
@@ -174,7 +179,7 @@ async function acceptFriend(uid, emailFriend) {
         });
 
         // Thông báo cháp nhận lời mời kết bạn
-        await friendAcceptNotification(uid, emailFriend);
+        await friendAcceptNotification(uid, friendID);
 
         logger.debug("Đã chấp nhận lời mời kết bạn thành công.");
         return true;
@@ -185,9 +190,10 @@ async function acceptFriend(uid, emailFriend) {
 }
 
 // Gửi lời mời kết bạn
-async function friendRequest(uid, emailFriend) {
+async function friendRequest(uid, friendID) {
     try {
-        const friend = await admin.auth().getUserByEmail(emailFriend);
+        // Lấy thông tin bạn bè từ uid
+        const friend = await admin.auth().getUser(friendID);
 
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
@@ -197,13 +203,47 @@ async function friendRequest(uid, emailFriend) {
             friendRequests: admin.firestore.FieldValue.arrayUnion(friend.uid)
         });
 
+        // Thêm vào mảng friendReceived của friend
+        const friendRef = db.collection("users").doc(friend.uid);
+        await friendRef.update({
+            friendReceived: admin.firestore.FieldValue.arrayUnion(uid)
+        });
+
         // Gửi thông báo lời mời kết bạn
-        await friendRequestNotification(uid, emailFriend);
+        await friendRequestNotification(uid, friendID);
 
         logger.debug("Đã gửi lời mời kết bạn thành công.");
         return true;
     } catch (error) {
         logger.error("Lỗi khi gửi lời mời kết bạn:", error);
+        return false;
+    }
+}
+
+// Xóa lời mời kết bạn
+async function cancelFriend(uid, friendID) {
+    try {
+        // Lấy thông tin bạn bè từ uid
+        const friend = await admin.auth().getUser(friendID);
+
+        // Truy cập document của user trong Firestore
+        const userRef = db.collection("users").doc(uid);
+        const friendRef = db.collection("users").doc(friend.uid);
+
+        // Dùng arrayRemove để xóa friendId ra khỏi mảng friendReceived
+        await userRef.update({
+            friendReceived: admin.firestore.FieldValue.arrayRemove(friend.uid)
+        });
+
+        // Dùng arrayRemove để xóa myId ra khỏi mảng friendRequest của friend
+        await friendRef.update({
+            friendRequests: admin.firestore.FieldValue.arrayRemove(uid)
+        });
+
+        logger.debug("Đã hủy lời mời kết bạn thành công.");
+        return true;
+    } catch (error) {
+        logger.error("Lỗi khi hủy lời mời kết bạn:", error);
         return false;
     }
 }
@@ -223,6 +263,30 @@ async function updateLastOnline(uid) {
     }
 }
 
+// Lấy profile của một người dùng
+async function getProfileUser(uid) {
+    try {
+        const user = await db.collection("users").doc(uid).get();
+        const userData = user.data();
+
+        return {
+            displayName: userData.displayName,
+            email: userData.email,
+            avatar: userData.avatar,
+            listFriend: userData.friendList,
+            countFriends: userData.friendList.length,
+            biography: userData.biography,
+            gender: userData.gender,
+            birthday: userData.birthday,
+            socialLinks: userData.socialLinks,
+            createdAt: userData.createdAt,
+        };
+    } catch (error) {
+        logger.error("Lỗi khi lấy thông tin người dùng:", error);
+        return null;
+    }
+}
+
 module.exports = {
     getInfo,
     setPassword,
@@ -231,5 +295,7 @@ module.exports = {
     removeFriend,
     acceptFriend,
     friendRequest,
+    cancelFriend,
     updateLastOnline,
+    getProfileUser
 };

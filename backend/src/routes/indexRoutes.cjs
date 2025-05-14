@@ -1,15 +1,15 @@
 const express = require('express');
-const { getAvatarUser,
-    searchFriend,
+const { searchFriend,
     deleteNotification,
-    getWebsiteInfo
+    getWebsiteInfo,
+    getFriendStatus
 } = require("../controllers/indexController.cjs");
 
 const router = express.Router();
 
 router.post("/search", searchFriend);
-router.post("/get-avatar", getAvatarUser);
-router.post('delete-notifications', deleteNotification);
+router.post('delete-notification', deleteNotification);
 router.post('/get-website-info', getWebsiteInfo);
+router.post('/get-friend-status', getFriendStatus);
 
 module.exports = router;

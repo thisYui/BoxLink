@@ -5,12 +5,14 @@ const { getInfo,
     removeFriend,
     acceptFriend,
     friendRequest,
+    cancelFriend,
     updateLastOnline,
+    getProfileUser
 } = require("../services/userServices.cjs");
 const { deleteAuth } = require("../services/firebaseServices.cjs");
 const logger = require("../config/logger.cjs");
 
-// Lấy thông tin người dùng từ email
+// Lấy thông tin người dùng từ
 async function getUserInfo(req, res) {
     const { uid } = req.body;
     try {
@@ -54,9 +56,9 @@ async function changeDisplayName(req, res) {
 
 // Hủy kết bạn
 async function unfriend(req, res) {
-    const { uid, emailFriend } = req.body;
+    const { uid, friendID } = req.body;
     try {
-        const user = await removeFriend(uid, emailFriend);
+        const user = await removeFriend(uid, friendID);
         if (!user) return res.status(404).json({ message: 'Hủy kết bạn thất bại!' });
         res.status(200).json({ message: 'Đã hủy kết bạn!' });
 
@@ -68,9 +70,9 @@ async function unfriend(req, res) {
 
 // Gửi lời mời kết bạn
 async function sendFriendRequest(req, res) {
-    const { uid, emailFriend} = req.body;
+    const { uid, friendID} = req.body;
     try {
-        const user = await friendRequest(uid, emailFriend);
+        const user = await friendRequest(uid, friendID);
         if (!user) return res.status(404).json({ message: 'Gửi lời mời thất bại!' });
         // Gửi lời mời kết bạn
         res.status(200).json({ message: 'Lời mời kết bạn đã được gửi!' });
@@ -83,9 +85,9 @@ async function sendFriendRequest(req, res) {
 
 // Xác nhận lời mời kết bạn
 async function acceptFriendRequest(req, res) {
-    const { uid, emailFriend } = req.body;
+    const { uid, friendID } = req.body;
     try {
-        const user = await acceptFriend(uid, emailFriend);
+        const user = await acceptFriend(uid, friendID);
         if (!user) return res.status(404).json({ message: 'Chấp nhận lời mời thất bại!' });
         res.status(200).json({ message: 'Đã chấp nhận lời mời kết bạn!' });
 
@@ -97,9 +99,9 @@ async function acceptFriendRequest(req, res) {
 
 // Xóa lời mời kết bạn
 async function cancelFriendRequest(req, res) {
-    const { uid, emailFriend } = req.body;
+    const { uid, friendID } = req.body;
     try {
-        const user = await unfriend(uid, emailFriend);
+        const user = await cancelFriend(uid, friendID);
         if (!user) return res.status(404).json({ message: 'Hủy lời mời kết bạn thất bại!' });
         res.status(200).json({ message: 'Đã hủy lời mời kết bạn!' });
 
@@ -153,6 +155,20 @@ async function updateOnline(req, res) {
     }
 }
 
+// Lấy thông tin hồ sơ
+async function getProfile(req, res) {
+    const { uid } = req.body;
+    try {
+        const user = await getProfileUser(uid);
+        if (!user) return res.status(404).json({ message: 'Người dùng không tồn tại!' });
+        res.status(200).json(user);
+
+    } catch (error) {
+        logger.error('Lỗi khi lấy thông tin hồ sơ!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
     getUserInfo,
     changeAvatar,
@@ -164,4 +180,5 @@ module.exports = {
     cancelFriendRequest,
     deleteAccount,
     updateOnline,
+    getProfile
 };

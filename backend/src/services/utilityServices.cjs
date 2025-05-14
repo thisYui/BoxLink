@@ -56,62 +56,52 @@ async function getWebsitePreview(url) {
 }
 
 // Tìm kiếm người dùng
-async function searchUser(uid, email) {
+async function searchUserByID(uid, friendID) {
     try {
-        // Tìm user từ email
-        const userRecord = await admin.auth().getUserByEmail(email);
+        //
+        const userRef = db.collection("users").doc(uid).get();
+        const friendRef = db.collection("users").doc(friendID).get();
 
-        // Truy cập document của user trong Firestore
-        const userRef = db.collection("users").doc(userRecord.uid);
-        const userDoc = await userRef.get();
-
-        if (!userDoc.exists) {
-            logger.debug("Không tìm thấy người dùng trong Firestore.");
-            return null;
-        }
-
-        const userData = userDoc.data();
+        // Tìm trạng thái
+        let status = "none"; // Trạng thái mặc định là không có gì
 
         // Kiểm tra xem người dùng đã kết bạn hay chưa
-        const friendList = userData.friendList || [];  // List email
-        const friendRequests = userData.friendRequests || [];  // List email
-        const friendReceived = userData.friendReceived || [];  // List email
+        const friendList = userRef.friendList || [];  // List email
+        const friendRequests = userRef.friendRequests || [];  // List email
+        const friendReceived = userRef.friendReceived || [];  // List email
 
-        let status = "none"; // Trạng thái mặc định là không có gì
-        if (friendList.includes(email)) {
+        if (friendList.includes(friendID)) {
             status = "friend"; // Đã kết bạn
-        } else if (friendRequests.includes(email)) {
+        } else if (friendRequests.includes(friendID)) {
             status = "sender-request"; // Đã gửi lời mời kết bạn
-        } else if (friendReceived.includes(email)) {
+        } else if (friendReceived.includes(friendID)) {
             status = "receiver-request"; // Đã nhận lời mời kết bạn
         }
 
         return {
-            displayName: userData.displayName,
-            email: userRecord.email,
-            avatar: userData.avatar,
+            uid: friendRef.uid,
+            displayName: friendRef.displayName,
+            email: friendRef.email,
+            avatar: friendRef.avatar,
             status: status
         }
+
     } catch (error) {
         logger.warn("Lỗi khi tìm kiếm người dùng:", error);
         return null;
     }
 }
 
-// Lấy link ảnh đại diện
-async function getAvatar(friendID) {
+// Tìm kiếm người dùng
+async function searchUserByEmail(uid, email) {
     try {
-        const user = await db.collection("users").doc(friendID).get();
-        const userData = user.data();
+        // Tìm user từ email
+        const userRecord = await admin.auth().getUserByEmail(email);
 
-        if (!userData) {
-            logger.warn(`Không tìm thấy người dùng với ID: ${friendID}`);
-            return null;
-        }
+        return await searchUserByID(uid, userRecord.uid);
 
-        return userData.avatar;
     } catch (error) {
-        logger.error("Lỗi khi lấy ảnh đại diện:", error);
+        logger.warn("Lỗi khi tìm kiếm người dùng:", error);
         return null;
     }
 }
@@ -189,10 +179,43 @@ function formatRichTextFromPlain(text) {
     return result; // Trả về danh sách các phần tử mà không có block
 }
 
+// Trạng thái của tất cả bạn bè
+async function getLastOnlineObject(uid) {
+    try {
+        const userRef = db.collection("users").doc(uid);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            throw new Error("User not found");
+        }
+
+        const friendList = userDoc.data().friendList || [];
+
+        const lastOnlineObj = {};
+
+        await Promise.all(friendList.map(async (friendID) => {
+            const friendRef = db.collection("users").doc(friendID);
+            const friendDoc = await friendRef.get();
+
+            if (friendDoc.exists) {
+                const data = friendDoc.data();
+                lastOnlineObj[friendID] = data.lastOnline || null;
+            }
+        }));
+
+        return lastOnlineObj;
+    } catch (error) {
+        logger.warn("Lỗi khi lấy lastOnline bạn bè:", error);
+        return {};
+    }
+}
+
+
 module.exports = {
-    searchUser,
-    getAvatar,
+    searchUserByEmail,
+    searchUserByID,
     getWebsitePreview,
     getVideoDuration,
     formatRichTextFromPlain,
+    getLastOnlineObject
 }

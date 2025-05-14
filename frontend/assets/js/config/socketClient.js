@@ -1,3 +1,5 @@
+import { io } from "https://cdn.jsdelivr.net/npm/socket.io-client@4.6.1/dist/socket.io.esm.min.js";
+
 // Khởi tạo kết nối tới server
 const socket = io("http://localhost:3000");
 

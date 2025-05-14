@@ -1,0 +1,43 @@
+{
+  "menu": {
+    "logout": "Log Out",
+    "settings": "Settings",
+    "home": "Home",
+    "friend_list": "Friend List",
+    "profile": "Profile"
+  },
+  "chat": {
+    "title": "Chats",
+    "search_placeholder": "Search conversations..."
+  },
+  "friend": {
+    "title": "Friends",
+    "search_placeholder": "Search friends..."
+  },
+  "profile": {
+    "title": "My Profile",
+    "name": "Name",
+    "bio": "Bio",
+    "dob": "Date of Birth",
+    "gender": "Gender",
+    "email": "Email"
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": "Notifications",
+    "theme_mode": "Theme Mode",
+    "language": "Language",
+    "change_password": "Change Password",
+    "logout": "Log Out",
+    "delete_account": "Delete Account",
+    "select_theme": "Select Theme",
+    "light_theme": "Light Theme",
+    "dark_theme": "Dark Theme",
+    "custom_theme": "Custom Theme"
+  },
+  "message": {
+    "display_name": "User Name",
+    "last_seen": "Last seen today",
+    "placeholder": "Type a message..."
+  }
+}

@@ -8,7 +8,8 @@ const { getUserInfo,
     acceptFriendRequest,
     cancelFriendRequest,
     deleteAccount,
-    updateOnline
+    updateOnline,
+    getProfile
 } = require("../controllers/userController.cjs");
 
 const router = express.Router();
@@ -23,5 +24,6 @@ router.post("/reset-password", resetPassword);
 router.post("/unfriend", unfriend);
 router.post("/delete-account", deleteAccount);
 router.post("/update-online-time", updateOnline);
+router.post("/get-profile", getProfile);
 
 module.exports = router;

@@ -1,0 +1,43 @@
+{
+  "menu": {
+    "logout": "Đăng xuất",
+    "settings": "Cài đặt",
+    "home": "Trang chủ",
+    "friend_list": "Danh sách bạn bè",
+    "profile": "Hồ sơ"
+  },
+  "chat": {
+    "title": "Đoạn chat",
+    "search_placeholder": "Tìm cuộc trò chuyện..."
+  },
+  "friend": {
+    "title": "Bạn bè",
+    "search_placeholder": "Tìm bạn bè..."
+  },
+  "profile": {
+    "title": "Hồ sơ của tôi",
+    "name": "Tên",
+    "bio": "Tiểu sử",
+    "dob": "Ngày sinh",
+    "gender": "Giới tính",
+    "email": "Email"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "notifications": "Thông báo",
+    "theme_mode": "Chế độ giao diện",
+    "language": "Ngôn ngữ",
+    "change_password": "Đổi mật khẩu",
+    "logout": "Đăng xuất",
+    "delete_account": "Xóa tài khoản",
+    "select_theme": "Chọn giao diện",
+    "light_theme": "Giao diện sáng",
+    "dark_theme": "Giao diện tối",
+    "custom_theme": "Giao diện tùy chỉnh"
+  },
+  "message": {
+    "display_name": "Tên người dùng",
+    "last_seen": "Hoạt động gần đây",
+    "placeholder": "Nhập tin nhắn..."
+  }
+}
