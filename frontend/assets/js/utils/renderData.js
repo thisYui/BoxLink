@@ -60,11 +60,69 @@ function convertToDate(timeSend) {
     return new Date(timeWithNano);
 }
 
-// Ví dụ sử dụng:
+function formatRelativeTimeRead(inputDate) {
+    const now = new Date();
+    const date = new Date(inputDate);
+    const diffMs = now - date;
+    const diffHours = diffMs / (1000 * 60 * 60);
+    const diffDays = diffHours / 24;
+    const diffYears = now.getFullYear() - date.getFullYear();
 
+    if (diffHours < 24) {
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    } else if (diffDays < 10) {
+        return `${Math.floor(diffDays)} ngày trước`;
+    } else if (diffYears < 1) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        return `${day}/${month}`;
+    } else {
+        return `${date.getFullYear()}`;
+    }
+}
+
+function formatRelativeTimeOnline(inputDate) {
+    const now = new Date();
+    const date = new Date(inputDate);
+    const diffMs = now - date;
+
+    // Calculate time differences
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffYears = now.getFullYear() - date.getFullYear();
+
+    // Currently active (within last 5 minutes)
+    if (diffMs < 5 * 60 * 1000) {
+        return "Đang hoạt động";
+    }  else if (diffHours < 1) {
+        return `Hoạt động ${diffMinutes} phút trước`;
+    } else if (diffHours < 24) {
+        const remainingMinutes = diffMinutes % 60;
+        if (remainingMinutes > 0) {
+            return `Hoạt động ${diffHours} giờ ${remainingMinutes} phút trước`;
+        } else {
+            return `Hoạt động ${diffHours} giờ trước`;
+        }
+    } else if (diffDays < 10) {
+        return `Hoạt động ${diffDays} ngày trước`;
+    } else if (diffYears < 1) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        return `Hoạt động ngày ${day}/${month}`;
+    } else {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        return `Hoạt động ngày ${day}/${month}/${date.getFullYear()}`;
+    }
+}
 
 export {
     getDataFromDocument,
     convertFileToBinary,
-    convertToDate
+    convertToDate,
+    formatRelativeTimeRead,
+    formatRelativeTimeOnline
 };

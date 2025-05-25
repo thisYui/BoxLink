@@ -3,12 +3,23 @@ const { admin, db } = require("../config/firebaseConfig.cjs");
 const logger = require("../config/logger.cjs");
 const { deleteMessageNotification } = require("./notificationServices.cjs");
 
+// Đối tượng lưu trữ thông tin về tất cả các kết nối socket của user
+const userConnections = {};
+// Đối tượng lưu trữ các unsubscribe functions cho các listener
+const userListeners = {};
+
 // Lắng nghe thay đổi Firestore
-function listenToUserNotifications(userId, onNotificationChange) {
+function listenToUserNotifications(io, userId) {
+    // Nếu đã có listener cho user này, không cần tạo mới
+    if (userListeners[userId]) {
+        return;
+    }
+
     const userDocRef = db.collection("users").doc(userId);
 
     // Lắng nghe thay đổi Firestore với onSnapshot
-    userDocRef.onSnapshot((doc) => {
+    // Lưu unsubscribe function để có thể hủy listener khi không cần thiết
+    userListeners[userId] = userDocRef.onSnapshot((doc) => {
         if (!doc.exists) {
             logger.error("User document does not exist");
             return;
@@ -22,9 +33,14 @@ function listenToUserNotifications(userId, onNotificationChange) {
             }
         });
 
-        // Gọi callback để thông báo về client
-        if (onNotificationChange) {
-            onNotificationChange(notifications);
+        // Gửi thông báo cho tất cả kết nối của user này
+        if (userConnections[userId]) {
+            userConnections[userId].forEach(socketId => {
+                const socket = io.sockets.sockets.get(socketId);
+                if (socket) {
+                    socket.emit("notifications", {notifications});
+                }
+            });
         }
     });
 }
@@ -44,27 +60,50 @@ module.exports = function (server) {
             // Gắn userId vào socket để dùng sau
             socket.userId = uid;
 
-            // Gọi hàm lắng nghe thay đổi từ Firestore
-            listenToUserNotifications(uid, (notifications) => {
-                // Gửi thông báo cho đúng client
-                socket.emit("notifications", {
-                    notifications
-                });
-            });
+            // Thêm socketId vào danh sách kết nối của user
+            if (!userConnections[uid]) {
+                userConnections[uid] = [];
+            }
+            userConnections[uid].push(socket.id);
+
+            // Chỉ gọi hàm lắng nghe một lần cho mỗi userId
+            listenToUserNotifications(io, uid);
+
+            // Log số lượng kết nối hiện tại của user
+            logger.info(`User ${uid} now has ${userConnections[uid].length} active connections`);
         });
 
         socket.on("disconnect", () => {
             logger.info(`Client disconnected: ${socket.id}`);
 
-            // Gửi lên database time online cuối cùng
-            const userDocRef = db.collection("users").doc(socket.userId);
-            userDocRef.update({
-                lastOnline: admin.firestore.FieldValue.serverTimestamp()
-            }).then().catch((error) => {
-                logger.error(`Error updating last online time for user ${socket.userId}:`, error);
-            });
+            const userId = socket.userId;
+            if (userId && userConnections[userId]) {
+                // Xóa socket.id khỏi danh sách kết nối của user
+                userConnections[userId] = userConnections[userId].filter(id => id !== socket.id);
+
+                // Nếu user không còn kết nối nào, xóa listener để tiết kiệm tài nguyên
+                if (userConnections[userId].length === 0) {
+                    if (userListeners[userId]) {
+                        userListeners[userId]();  // Hủy listener
+                        delete userListeners[userId];
+                    }
+                    delete userConnections[userId];
+
+                    // Gửi lên database time online cuối cùng
+                    const userDocRef = db.collection("users").doc(userId);
+                    userDocRef.update({
+                        lastOnline: admin.firestore.FieldValue.serverTimestamp()
+                    }).then().catch((error) => {
+                        logger.error(`Error updating last online time for user ${userId}:`, error);
+                    });
+                } else {
+                    logger.info(`User ${userId} still has ${userConnections[userId].length} active connections`);
+                }
+            }
         });
     });
 
     logger.info("Socket.IO server initialized");
+    return io;  // Trả về io để có thể sử dụng ở nơi khác nếu cần
 };
+

@@ -42,6 +42,7 @@ async function getInfo(uid) {
                 uid: friendID,
                 avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
                 lastMessage: {
+                    senderID: chatData.lastMessage.senderId,
                     text: text,
                     timeSend: chatData.lastMessage.timestamp,
                     timeSeen: timeSeen
@@ -53,8 +54,6 @@ async function getInfo(uid) {
         }
 
         return {
-            displayName: userData.displayName,
-            email: userRecord.email,
             avatar: userData.avatar,
             friendList: friendList,
         }

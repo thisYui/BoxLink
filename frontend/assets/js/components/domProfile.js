@@ -42,4 +42,53 @@ function showMyProfile(profile) {
     // socialLinks: userData.socialLinks,
     // createdAt: userData.createdAt,
     // countFriendMutual: userData.countFriendMutual, (myprofile có giá trị -1)
+
+    // Tên, email, ảnh đại diện
+    document.querySelector('.display-name').textContent = profile.displayName || '';
+    document.querySelector('.email').textContent = profile.email || '';
+    document.querySelector('.biography').textContent = profile.biography || '';
+    document.querySelector('.profile-avatar').src = profile.avatar || 'assets/images/default-avatar.png';
+
+    // Giới tính
+    const genderDetail = document.querySelectorAll('.profile-detail')[0];
+    if (genderDetail) {
+        genderDetail.childNodes[1].textContent = ` ${profile.gender || ''}`;
+    }
+
+    // Ngày sinh
+    const birthdayDetail = document.querySelectorAll('.profile-detail')[1];
+    if (birthdayDetail) {
+        birthdayDetail.childNodes[1].textContent = ` ${profile.birthday || ''}`;
+    }
+
+    // Mạng xã hội
+    const socialDetail = document.querySelectorAll('.profile-detail')[2];
+    if (socialDetail) {
+        socialDetail.childNodes[1].innerHTML = ` ${profile.socialLinks || ''}`;
+    }
+
+    // Thống kê
+    const stats = document.querySelectorAll('.profile-stats .stat-value');
+    if (stats.length >= 3) {
+        stats[0].textContent = profile.createdAt || '';
+        stats[1].textContent = profile.countFriends?.toString() || '0';
+        stats[2].textContent = profile.listFriend?.length?.toString() || '0';
+    }
+
+    // Mutual friends (ẩn nếu là trang cá nhân)
+    const mutualCol = document.querySelector('.profile-stats .stat-column[hidden]');
+    if (mutualCol) {
+        if (profile.countFriendMutual === -1) {
+            mutualCol.setAttribute('hidden', true);
+        } else {
+            mutualCol.removeAttribute('hidden');
+            mutualCol.querySelector('.stat-value').textContent = profile.countFriendMutual.toString();
+        }
+    }
+
+    // Cập nhật nút sửa
+    const editBtn = document.querySelector('.edit-profile-btn');
+    if (editBtn) {
+        editBtn.textContent = 'Chỉnh sửa hồ sơ'; // hoặc giữ nguyên nếu dùng i18n
+    }
 }

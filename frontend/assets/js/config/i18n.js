@@ -21,13 +21,12 @@ async function loadLanguage(lang = 'en') {
     }
 
     // Chuyển đổi dữ liệu JSON thành đối tượng
-    const translations = await response.json();
+    window.translations = await response.json();
 
     // Hàm dịch đơn giản
     window.t = function(key) {
         return key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
     };
-
 
     // Áp dụng bản dịch lên HTML
     document.querySelectorAll('[data-i18n]').forEach(el => {

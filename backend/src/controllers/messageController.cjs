@@ -34,8 +34,8 @@ async function startChatSession(req, res) {
     const { uid, friendID } = req.body;
     try {
         // Tạo phiên chat
-        await startChat(uid, friendID);
-        res.status(200).json({ message: `Phiên chat được mở với ${friendID}` });
+        const chatID = await startChat(uid, friendID);
+        res.status(200).json({ chatID });
 
     } catch (error) {
         logger.error('Lỗi khi tạo phiên chat:', error);
@@ -45,10 +45,10 @@ async function startChatSession(req, res) {
 
 // Lấy tin nhắn và gửi đến firebase
 async function sendMessages(req, res) {
-    const { uid,  friendID, type, content, replyTo } = req.body;
+    const { chatID, uid,  friendID, type, content, replyTo } = req.body;
 
     try {
-        await sendMessage(uid, friendID, type, content, replyTo);
+        await sendMessage(chatID, uid, friendID, type, content, replyTo);
         res.status(200).json({ message: 'Tin nhắn đã được gửi thành công!' });
 
     } catch (error) {
@@ -59,8 +59,10 @@ async function sendMessages(req, res) {
 
 // Lấy tin nhắn
 async function fetchMessages(req, res) {
+    const { chatID } = req.body;
+
     try {
-        const messages = await getMessages();
+        const messages = await getMessages(chatID);
         res.status(200).json(messages);
 
     } catch (error) {
@@ -72,6 +74,7 @@ async function fetchMessages(req, res) {
 // Lấy tin nhắn duy nhất
 async function getSingleMessage(req, res) {
     const { uid, srcID, messageID } = req.body;
+
     try {
         const message = await getSingle(uid, srcID, messageID);
         res.status(200).json(message);
@@ -84,8 +87,10 @@ async function getSingleMessage(req, res) {
 
 // Tải thêm tin nhắn
 async function loadMoreMessages(req, res) {
+    const { chatID } = req.body;
+
     try {
-        const messages = await loadMore();
+        const messages = await loadMore(chatID);
         res.status(200).json(messages);
 
     } catch (error) {

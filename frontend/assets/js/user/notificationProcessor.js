@@ -1,17 +1,15 @@
 import { addMessageToChatBoxServer } from '../utils/renderMessage.js';
 import { getSingleMessage } from '../fetchers/chatFetcher.js';
 import { searchFriendByID } from '../fetchers/request.js';
-import { addMessageToChatBoxList } from '../utils/chatProcessor.js';
+import { fixMessageToChatBoxList } from '../utils/chatProcessor.js';
+import { moveChatIDToFirstInListBox } from '../utils/chatProcessor.js';
+import { convertToDate } from '../utils/renderData.js';
 
 let turnOffNotification = false;
 
 window.processingNotification = async function (notification) {
     // Xử lí theo loại notification
     const { typeNotification, srcID, text, timeSend } = notification;  // text chứa id document
-    console.log("Notification type:", typeNotification);
-    console.log("Notification srcID:", srcID);
-    console.log("Notification text:", text);
-    console.log("Notification timeSend:", timeSend);
 
     if (turnOffNotification === false) {
         playNotificationSound();  // Phát âm thanh thông báo
@@ -20,14 +18,17 @@ window.processingNotification = async function (notification) {
     if (typeNotification === "message") {
         // Theo srcID để tìm ra người gửi lấy thông tin
         const msg = await getSingleMessage(srcID, text);  // text chứa id document
+        msg.timeSend = convertToDate(msg.timeSend);  // Chuyển đổi thời gian gửi tin nhắn
+        moveChatIDToFirstInListBox(msg.senderId);
 
         // Đưa tin nhắn vào chat cho 2 trường hợp
         if (msg.senderId === window.lastClickedUser) {
             // 1. Nếu chat là chat đang mở
+            fixMessageToChatBoxList(msg.senderId, msg, true);
             addMessageToChatBoxServer(msg);  // Thêm tin nhắn vào chat box
         } else {
             // 2. Nếu chat không phải là chat đang mở
-            addMessageToChatBoxList(msg);  // Thêm tin nhắn vào chat box
+            fixMessageToChatBoxList(msg.senderId, msg);  // Thêm tin nhắn vào chat box
         }
 
     } else if (typeNotification === "friend-request"
@@ -56,7 +57,7 @@ window.processingNotification = async function (notification) {
         // Tìm kiếm srcID
         // thay src = displayName
 
-    }  else if (typeNotification === "other") {
+    } else if (typeNotification === "other") {
         // Xử lý thông báo khác: cập nhật avatars, tên hiển thị, hoặc thông báo hệ thống
         const text = notification.text; // Lấy thông báo từ text
         const timeSend = notification.timeSend; // Lấy thời gian gửi thông báo từ timeSend
@@ -93,7 +94,7 @@ function updateUnreadCount(type) {
     // type = 'less' thì giảm đi 1
 }
 
-function playNotificationSound(src = 'level-up-191997.mp3') {
+function playNotificationSound(src = 'assets/sound/level-up-191997.mp3') {
     const audio = new Audio(src);
     audio.play().catch((error) => {
         console.warn('không thể phát âm thanh:', error);
@@ -101,12 +102,7 @@ function playNotificationSound(src = 'level-up-191997.mp3') {
 }
 
 function turnOnOrOffNotification() {
-    // Nếu đang tắt thì bật
-    if (turnOffNotification === true) {
-        turnOffNotification = false;
-    } else {
-        turnOffNotification = true;
-    }
+    turnOffNotification = turnOffNotification !== true;
 }
 
 export {

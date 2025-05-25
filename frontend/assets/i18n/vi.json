@@ -8,7 +8,9 @@
   },
   "chat": {
     "title": "Đoạn chat",
-    "search_placeholder": "Tìm cuộc trò chuyện..."
+    "search_placeholder": "Tìm cuộc trò chuyện...",
+    "unread": "Chưa xem",
+    "read": "Đã xem"
   },
   "friend": {
     "title": "Bạn bè",
@@ -20,8 +22,19 @@
     "bio": "Tiểu sử",
     "dob": "Ngày sinh",
     "gender": "Giới tính",
-    "email": "Email"
+    "email": "Email",
+    "displayName": "Tên hiển thị",
+    "biography": "Tiểu sử",
+    "genderLabel": "Giới tính:",
+    "birthdayLabel": "Ngày sinh:",
+    "socialLinkLabel": "Liên kết khác:",
+    "statStartDate": "Từ ngày",
+    "statFriends": "Bạn bè",
+    "statDays": "Số ngày",
+    "mutualFriends": "Bạn chung",
+    "editButton": "Chỉnh sửa hồ sơ"
   },
+
   "settings": {
     "title": "Cài đặt",
     "notifications": "Thông báo",

@@ -8,7 +8,9 @@
   },
   "chat": {
     "title": "Chats",
-    "search_placeholder": "Search conversations..."
+    "search_placeholder": "Search conversations...",
+    "unread": "Unread",
+    "read": "Read"
   },
   "friend": {
     "title": "Friends",
@@ -20,8 +22,19 @@
     "bio": "Bio",
     "dob": "Date of Birth",
     "gender": "Gender",
-    "email": "Email"
+    "displayName": "Display name",
+    "email": "Email",
+    "biography": "Biography",
+    "genderLabel": "Gender:",
+    "birthdayLabel": "BirthDay:",
+    "socialLinkLabel": "Sociallink:",
+    "statStartDate": "Start Date",
+    "statFriends": "Friends",
+    "statDays": "Days",
+    "mutualFriends": "Mutual Friends",
+    "editButton": "Edit profile"
   },
+
   "settings": {
     "title": "Settings",
     "notifications": "Notifications",

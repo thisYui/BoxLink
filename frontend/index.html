@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Web</title>
-    <link id="theme-style" rel="stylesheet" href="assets/css/light-theme.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link id="theme-style" rel="stylesheet" href="assets/css/light-theme.css">
     <script src="https://kit.fontawesome.com/05266ada08.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -27,19 +27,17 @@
         <div class="menu-bar">
             <div class="menu-bar-button display-option menu-bar-button-choosen" id="Home" onclick="changeTab('Home')">
                 <i class="fas fa-home"></i>
-                <p data-i18n="menu.home"></p>
             </div>
-            <div class="menu-bar-button display-option" id="FriendList" onclick="changeTab('FriendList')">
+            <div class="menu-bar-button display-option" id="ChatList" onclick="changeTab('ChatList')">
                 <i class="fas fa-user-group"></i>
-                <p data-i18n="menu.friend_list"></p>
             </div>
+        </div>
+        <div class="menu-bar">
             <div class="menu-bar-button display-option" id="Profile" onclick="changeTab('Profile')">
                 <i class="fas fa-user"></i>
-                <p data-i18n="menu.profile"></p>
             </div>
             <div class="menu-bar-button display-option" id="Settings" onclick="changeTab('Settings')">
                 <i class="fas fa-cog"></i>
-                <p data-i18n="menu.settings"></p>
             </div>
         </div>
     </div>
@@ -48,15 +46,8 @@
     <div class="chat-container" id="chatContainer">
         <div class="chat-container-header">
             <h2 class="" data-i18n="chat.title"></h2>
-            <div class="chat-container-header-newchat">
-                <i class="fa-regular fa-pen-to-square"></i>
-            </div>
         </div>
         <div class="chat-container-body">
-            <div class="chat-container-body-search">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="chat-container-body-finding" data-i18n-placeholder="chat.search_placeholder" placeholder="Search conversations...">
-            </div>
             <div class="chat-box-area">
                 <!-- Chat boxes will be rendered here -->
             </div>
@@ -72,55 +63,52 @@
             <div class="profile-avatar-section">
                 <div class="profile-avatar-wrapper">
                     <img src="assets/images/default-avatar.png" alt="Profile Avatar" class="profile-avatar">
-                    <div class="profile-avatar-edit">
-                        <i class="fas fa-camera"></i>
-                    </div>
                 </div>
             </div>
-            <div class="profile-info-section">
-                <div class="profile-info-item">
-                    <label data-i18n="profile.name">Name</label>
-                    <div class="profile-info-value">
-                        <span id="profileName">John Doe</span>
-                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                    </div>
+
+            <div class="profile-info">
+                <h1 class="display-name" data-i18n="profile.displayName"></h1>
+                <p class="email" data-i18n="profile.email"></p>
+                <p class="biography" data-i18n="profile.biography"></p>
+                <p class="profile-detail">
+                    <span class="detail-label" data-i18n="profile.genderLabel"></span> ...
+                </p>
+                <p class="profile-detail">
+                    <span class="detail-label" data-i18n="profile.birthdayLabel"></span>
+                </p>
+                <p class="profile-detail">
+                    <span class="detail-label" data-i18n="profile.socialLinkLabel"></span> ....
+                </p>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-column">
+                    <h3 class="stat-label" data-i18n="profile.statStartDate"></h3>
+                    <p class="stat-value">01/01/2025</p>
                 </div>
-                <div class="profile-info-item">
-                    <label data-i18n="profile.bio">Bio</label>
-                    <div class="profile-info-value">
-                        <span id="profileBio">Hello world! I'm using Chat Web.</span>
-                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                    </div>
+                <div class="stat-column">
+                    <h3 class="stat-label" data-i18n="profile.statFriends"></h3>
+                    <p class="stat-value">0</p>
                 </div>
-                <div class="profile-info-item">
-                    <label data-i18n="profile.dob">Date of Birth</label>
-                    <div class="profile-info-value">
-                        <span id="profileDob">01/01/1990</span>
-                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                    </div>
+                <div class="stat-column">
+                    <h3 class="stat-label" data-i18n="profile.statDays"></h3>
+                    <p class="stat-value">0</p>
                 </div>
-                <div class="profile-info-item">
-                    <label data-i18n="profile.gender">Gender</label>
-                    <div class="profile-info-value">
-                        <span id="profileGender">Male</span>
-                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
-                    </div>
-                </div>
-                <div class="profile-info-item">
-                    <label data-i18n="profile.email">Email</label>
-                    <div class="profile-info-value">
-                        <span id="profileEmail">john.doe@example.com</span>
-                        <button class="edit-btn disabled"><i class="fas fa-lock"></i></button>
-                    </div>
+                <div class="stat-column" hidden>
+                    <h3 class="stat-label" data-i18n="profile.mutualFriends"></h3>
+                    <p class="stat-value">0</p>
                 </div>
             </div>
+
+            <button class="edit-profile-btn" data-i18n="profile.editButton"></button>
         </div>
     </div>
+
 
     <!-- Settings Container -->
     <div class="settings-container hidden" id="settingsContainer">
         <div class="settings-header">
-            <h2 data-i18n="settings.title">Settings</h2>
+            <h2 data-i18n="settings.title"></h2>
         </div>
         <div class="settings-body">
             <div class="settings-icon">
@@ -130,42 +118,42 @@
                 <div class="settings-option">
                     <div class="settings-option-text">
                         <i class="fas fa-bell"></i>
-                        <span data-i18n="settings.notifications">Notifications</span>
+                        <span data-i18n="settings.notifications"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
                 <div class="settings-option" id="themeToggle">
                     <div class="settings-option-text">
                         <i class="fas fa-moon"></i>
-                        <span data-i18n="settings.theme_mode">Theme Mode</span>
+                        <span data-i18n="settings.theme_mode"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
                 <div class="settings-option">
                     <div class="settings-option-text">
                         <i class="fas fa-globe"></i>
-                        <span data-i18n="settings.language">Language</span>
+                        <span data-i18n="settings.language"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
                 <div class="settings-option">
                     <div class="settings-option-text">
                         <i class="fas fa-key"></i>
-                        <span data-i18n="settings.change_password">Change Password</span>
+                        <span data-i18n="settings.change_password"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
                 <div class="settings-option danger">
                     <div class="settings-option-text">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span data-i18n="settings.logout">Log Out</span>
+                        <span data-i18n="settings.logout"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
                 <div class="settings-option danger">
                     <div class="settings-option-text">
                         <i class="fas fa-trash-alt"></i>
-                        <span data-i18n="settings.delete_account">Delete Account</span>
+                        <span data-i18n="settings.delete_account"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
@@ -173,22 +161,16 @@
         </div>
     </div>
 
-    <div class="message-container" id="messageContainerAll">
+    <div class="message-container" id="messageGroupContainer">
         <div class="message-container-header">
             <div class="chat-info">
                 <img src="assets/images/default-avatar.png" alt="" class="chat-info-avatar" id="messageContainerAvatar">
                 <div class="chat-info-display">
-                    <h4 class="chat-info-display-name" data-i18n="message.display_name">User Name</h4>
-                    <p class="chat-info-display-actived" data-i18n="message.last_seen">Last seen today</p>
+                    <h4 class="chat-info-display-name" data-i18n="message.display_name"></h4>
+                    <p class="chat-info-display-actived" data-i18n="message.last_seen"></p>
                 </div>
             </div>
             <div class="options">
-                <div class="options-button">
-                    <i class="fa-solid fa-phone"></i>
-                </div>
-                <div class="options-button">
-                    <i class="fa-solid fa-video"></i>
-                </div>
                 <div class="options-button">
                     <i class="fa-solid fa-ellipsis"></i>
                 </div>
@@ -286,6 +268,8 @@
     <script type="module" defer src="assets/js/config/socketClient.js"></script>
     <script type="module" defer src="assets/js/components/domHome.js"></script>
     <script type="module" defer src="assets/js/components/buttonHome.js"></script>
+    <script type="module" defer src="assets/js/components/domProfile.js"></script>
+    <script type="module" defer src="assets/js/components/domSetting.js"></script>
     <script type="module" defer src="assets/js/script.js"></script>
 
 </body>

@@ -109,6 +109,8 @@ async function createChat(userId, emailFriend) {
         });
 
         logger.debug("Cuộc trò chuyện đã được tạo thành công.");
+
+        return chatRef.id; // Trả về ID của cuộc trò chuyện mới tạo
     } catch (error) {
         logger.error("Lỗi khi tạo cuộc trò chuyện:", error);
         throw error;

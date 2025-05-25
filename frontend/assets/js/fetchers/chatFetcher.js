@@ -1,7 +1,7 @@
 // Tạo phiên mới với user được chọn thông qua email
 async function startChatSession(friendID) {
     try {
-        return (await fetch("http://localhost:3000/api/start-chat-session", {
+        const response  = await fetch("http://localhost:3000/api/start-chat-session", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -10,7 +10,14 @@ async function startChatSession(friendID) {
                 uid: localStorage.getItem("uid"),  // Lấy uid từ localStorage
                 friendID: friendID
             })
-        })).ok;
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        return await response.json();  // Trả về ID của cuộc trò chuyện mới
+
     } catch (error) {
         console.error("Error starting chat session:", error);
     }
@@ -20,10 +27,13 @@ async function startChatSession(friendID) {
 async function fetchMessages() {
     try {
         const response = await fetch("http://localhost:3000/api/fetch-messages", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            body: JSON.stringify({
+                chatID: sessionStorage.getItem("chatID"),  // Lấy chatID từ sessionStorage
+            })
         });
 
         if (!response.ok) {
@@ -70,6 +80,7 @@ async function sendMessages(friendID, type, content, replyTo) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                chatID: sessionStorage.getItem("chatID"),  // Lấy chatID từ sessionStorage
                 uid: localStorage.getItem("uid"),  // Lấy uid từ localStorage
                 friendID: friendID,
                 type: type,
@@ -86,10 +97,13 @@ async function sendMessages(friendID, type, content, replyTo) {
 async function loadMoreMessages() {
     try {
         const response = await fetch("http://localhost:3000/api/load-more-messages", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            body: JSON.stringify({
+                chatID: sessionStorage.getItem("chatID"),  // Lấy chatID từ sessionStorage
+            })
         });
 
         if (!response.ok) {

@@ -1,5 +1,6 @@
-import { getHyperlinkInfo } from '../fetchers/request.js';
-import { addMessageToChatBoxList } from './chatProcessor.js';
+import {getHyperlinkInfo} from '../fetchers/request.js';
+import {fixMessageToChatBoxList, moveChatIDToFirstInListBox} from './chatProcessor.js';
+import { formatRelativeTimeRead, formatRelativeTimeOnline } from "./renderData.js";
 
 // Chỉ dùng cho server
 function addMessageToChatBoxServer(message) {
@@ -42,12 +43,12 @@ function addMessageToChatBoxServer(message) {
     } else {
         console.warn("Loại tin nhắn không xác định:", type);
     }
-
-    addMessageToChatBoxList(message);
 }
 
 // Chỉ dùng cho client
 function addMessageToChatBoxClient(type, content, replyTo) {
+    moveChatIDToFirstInListBox(sessionStorage.getItem("lastClickedUser"));  // Di chuyển đoạn chat của người gửi lên đầu danh sách
+
     const timeSend = new Date().toISOString();  // Thời gian gửi tin nhắn
     const senderID = localStorage.getItem("uid");  // ID người gửi
 
@@ -92,17 +93,32 @@ function addMessageToChatBoxClient(type, content, replyTo) {
 
     const tempMessage = {
         senderID: senderID,
-        timeSend: new Date().toDateString(),
+        timeSend: new Date(),
         type: type,
         replyTo: "",
-        content: content
+        content: {
+            text: content
+        }
     }
 
-    addMessageToChatBoxList(tempMessage);  // Thêm tin nhắn vào danh sách chat box
-    document.getElementById( "message-input").value = '';
+    fixMessageToChatBoxList(sessionStorage.getItem("lastClickedUser"), tempMessage);  // Sửa đổi tin nhắn trong chat box danh sách
+    document.getElementById("message-input").value = '';
 }
 
-// Thêm 1 tin nhắn vào đoạn chat
+function addTimestampToMessage(messageDiv, timeSend) {
+    const timeElement = document.createElement("span");
+    timeElement.classList.add("message-time");
+
+    // Format the time
+    const date = new Date(timeSend);
+    timeElement.textContent = formatRelativeTimeRead(date);
+    timeElement.style.fontSize = '12px';
+    timeElement.style.color = '#888';
+    timeElement.style.marginLeft = '8px';
+
+    messageDiv.appendChild(timeElement);
+}
+
 function addTextMessageToChatBox(textMessage, senderID, type, timeSend, reply) {
     const container = document.getElementById("messageContainer");
     const div = document.createElement("div");
@@ -118,8 +134,15 @@ function addTextMessageToChatBox(textMessage, senderID, type, timeSend, reply) {
         div.classList.add("sender");
     }
 
+    // Create message content
     p.textContent = textMessage;
     div.appendChild(p);
+
+    // Add a timestamp if provided
+    if (timeSend) {
+        addTimestampToMessage(div, timeSend);
+    }
+
     container.appendChild(div);
 }
 
@@ -325,7 +348,7 @@ function isRichText(inputText) {
 export {
     addMessageToChatBoxClient,
     addMessageToChatBoxServer,
-    addMessageToChatBoxList,
+    fixMessageToChatBoxList,
     isRichText
 };
 

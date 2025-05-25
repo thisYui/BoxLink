@@ -5,9 +5,6 @@ const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 const mine = require("mime-types");
 const { getWebsitePreview, getVideoDuration,formatRichTextFromPlain } = require("./utilityServices.cjs");
 
-let chatCurrent = null;  // Tại một thời điểm chỉ có một cuộc trò chuyện đang mở
-let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
-
 /*
 2. Cloud Firestore:
   Dung lượng lưu trữ: 1 GiB
@@ -103,7 +100,7 @@ let lastVisible = null;  // Lưu lại tin nhắn cuối cùng để load thêm
 */
 
 // Cấu trúc lại dữ liệu
-async function formatMessage(type, content) {
+async function formatMessage(type, content, chatID) {
     if (type === "text" || type === "system") {
         return {
             text: content,
@@ -119,7 +116,7 @@ async function formatMessage(type, content) {
     }
 
     // Chỉ còn lại các loại dữ liệu dạng file
-    const filePath = `${chatCurrent}/${content.fileName}`;
+    const filePath = `${chatID}/${content.fileName}`;
     await uploadFile(content.date, filePath); // Tải ảnh lên Firebase Storage
 
     if (type === "image") {
@@ -183,11 +180,13 @@ async function findChat(uid, friendID) {
 //Tìm kiếm cuộc trò chuyện giữa hai người tạo phiên làm việc mới
 async function startChat(uid, friendID){
     try {
-        chatCurrent = await findChat(uid, friendID);
+        const chatID = await findChat(uid, friendID);
         // Cập nhật thời gian trò chuyện
-        await db.collection("chats").doc(chatCurrent).update({
+        await db.collection("chats").doc(chatID).update({
             [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp()
         });
+        
+        return chatID; // Trả về ID của cuộc trò chuyện hiện tại
 
     } catch (error) {
         logger.error("Lỗi khi bắt đầu trò chuyện:", error);
@@ -196,9 +195,9 @@ async function startChat(uid, friendID){
 }
 
 // Gửi tin nhắn và đưa tin nhắn lên Firebase
-async function sendMessage(uid, friendID, type, content, replyTo) {
+async function sendMessage(chatID, uid, friendID, type, content, replyTo) {
     try {
-        const formattedMessage = await formatMessage(type, content);
+        const formattedMessage = await formatMessage(type, content, chatID);
 
         // Định dạng tin nhắn
         const message = {
@@ -210,17 +209,17 @@ async function sendMessage(uid, friendID, type, content, replyTo) {
         };
 
         // Thêm tin nhắn vào subcollection "messages"
-        await db.collection("chats").doc(chatCurrent).collection("messages").add(message);
+        await db.collection("chats").doc(chatID).collection("messages").add(message);
 
         // Lây ra id của tin nhắn vừa gửi
-        const messageDoc = await db.collection("chats").doc(chatCurrent).collection("messages").orderBy("timestamp", "desc").limit(1).get();
+        const messageDoc = await db.collection("chats").doc(chatID).collection("messages").orderBy("timestamp", "desc").limit(1).get();
         const messID = messageDoc.docs[0].id;
 
         // Gửi thông báo đến người nhận
         await messageNotification(uid, friendID, messID);
 
         // Cập nhật tin nhắn cuối cùng và thời gian gửi
-        await db.collection("chats").doc(chatCurrent).update({
+        await db.collection("chats").doc(chatID).update({
             lastMessage: message,
             [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp(),
         });
@@ -231,17 +230,15 @@ async function sendMessage(uid, friendID, type, content, replyTo) {
     }
 }
 
-async function getMessages(limit = 100) {
+async function getMessages(chatID, limit = 100) {
     try {
-        const messagesRef = db.collection("chats").doc(chatCurrent).collection("messages");
+        const messagesRef = db.collection("chats").doc(chatID).collection("messages");
         const snapshot = await messagesRef.orderBy("timestamp", "desc").limit(limit).get();
 
         const messages = [];
         snapshot.forEach(doc => {
             messages.push({ id: doc.id, ...doc.data() });
         });
-
-        lastVisible =  snapshot.docs[snapshot.docs.length - 1] || null; // Lưu lại tin nhắn cuối cùng để load thêm
 
         return messages.reverse(); // Hiển thị từ cũ đến mới
     } catch (error) {
@@ -266,10 +263,10 @@ async function getSingle(uid, srcID, messageID) {
 }
 
 // Lấy thêm dữ liệu từ messages
-async function loadMore(limit = 100) {
+async function loadMore(chatID, limit = 100) {
     const messagesRef = db
         .collection("chats")
-        .doc(chatCurrent)
+        .doc(chatID)
         .collection("messages")
         .orderBy("timestamp", "desc")
         .startAfter(lastVisible)
@@ -281,8 +278,6 @@ async function loadMore(limit = 100) {
     snapshot.forEach(doc => {
         messages.push({ id: doc.id, ...doc.data() });
     });
-
-    lastVisible = snapshot.docs[snapshot.docs.length - 1] || null; // Lưu lại tin nhắn cuối cùng để load thêm
 
     return messages.reverse(); // Hiển thị từ cũ đến mới
 }

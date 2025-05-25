@@ -26,23 +26,24 @@ body {
 /* Menu Styles */
 .menu {
     display: flex;
-    justify-content: space-between;
+    flex-shrink: 0;
+    justify-content: flex-start;
     align-items: center;
     height: 100%;
     min-width: 60px;
-    padding: 15px 5px;
-    display: flex;
+    gap: 10px;
+    padding: 15px 15px;
     flex-direction: column;
-    margin: 0 5px;
 }
 
 .menu-bar {
     display: flex;
+    border-radius: 25px;
+    padding: 15px 15px;
     flex-direction: column;
     align-items: center;
     width: 100%;
     height: fit-content;
-    margin: 10px 0;
     position: relative;
 }
 
@@ -66,7 +67,6 @@ body {
     height: fit-content;
     position: absolute;
     right: -210px;
-    display: block;
     padding: 10px 15px;
     border-radius: 15px;
     display: none;
@@ -96,40 +96,42 @@ body {
 }
 
 .logOutBox-button p {
-    margin: auto;
-    margin-left: 10px;
+    margin: auto auto auto 10px;
 }
 
 .menu-bar-button {
     display: flex;
     align-items: center;
+    justify-content: center; /* canh giữa ngang */
     width: 100%;
     margin: 5px 0;
     overflow: hidden;
     cursor: pointer;
     border-radius: 10px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-.menu-bar-button:hover {
-    transform: translateX(3px);
+.menu-bar-button:hover i {
+    transform: scale(1.3); /* phóng to icon */
 }
 
+/* Icon cơ bản */
 .menu-bar-button i {
     font-size: 20px;
     margin: 10px 0;
     padding: 10px;
-    margin-right: 10px;
-    transition: color 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
 
+/* Nếu muốn hiệu ứng khi được chọn */
 .menu-bar-button-choosen i {
     border-radius: 40%;
 }
 
 /* Container Styles - Common */
-.chat-container, .list-container, .profile-container, .settings-container {
-    width: 370px;
+.chat-container {
+    width: 400px;
+    flex-shrink: 0.1;
     min-width: 200px;
     height: 100%;
     border-radius: 25px;
@@ -139,6 +141,23 @@ body {
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+.profile-container, .settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+    padding: 20px 15px;
+    width: 100%;
+    height: 100%;
+    margin: 10px;
+    position: relative;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+
+
 .hidden {
     display: none;
     opacity: 0;
@@ -146,14 +165,23 @@ body {
 }
 
 /* Chat Container Styles */
-.chat-container-header, .list-container-header, .profile-header, .settings-header {
+.chat-container-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin: 10px 20px;
 }
 
-.chat-container-header-newchat, .list-container-header-add {
+.profile-header, .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-self: flex-start;
+    margin-left: 25px;
+    margin-top: 25px;
+    font-size: 24px;
+}
+
+.chat-container-header-newchat {
     border-radius: 100%;
     padding: 10px;
     width: 40px;
@@ -166,11 +194,11 @@ body {
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.chat-container-header-newchat:hover, .list-container-header-add:hover {
+.chat-container-header-newchat:hover {
     transform: rotate(15deg);
 }
 
-.chat-container-header-newchat i, .list-container-header-add i {
+.chat-container-header-newchat i{
     font-size: 20px;
 }
 
@@ -243,11 +271,11 @@ body {
 }
 
 /* Message Container Styles */
-.message-container {
-    width: 740px;
+.message-container {;
     min-width: 400px;
     height: 100%;
-    margin: 10px auto;
+    width: 100%;
+    margin: 10px 20px;
     border-radius: 20px;
     padding: 5px 20px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
@@ -413,7 +441,7 @@ body {
 }
 
 .form-text {
-    width: 500px;
+    width: 90%;
     border-radius: 50px;
     align-items: center;
     display: flex;
@@ -421,8 +449,9 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+
 #message-input {
-    width: 450px;
+    width: 100%;
     min-width: 250px;
     height: 100%;
     outline: none;
@@ -464,8 +493,8 @@ body {
 
 .profile-avatar-wrapper {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 160px;
+    height: 160px;
 }
 
 .profile-avatar {
@@ -474,6 +503,82 @@ body {
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid var(--light-green);
+}
+
+.profile-info {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.display-name {
+    font-size: 2.5rem;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.email {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.biography {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.profile-detail {
+    font-size: 1rem;
+    margin: 6px 0;
+}
+
+.detail-label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.profile-stats {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    border-top: 1px solid rgba(128, 128, 128, 0.3);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    padding: 20px 0;
+}
+
+.stat-column {
+    text-align: center;
+    width: 33%;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.edit-profile-btn {
+    padding: 10px 30px;
+    background: none;
+    border: 1px solid var(--light-green);
+    color: var(--light-green);
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-profile-btn:hover {
+    background-color: var(--light-green);
+    color: white;
 }
 
 .profile-avatar-edit {
@@ -563,11 +668,11 @@ body {
 }
 
 .settings-icon {
-    font-size: 60px;
+    font-size: 120px;
     margin-bottom: 30px;
     color: var(--light-green);
-    width: 100px;
-    height: 100px;
+    width: 160px;
+    height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -809,5 +914,14 @@ body {
 
     .message-container-body-message-area {
         height: calc(100% - 100px);
+    }
+
+    .profile-stats {
+        flex-direction: column;
+    }
+
+    .stat-column {
+        width: 100%;
+        margin: 10px 0;
     }
 }

@@ -10,6 +10,7 @@ loadLanguage(getUserLanguage()).then();
 // Lấy dữ liệu từ database
 loadPage().then();
 
+// Load
 setInterval(() => {
     updateOnlineTime().catch(console.error);
 }, 60 * 1000);
@@ -60,6 +61,7 @@ document.getElementById("search-button").addEventListener("click", async (event)
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (event) => {
+        console.log("gjhfdgdfghjfd");
         const element = event.target.closest(".chat-box-area-box");
         
         // Kiểm tra nếu click vào phần tử có class chat-box-area-box
@@ -92,44 +94,90 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-});
 
+    // Set up event listeners for the profile edit buttons
+    setupProfileEditButtons();
 
-/**CHÚ Ý:
- * Các hàm sau đây chưa đc kiểm chứng
- */
+    // Set up theme toggle functionality
+    setupThemeToggle();
 
- // Manage tab switching functionality
-window.changeTab = function (tabName) {
-    // Hide all containers
-    document.getElementById('chatContainer').classList.add('hidden');
-    document.getElementById('messageContainerAll').classList.add('hidden');
-    document.getElementById('profileContainer').classList.add('hidden');
-    document.getElementById('settingsContainer').classList.add('hidden');
+    // Set up modal closers
+    setupModalClosers();
 
-    // Remove active class from all menu buttons
-    const menuButtons = document.querySelectorAll('.menu-bar-button');
-    menuButtons.forEach(button => {
-        button.classList.remove('menu-bar-button-choosen');
+    // Set up form submission handling
+    setupEditFormSubmission();
+
+    // Load saved theme
+    loadSavedTheme();
+
+    // Set up event handler for Settings button in logout box
+    document.getElementById('SettingButton').addEventListener('click', function() {
+        changeTab('Settings');
+        document.getElementById('logOutBox').classList.add('hidden');
     });
 
-    // Show selected container and highlight the corresponding menu button
-    if (tabName === 'Home') {
-        document.getElementById('chatContainer').classList.remove('hidden');
-        document.getElementById('messageContainerAll').classList.remove('hidden');
-        document.getElementById('Home').classList.add('menu-bar-button-choosen');
-    } else if (tabName === 'FriendList') {
-        document.getElementById('friendListContainer').classList.remove('hidden');
-        document.getElementById('FriendList').classList.add('menu-bar-button-choosen');
-    } else if (tabName === 'Profile') {
-        document.getElementById('profileContainer').classList.remove('hidden');
-        document.getElementById('Profile').classList.add('menu-bar-button-choosen');
-        loadProfileData(); // Load profile data when switching to profile tab
-    } else if (tabName === 'Settings') {
-        document.getElementById('settingsContainer').classList.remove('hidden');
-        document.getElementById('Settings').classList.add('menu-bar-button-choosen');
+    // Handle the main logout button
+    document.getElementById('logOutButton').addEventListener('click', function() {
+        // Implement logout logic here
+        console.log('Logging out...');
+        window.location.href = 'auth.html';
+    });
+});
+
+// Manage tab switching functionality
+window.changeTab = function (tabName) {
+    const containers = {
+        chatContainer: document.getElementById('chatContainer'),
+        messageGroupContainer: document.getElementById('messageGroupContainer'),
+        profileContainer: document.getElementById('profileContainer'),
+        settingsContainer: document.getElementById('settingsContainer'),
+    };
+
+    const menuButtons = document.querySelectorAll('.menu-bar-button');
+
+    // Toggle FriendList riêng
+    if (tabName === 'ChatList' && !containers.messageGroupContainer.classList.contains('hidden')) {
+        if (containers.chatContainer.classList.contains('hidden')) {
+            containers.chatContainer.classList.remove('hidden');
+        } else {
+            containers.chatContainer.classList.add('hidden');
+        }
+        return;
+    } else if (tabName === 'ChatList') {
+        return;
     }
-}
+
+    // Ẩn tất cả container trước
+    for (const key in containers) {
+        containers[key].classList.add('hidden');
+    }
+
+    // Bỏ chọn tất cả nút menu
+    menuButtons.forEach(btn => btn.classList.remove('menu-bar-button-choosen'));
+
+    // Định nghĩa map tab -> containerId và buttonId
+    const tabMap = {
+        Home: {
+            show: ['chatContainer', 'messageGroupContainer'],
+            buttonId: 'Home'
+        },
+        Profile: {
+            show: ['profileContainer'],
+            buttonId: 'Profile',
+            onShow: loadProfileData
+        },
+        Settings: {
+            show: ['settingsContainer'],
+            buttonId: 'Settings'
+        }
+    };
+
+    if (tabMap[tabName]) {
+        tabMap[tabName].show.forEach(id => containers[id].classList.remove('hidden'));
+        document.getElementById(tabMap[tabName].buttonId).classList.add('menu-bar-button-choosen');
+        if (tabMap[tabName].onShow) tabMap[tabName].onShow();
+    }
+};
 
 // Show/hide dropdown boxes like logout menu
 window.showBox = function (boxId, triggerId) {
@@ -165,6 +213,11 @@ window.showBox = function (boxId, triggerId) {
         });
     }
 }
+
+/**CHÚ Ý:
+ * Các hàm sau đây chưa đc kiểm chứng
+ */
+
 
 // Load user profile data (simulation - replace with actual API calls in production)
 window.loadProfileData = function () {
@@ -226,7 +279,7 @@ window.setupProfileEditButtons = function () {
             } else if (fieldId === 'profileDob') {
                 editInput.style.display = 'none';
                 dobGroup.style.display = 'block';
-                // Convert date format for date input (assuming DD/MM/YYYY to YYYY-MM-DD)
+                // Convert the date format for date input (assuming DD/MM/YYYY to YYYY-MM-DD)
                 const dateParts = value.split('/');
                 if (dateParts.length === 3) {
                     const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
@@ -359,7 +412,7 @@ window.setupEditFormSubmission = function () {
         });
         */
 
-        // For demo purposes, just close the modal
+        // For demo purposes, close the modal
         closeAllModals();
     });
 }
@@ -371,34 +424,3 @@ window.loadSavedTheme = function () {
         changeTheme(savedTheme);
     }
 }
-
-// Initialize all event listeners when the document is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Set up event listeners for the profile edit buttons
-    setupProfileEditButtons();
-
-    // Set up theme toggle functionality
-    setupThemeToggle();
-
-    // Set up modal closers
-    setupModalClosers();
-
-    // Set up form submission handling
-    setupEditFormSubmission();
-
-    // Load saved theme
-    loadSavedTheme();
-
-    // Set up event handler for Settings button in logout box
-    document.getElementById('SettingButton').addEventListener('click', function() {
-        changeTab('Settings');
-        document.getElementById('logOutBox').classList.add('hidden');
-    });
-
-    // Handle main logout button
-    document.getElementById('logOutButton').addEventListener('click', function() {
-        // Implement logout logic here
-        console.log('Logging out...');
-        // Example: window.location.href = 'login.html';
-    });
-});

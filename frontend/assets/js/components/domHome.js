@@ -1,7 +1,7 @@
 import { getFriendStatus, getUserInfo } from '../fetchers/request.js';
 import { fetchMessages, startChatSession } from '../fetchers/chatFetcher.js';
 import { addMessageToChatBoxServer } from '../utils/renderMessage.js';
-import { addBoxChatToList } from "../utils/chatProcessor.js";
+import { addBoxChatToList, fixMessageContainer, updateSeenMessage } from "../utils/chatProcessor.js";
 import { convertToDate } from "../utils/renderData.js";
 
 window.loadPage = async function (){
@@ -9,8 +9,6 @@ window.loadPage = async function (){
     const data = await getUserInfo();
 
     /* {
-    displayName:
-    email:
     avatar:
     friendList: [
     {
@@ -22,21 +20,22 @@ window.loadPage = async function (){
     },..]
     }*/
 
-    const avatar = data.avatar; // URL của ảnh đại diện
-    const name = data.displayName; // Tên người dùng
-    const email = data.email; // Email người dùng
-
     const userAvatar = document.getElementById('mainAccountAvatar');
-    userAvatar.src = avatar;
-    // Hiện tên người dùng
-    // Hiện email người dùng
+    userAvatar.src = data.avatar;
 
-    const friendList = data.friendList; // Danh sách bạn bè
+    const friendList = data.friendList; // danh sách bạn bè
 
-    // Lưu trữ ID bạn bè với thời gian gửi tin nhắn
+    // lưu trữ ID bạn bè với thời gian gửi tin nhắn
     friendList.forEach(friend => {
-        const friendID = friend.uid; // ID bạn bè
-        window.listChatBoxID[friendID] = convertToDate(friend.lastMessage.timeSend); // Lưu trữ theo ID bạn bè
+        const friendID = friend.uid;
+        window.listChatBoxID[friendID] = convertToDate(friend.lastMessage.timeSend);
+    });
+
+    // sắp xếp friendList theo thời gian gửi tin nhắn giảm dần (mới nhất trước)
+    friendList.sort((a, b) => {
+        const timeA = convertToDate(a.lastMessage.timeSend).getTime();
+        const timeB = convertToDate(b.lastMessage.timeSend).getTime();
+        return timeB - timeA; // nếu muốn tăng dần thì đổi thành timeA - timeB
     });
 
     for (const friend of friendList) {
@@ -45,15 +44,22 @@ window.loadPage = async function (){
 }
 
 window.loadChat = async function () {
-    await startChatSession(window.lastClickedUser);
+    const { chatID } = await startChatSession(window.lastClickedUser);
+    sessionStorage.setItem('chatID', chatID);
+
     const chatData = await fetchMessages();
-    const currentUserId = localStorage.getItem("uid"); // Lấy email từ localStorage
     const container = document.getElementById("messageContainer");
+
+    fixMessageContainer(window.lastClickedUser);
 
     container.innerHTML = "";
     chatData.forEach(msg => {
         addMessageToChatBoxServer(msg);
     });
+
+    updateSeenMessage(chatID);  // cập nhật trạng thái đã đọc
+
+    container.style.scrollBehavior = 'auto';
     container.scrollTop = container.scrollHeight;
 }
 
@@ -67,17 +73,3 @@ window.updateLastOnlineListFriend = async function () {
     }
 }
 
-// Ẩn hoặc hiện danh sách chat
-function hiddenChatList() {
-
-}
-
-// Đưa box chat được chọn lên đầu khi nhận tin nhắn
-function moveBoxOnTopOfChatList(chatID) {
-
-}
-
-export {
-    hiddenChatList,
-    moveBoxOnTopOfChatList,
-}
