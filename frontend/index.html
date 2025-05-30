@@ -18,6 +18,7 @@
                     <i class="fas fa-sign-out-alt"></i>
                     <p data-i18n="menu.logout"></p>
                 </div>
+                
                 <div id="SettingButton" class="logOutBox-button">
                     <i class="fas fa-cog"></i>
                     <p data-i18n="menu.settings"></p>
@@ -27,6 +28,12 @@
         <div class="menu-bar">
             <div class="menu-bar-button display-option menu-bar-button-choosen" id="Home" onclick="changeTab('Home')">
                 <i class="fas fa-home"></i>
+            </div>
+                        <div class="menu-bar-button display-option" id="Notification" onclick="changeTab('Notification')">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="menu-bar-button display-option" id="Search" onclick="changeTab('Search')">
+                <i class="fas fa-magnifying-glass"></i>
             </div>
             <div class="menu-bar-button display-option" id="ChatList" onclick="changeTab('ChatList')">
                 <i class="fas fa-user-group"></i>
@@ -44,63 +51,106 @@
 
     <!-- Chat Container -->
     <div class="chat-container" id="chatContainer">
-        <div class="chat-container-header">
-            <h2 class="" data-i18n="chat.title"></h2>
+        <div class="chats-header">
+            <p class="chats-header-text">
+                Đoạn chat
+            </p>
         </div>
-        <div class="chat-container-body">
-            <div class="chat-box-area">
-                <!-- Chat boxes will be rendered here -->
+        <div class="chats-list">
+            <div class="chats-list-user">
+                <img src="./assets/images/default-avatar.png" 
+                alt="" class="chats-list-user-avatar">
+                <div class="chats-list-user-content">
+                    <h4 class="chats-list-user-name">
+                        User XYZ1
+                    </h4>
+                    <div class="chats-list-user-message">
+                        <p class="chats-list-user-text">
+                            😊🚀❤️😊🚀❤️
+                        </p>
+                    </div>
+                </div>
+                <img src="./assets/images/default-avatar.png" alt="" 
+                    class="chats-list-user-seen">
+            </div>
+            <div class="chats-list-user">
+                <img src="./assets/images/default-avatar.png" 
+                alt="" class="chats-list-user-avatar">
+                <div class="chats-list-user-content">
+                    <h4 class="chats-list-user-name">
+                        User XYZ2
+                    </h4>
+                    <div class="chats-list-user-message">
+                        <p class="chats-list-user-text">
+                            There are many Lorem ipsum text generators available,
+                        </p>
+                    </div>
+                </div>
+                <img src="./assets/images/default-avatar.png" alt="" 
+                    class="chats-list-user-seen">
+            </div>
+            <div class="chats-list-user">
+                <img src="./assets/images/default-avatar.png" 
+                alt="" class="chats-list-user-avatar">
+                <div class="chats-list-user-content">
+                    <h4 class="chats-list-user-name">
+                        User XYZ3
+                    </h4>
+                    <div class="chats-list-user-message">
+                        <p class="chats-list-user-text">
+                            The lorem ipsum text is usually a section of a
+                        </p>
+                    </div>
+                </div>
+                <img src="./assets/images/default-avatar.png" alt="" 
+                    class="chats-list-user-seen">
             </div>
         </div>
     </div>
 
     <!-- Profile Container -->
     <div class="profile-container hidden" id="profileContainer">
-        <div class="profile-header">
-            <h2 data-i18n="profile.title">My Profile</h2>
-        </div>
-        <div class="profile-body">
-            <div class="profile-avatar-section">
-                <div class="profile-avatar-wrapper">
-                    <img src="assets/images/default-avatar.png" alt="Profile Avatar" class="profile-avatar">
+        <div class="profile-container-div">
+            <h3 class="profile-header">Thông tin cá nhân</h3>
+            <div class="profile-body">
+                <div class="profile-body-basic-info">
+                    <img src="./assets/images/default-avatar.png" alt="" class="profile-body-basic-info-avatar">
+                    <p class="profile-body-basic-info-text profile-name">TEST01</p>
+                    <p class="profile-body-basic-info-text profile-email">test01@gmail.com</p>
+                    <p class="profile-body-basic-info-text profile-description">wuehquihwe qwqqqqweqweqwehequhwe qwu wqehquweh</p>
+                </div>
+                <div class="profile-body-info">
+                    <div class="profile-body-personal-info">
+                        <div class="profile-body-personal-info-container">
+                            <h4 class="profile-body-personal-info-container-title">Giới tính:</h4>
+                            <p class="profile-body-personal-info-container-text profile-gender">50 - 50</p>
+                        </div>
+                        <div class="profile-body-personal-info-container">
+                            <h4 class="profile-body-personal-info-container-title">Ngày sinh:</h4>
+                            <p class="profile-body-personal-info-container-text profile-birth">29/02/2004</p>
+                        </div>
+                        <div class="profile-body-personal-info-container">
+                            <h4 class="profile-body-personal-info-container-title">Liên kết khác:</h4>
+                            <a href="https://chatgpt.com/" class="profile-body-personal-info-container-text profile-link">OpenAI</a>
+                        </div>
+                    </div>
+                    <div class="profile-body-additional-info">
+                        <div class="profile-body-additional-info-container">
+                            <h4 class="profile-body-additional-info-container-title">Từ ngày</h4>
+                            <p class="profile-body-additional-info-container-text profile-started-day">29/02/2003</p>
+                        </div>
+                        <div class="profile-body-additional-info-container">
+                            <h4 class="profile-body-additional-info-container-title">Bạn bè</h4>
+                            <p class="profile-body-additional-info-container-text profile-friend-num">2000</p>
+                        </div>
+                        <div class="profile-body-additional-info-container">
+                            <h4 class="profile-body-additional-info-container-title">Số ngày</h4>
+                            <p class="profile-body-additional-info-container-text profile-day-num">2000</p>
+                        </div>
+                    </div>
+                    <button class="edit-profile-button">Chỉnh sửa thông tin cá nhân</button>
                 </div>
             </div>
-
-            <div class="profile-info">
-                <h1 class="display-name" data-i18n="profile.displayName"></h1>
-                <p class="email" data-i18n="profile.email"></p>
-                <p class="biography" data-i18n="profile.biography"></p>
-                <p class="profile-detail">
-                    <span class="detail-label" data-i18n="profile.genderLabel"></span> ...
-                </p>
-                <p class="profile-detail">
-                    <span class="detail-label" data-i18n="profile.birthdayLabel"></span>
-                </p>
-                <p class="profile-detail">
-                    <span class="detail-label" data-i18n="profile.socialLinkLabel"></span> ....
-                </p>
-            </div>
-
-            <div class="profile-stats">
-                <div class="stat-column">
-                    <h3 class="stat-label" data-i18n="profile.statStartDate"></h3>
-                    <p class="stat-value">01/01/2025</p>
-                </div>
-                <div class="stat-column">
-                    <h3 class="stat-label" data-i18n="profile.statFriends"></h3>
-                    <p class="stat-value">0</p>
-                </div>
-                <div class="stat-column">
-                    <h3 class="stat-label" data-i18n="profile.statDays"></h3>
-                    <p class="stat-value">0</p>
-                </div>
-                <div class="stat-column" hidden>
-                    <h3 class="stat-label" data-i18n="profile.mutualFriends"></h3>
-                    <p class="stat-value">0</p>
-                </div>
-            </div>
-
-            <button class="edit-profile-btn" data-i18n="profile.editButton"></button>
         </div>
     </div>
 
@@ -171,7 +221,7 @@
                 </div>
             </div>
             <div class="options">
-                <div class="options-button">
+                <div class="options-button menu-bar-button" id="openChatInfoButton" onclick="openChatInfo()">
                     <i class="fa-solid fa-ellipsis"></i>
                 </div>
             </div>
@@ -199,7 +249,24 @@
             </div>
         </div>
     </div>
-
+    <div class="chats-info" id="chatInfoContainer">
+        <div class="chats-info-header">
+            <p class="chats-info-header-avatar-container">
+                <img src="./assets/images/default-avatar.png" alt="" 
+                class="chats-info-header-avatar">
+            </p>
+            <p class="chats-info-header-name">Userqweqweq weqweqweqw wqweweeq w XYZ</p>
+            <p class="chats-info-header-name-state">
+                Đang hoạt động
+            </p>
+        </div>
+        <div class="chats-info-features">
+            <div class="chats-info-features-button" id="change-display-name-button">
+                <i class="fa-solid fa-a chats-info-features-button"></i>
+                <p>Thay đổi biệt danh</p>
+            </div>
+        </div>
+    </div>
     <!-- Modal for editing profile information -->
     <div class="modal" id="editModal">
         <div class="modal-content">

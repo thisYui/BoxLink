@@ -79,6 +79,9 @@ body {
     background-color: #f3f3f3;
 }
 
+
+.chat-box-area-item-content-message-text
+
 .chat-box-choosen, .friend-box-choosen {
     background-color: #e6f5f2;
 }
@@ -211,4 +214,16 @@ body {
 
 .btn-save:hover {
     background-color: #1a5d54;
+}
+
+.chats-info {
+    background-color: #BDDDE4;
+}
+
+.chats-list-user {
+    background-color: inherit;
+}
+
+.chats-list-user:hover {
+    background-color: rgba(0, 0, 0, 0.15);    
 }

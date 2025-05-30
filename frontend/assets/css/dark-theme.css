@@ -208,3 +208,15 @@ body {
 .btn-save:hover {
     background-color: #1a5d54;
 }
+
+.chats-info {
+    background-color: #46484B;
+}
+
+.chats-list-user {
+    background-color: inherit;
+}
+
+.chats-list-user:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

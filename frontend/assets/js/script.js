@@ -124,8 +124,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+
+
+
+
+window.openChatInfo = function () {
+    const chatInfor = document.getElementById('chatInfoContainer');
+    const isHidden = window.getComputedStyle(chatInfor).display === 'none';
+    chatInfor.style.display = isHidden ? "block" : "none";
+}
+
 // Manage tab switching functionality
 window.changeTab = function (tabName) {
+    document.getElementById('chatInfoContainer').style.display = 'none';
     const containers = {
         chatContainer: document.getElementById('chatContainer'),
         messageGroupContainer: document.getElementById('messageGroupContainer'),
