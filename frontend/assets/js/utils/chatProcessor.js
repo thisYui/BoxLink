@@ -63,81 +63,46 @@ function addBoxChatToList(chatData) {
     const formattedTime = formatRelativeTimeRead(timeSend);
     const formattedLastOnline = formatRelativeTimeOnline(lastOnline);
 
-    const chatsContainer = document.querySelector(".chat-box-area");
+    const chatsContainer = document.querySelector(".chats-list");
 
     const div = document.createElement('div');
-    div.classList.add('chat-box-area-box');
+    div.classList.add('chats-list-user');
     div.id = friendID;
 
-    const img = document.createElement('img');
-    img.src = friendAvatar;
-    img.classList.add('chat-box-avatar');
+    //Avatar
+    const avatar = document.createElement('img');
+    avatar.src = friendAvatar;
+    avatar.classList.add('chats-list-user-avatar');
 
-    const containBox = document.createElement('div');
-    containBox.classList.add('chat-box-contain');
-
-    // ----------- dòng 1: Tên + Thời gian gửi -----------
-    const nameTimeContainer = document.createElement('div');
-    nameTimeContainer.style.display = 'flex';
-    nameTimeContainer.style.justifyContent = 'space-between';
-    nameTimeContainer.style.alignItems = 'flex-start'; // canh trên
-    nameTimeContainer.style.width = '100%';             // để 2 bên có không gian
-
-    const name = document.createElement('h4');
-    name.classList.add('displayName');
-    name.textContent = friendName;
-
-    const timeElement = document.createElement('span');
-    timeElement.classList.add('message-time');
-    timeElement.textContent = formattedTime;
-    timeElement.style.fontSize = '12px';
-    timeElement.style.color = '#888';
-
-    nameTimeContainer.appendChild(name);
-    nameTimeContainer.appendChild(timeElement);
-
-    // ----------- dòng 2: Trạng thái hoạt động -----------
-    const status = document.createElement('span');
-    status.classList.add('friend-status');
-    status.textContent = formattedLastOnline;
-    status.style.fontSize = '12px';
-    status.style.color = '#888';
-    status.style.margin = '2px 0';
-
-    // ----------- dòng 3: Tin nhắn + trạng thái đọc -----------
-    const messageStatusContainer = document.createElement('div');
-    messageStatusContainer.style.display = 'flex';
-    messageStatusContainer.style.justifyContent = 'space-between';
-    messageStatusContainer.style.alignItems = 'flex-start'; // canh trên
-    messageStatusContainer.style.width = '100%'; // để 2 bên có không gian
-
-    const lastestMessage = document.createElement('p');
-    lastestMessage.classList.add('lastest-chat');
-    lastestMessage.textContent = text;
-
-    const readStatus = document.createElement('span');
-    readStatus.classList.add('read-status');
-    readStatus.style.fontSize = '12px';
-
-    if (timeSend.getTime() === timeSeen.getTime()) {
-        readStatus.textContent = window.t('chat.read');
-        readStatus.style.color = '#5cb85c';
-    } else {
-        readStatus.textContent = window.t('chat.unread');
-        readStatus.style.color = '#0d6efd';
-        lastestMessage.style.fontWeight = 'bold';
+    //Content div
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('chats-list-user-content')
+    if (isOnline(lastOnline)) {
+        contentDiv.classList.add('chats-list-user-content-is-online');
     }
 
-    messageStatusContainer.appendChild(lastestMessage);
-    messageStatusContainer.appendChild(readStatus);
+    console.log(lastOnline);
 
-    // ghép tất cả vào containBox
-    containBox.appendChild(nameTimeContainer);
-    containBox.appendChild(status);
-    containBox.appendChild(messageStatusContainer);
+    //Name
+    const h4 = document.createElement('h4');
+    h4.textContent = friendName;
+    h4.classList.add('chats-list-user-name');
 
-    div.appendChild(img);
-    div.appendChild(containBox);
+    //message
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('chats-list-user-message');
+    const lastMessageP = document.createElement('p');
+    lastMessageP.classList.add('chats-list-user-text');
+    const lastMessageTime = document.createElement('p');
+    lastMessageTime.classList.add('chats-list-user-time');
+    lastMessageP.textContent = text;
+    lastMessageTime.textContent = " - " + formatRelativeTimeRead(timeSend);
+    messageDiv.appendChild(lastMessageP);
+    messageDiv.appendChild(lastMessageTime);
+    contentDiv.appendChild(h4);
+    contentDiv.appendChild(messageDiv);
+    div.appendChild(avatar);
+    div.appendChild(contentDiv);
     chatsContainer.appendChild(div);
 }
 
@@ -219,6 +184,15 @@ function updateSeenMessage(chatID) {
     readStatus.textContent = window.t('chat.read');
     readStatus.style.color = '#5cb85c';
     lastestMessage.style.fontWeight = 'normal';
+}
+
+function isOnline(inputDate) {
+    const now = new Date();
+    const date = new Date(inputDate);
+    const diffMs = now - date;
+
+    // Kiểm tra xem thời gian khác nhau có nhỏ hơn 2 phút không
+    return diffMs < 2 * 60 * 1000; // 2 phút
 }
 
 export {
