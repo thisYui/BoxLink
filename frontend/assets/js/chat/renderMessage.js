@@ -1,6 +1,6 @@
 import {getHyperlinkInfo} from '../fetchers/request.js';
 import {fixMessageToChatBoxList, moveChatIDToFirstInListBox} from './chatProcessor.js';
-import { formatRelativeTimeRead, formatRelativeTimeOnline } from "./renderData.js";
+import { formatRelativeTimeRead, formatRelativeTimeOnline } from "../utils/renderData.js";
 
 // Chỉ dùng cho server
 function addMessageToChatBoxServer(message) {
@@ -94,7 +94,7 @@ function addMessageToChatBoxClient(messageID, type, content, replyTo) {
 
     const tempMessage = {
         senderID: senderID,
-        timeSend: new Date(),
+        timestamp: new Date(),
         type: type,
         replyTo: "",
         content: {

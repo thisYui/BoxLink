@@ -44,8 +44,6 @@ document.getElementById("search-button").addEventListener("click", async (event)
 
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
-    updateLastOnlineListFriend().then()
-
     document.addEventListener("click", (event) => {
         const element = event.target.closest(".chats-list-user");
 
@@ -68,11 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 window.lastClickedUser = elementId;
                 sessionStorage.setItem("lastClickedUser", elementId);
+
                 try {
                     if (typeof loadChat === "function") {
                         loadChat().then();
                     }
-                    console.log(`Người dùng được chọn: ${window.lastClickedUser}`);
                 } catch (error) {
                     console.error("Lỗi khi tải chat:", error);
                 }
@@ -136,13 +134,15 @@ window.openChatInfo = function () {
 }
 
 // Manage tab switching functionality
-window.changeTab = function (tabName) {
+window.changeTab = async function (tabName) {
     document.getElementById('chatInfoContainer').style.display = 'none';
     const containers = {
         chatContainer: document.getElementById('chatContainer'),
         messageGroupContainer: document.getElementById('messageGroupContainer'),
         profileContainer: document.getElementById('profileContainer'),
         settingsContainer: document.getElementById('settingsContainer'),
+        searchContainer: document.getElementById('searchContainer'),
+        notificationContainer: document.getElementById('notificationContainer'),
     };
 
     const menuButtons = document.querySelectorAll('.menu-bar-button');
@@ -176,18 +176,26 @@ window.changeTab = function (tabName) {
         Profile: {
             show: ['profileContainer'],
             buttonId: 'Profile',
-            onShow: loadProfileData
+            onShow: loadProfile,
         },
         Settings: {
             show: ['settingsContainer'],
             buttonId: 'Settings'
-        }
+        },
+        Search: {
+            show: ['searchContainer'],
+            buttonId: 'Search'
+        },
+        Notification: {
+            show: ['notificationContainer'],
+            buttonId: 'Notification'
+        },
     };
 
     if (tabMap[tabName]) {
         tabMap[tabName].show.forEach(id => containers[id].classList.remove('hidden'));
         document.getElementById(tabMap[tabName].buttonId).classList.add('menu-bar-button-choosen');
-        if (tabMap[tabName].onShow) tabMap[tabName].onShow();
+        if (tabMap[tabName].onShow) await tabMap[tabName].onShow();
     }
 };
 
@@ -230,34 +238,6 @@ window.showBox = function (boxId, triggerId) {
  * Các hàm sau đây chưa đc kiểm chứng
  */
 
-
-// Load user profile data (simulation - replace with actual API calls in production)
-window.loadProfileData = function () {
-    // This would typically be an API call to fetch user data
-    // For demo purposes, we're just using the placeholder data
-
-    // You could implement an actual fetch call like this:
-    /*
-    fetch('/api/user/profile')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('profileName').textContent = data.name;
-            document.getElementById('profileBio').textContent = data.bio;
-            document.getElementById('profileDob').textContent = data.dob;
-            document.getElementById('profileGender').textContent = data.gender;
-            document.getElementById('profileEmail').textContent = data.email;
-
-            // Update avatar if available
-            if (data.avatarUrl) {
-                document.querySelector('.profile-avatar').src = data.avatarUrl;
-                document.getElementById('mainAccountAvatar').src = data.avatarUrl;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading profile data:', error);
-        });
-    */
-}
 
 // Handle profile edit button clicks
 window.setupProfileEditButtons = function () {

@@ -53,19 +53,25 @@ async function deleteAuth(uid) {
 }
 
 // Tạo cuộc trò chuyện
-async function createChat(userId, emailFriend) {
+async function createChat(userId, friendID) {
     try {
         // Lấy thông tin người bạn từ email
-        const friend = await admin.auth().getUserByEmail(emailFriend);
+        const friend = await admin.auth().getUser(friendID);
 
         // Tạo cuộc trò chuyện trong Firestore
         const chatRef = db.collection("chats").doc();
         const timestamp = admin.firestore.FieldValue.serverTimestamp();
         await chatRef.set({
             participants: [userId, friend.uid],
-            seen: {
-              [userId]: { lastMessageSeen: timestamp },
-              [friend.uid]: { lastMessageSeen: timestamp }
+            info: {
+              [userId]: {
+                  lastMessageSeen: timestamp,
+                  turnOnNotification: true // Bật thông báo cho người dùng
+              },
+              [friend.uid]: {
+                  lastMessageSeen: timestamp,
+                  turnOnNotification: true // Bật thông báo cho người bạn
+              }
             },
             createdAt: timestamp,
             lastMessage: {}

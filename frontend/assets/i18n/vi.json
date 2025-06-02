@@ -19,9 +19,10 @@
   "profile": {
     "title": "Hồ sơ của tôi",
     "name": "Tên",
-    "bio": "Tiểu sử",
+    "noBiography": "Không có tiểu sử",
     "dob": "Ngày sinh",
     "gender": "Giới tính",
+    "noGender": "Chưa thiết lập",
     "email": "Email",
     "displayName": "Tên hiển thị",
     "biography": "Tiểu sử",

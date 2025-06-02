@@ -1,12 +1,9 @@
-import { getMyProfile, getProfileFriend, setAvatar, setDisplayName } from "../user/personalProfile.js";
+import { getMyProfile, setAvatar, setDisplayName } from "../user/personalProfile.js";
+import { convertToDate } from "../utils/renderData.js";
 
-window.loadProfile = function () {
-    const profile = getMyProfile();
-    showMyProfile(profile);
-}
-
-window.loadResultSearch = function () {
-    const profile = getProfileFriend();
+window.loadProfile = async function () {
+    const profile = await getMyProfile();
+    console.log(profile)
     showMyProfile(profile);
 }
 
@@ -43,52 +40,89 @@ function showMyProfile(profile) {
     // createdAt: userData.createdAt,
     // countFriendMutual: userData.countFriendMutual, (myprofile có giá trị -1)
 
-    // Tên, email, ảnh đại diện
-    document.querySelector('.display-name').textContent = profile.displayName || '';
-    document.querySelector('.email').textContent = profile.email || '';
-    document.querySelector('.biography').textContent = profile.biography || '';
-    document.querySelector('.profile-avatar').src = profile.avatar || 'assets/images/default-avatar.png';
+    // Cập nhật thông tin cơ bản của người dùng
+    const profileAvatar = document.querySelector(".profile-body-basic-info-avatar");
+    const profileName = document.querySelector(".profile-name");
+    const profileEmail = document.querySelector(".profile-email");
+    const profileDescription = document.querySelector(".profile-description");
 
-    // Giới tính
-    const genderDetail = document.querySelectorAll('.profile-detail')[0];
-    if (genderDetail) {
-        genderDetail.childNodes[1].textContent = ` ${profile.gender || ''}`;
+    // Cập nhật thông tin cá nhân
+    const profileGender = document.querySelector(".profile-gender");
+    const profileBirth = document.querySelector(".profile-birth");
+    const profileLink = document.querySelector(".profile-link");
+
+    // Cập nhật thông tin bổ sung
+    const profileStartedDay = document.querySelector(".profile-started-day");
+    const profileFriendNum = document.querySelector(".profile-friend-num");
+    const profileDayNum = document.querySelector(".profile-day-num");
+
+    // Nút chỉnh sửa
+    const editProfileButton = document.querySelector(".edit-profile-button");
+
+    // Cập nhật thông tin cơ bản
+    if (profileAvatar) {
+        profileAvatar.src = profile.avatar || "./assets/images/default-avatar.png";
     }
 
-    // Ngày sinh
-    const birthdayDetail = document.querySelectorAll('.profile-detail')[1];
-    if (birthdayDetail) {
-        birthdayDetail.childNodes[1].textContent = ` ${profile.birthday || ''}`;
+    if (profileName) {
+        profileName.textContent = profile.displayName || "";
     }
 
-    // Mạng xã hội
-    const socialDetail = document.querySelectorAll('.profile-detail')[2];
-    if (socialDetail) {
-        socialDetail.childNodes[1].innerHTML = ` ${profile.socialLinks || ''}`;
+    if (profileEmail) {
+        profileEmail.textContent = profile.email || "";
     }
 
-    // Thống kê
-    const stats = document.querySelectorAll('.profile-stats .stat-value');
-    if (stats.length >= 3) {
-        stats[0].textContent = profile.createdAt || '';
-        stats[1].textContent = profile.countFriends?.toString() || '0';
-        stats[2].textContent = profile.listFriend?.length?.toString() || '0';
+    if (profileDescription) {
+        profileDescription.textContent = profile.biography || t("profile.noBiography");
     }
 
-    // Mutual friends (ẩn nếu là trang cá nhân)
-    const mutualCol = document.querySelector('.profile-stats .stat-column[hidden]');
-    if (mutualCol) {
-        if (profile.countFriendMutual === -1) {
-            mutualCol.setAttribute('hidden', true);
+    // Cập nhật thông tin cá nhân
+    if (profileGender) {
+        profileGender.textContent = profile.gender || "";
+    }
+
+    if (profileBirth) {
+        profileBirth.textContent = profile.birthday || "";
+    }
+
+    if (profileLink) {
+        if (profile.socialLinks) {
+            profileLink.href = profile.socialLinks;
+            try {
+                profileLink.textContent = new URL(profile.socialLinks).hostname;
+            } catch (e) {
+                profileLink.textContent = profile.socialLinks;
+            }
         } else {
-            mutualCol.removeAttribute('hidden');
-            mutualCol.querySelector('.stat-value').textContent = profile.countFriendMutual.toString();
+            profileLink.href = "#";
+            profileLink.textContent = "Chưa có liên kết";
         }
     }
 
-    // Cập nhật nút sửa
-    const editBtn = document.querySelector('.edit-profile-btn');
-    if (editBtn) {
-        editBtn.textContent = 'Chỉnh sửa hồ sơ'; // hoặc giữ nguyên nếu dùng i18n
+    // Cập nhật thông tin bổ sung
+    if (profileStartedDay) {
+        profileStartedDay.textContent = profile.createdAt ? convertToDate(profile.createdAt) : "";
+    }
+
+    if (profileFriendNum) {
+        profileFriendNum.textContent = profile.countFriends?.toString() || "0";
+    }
+
+    if (profileDayNum) {
+        // Tính số ngày từ ngày tạo tài khoản đến hiện tại
+        if (profile.createdAt) {
+            const createdDate = new Date(profile.createdAt);
+            const currentDate = new Date();
+            const diffTime = Math.abs(currentDate - createdDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            profileDayNum.textContent = diffDays.toString();
+        } else {
+            profileDayNum.textContent = "0";
+        }
+    }
+
+    // Hiển thị nút chỉnh sửa chỉ khi đây là profile của người dùng hiện tại
+    if (editProfileButton) {
+        editProfileButton.style.display = profile.countFriendMutual === -1 ? "block" : "none";
     }
 }

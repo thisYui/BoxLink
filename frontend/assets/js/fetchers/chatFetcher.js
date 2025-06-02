@@ -99,6 +99,30 @@ async function sendMessages(friendID, type, content, replyTo) {
     }
 }
 
+// Cập nhật thời gian truy cập
+async function updateTimestampMessage() {
+    try {
+        const response = await fetch("http://localhost:3000/api/update-seen-message", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                friendID: sessionStorage.getItem("lastClickedUser"),  // Lấy chatID từ sessionStorage
+                uid: localStorage.getItem("uid")  // Lấy uid từ localStorage
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        return await response.json();  // Trả về kết quả cập nhật
+    } catch (error) {
+        console.error("Error updating seen message style:", error);
+    }
+}
+
 // Tải thêm tin nhắn
 async function loadMoreMessages() {
     try {
@@ -145,11 +169,37 @@ async function downloadFile(filePath) {
     }
 }
 
+// Bật tắt thông báo
+async function toggleNotification() {
+    try {
+        const response = await fetch("http://localhost:3000/api/toggle-notification", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                uid: localStorage.getItem("uid"),  // Lấy uid từ localStorage
+                friendID: sessionStorage.getItem("lastClickedUser")  // Lấy friendID từ sessionStorage
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        return await response.json();  // Trả về kết quả cập nhật
+    } catch (error) {
+        console.error("Error toggling notification:", error);
+    }
+}
+
 export {
     startChatSession,
     fetchMessages,
     getSingleMessage,
+    updateTimestampMessage,
     sendMessages,
     loadMoreMessages,
-    downloadFile
+    downloadFile,
+    toggleNotification
 }

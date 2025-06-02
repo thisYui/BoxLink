@@ -21,14 +21,14 @@ async function messageNotification(srcId, desID, messID) {
 }
 
 // Thông báo đã xem
-async function seenMessageNotification(srcId, desID, chatID) {
+async function seenMessageNotification(srcID, desID) {
     try {
         // Thêm thông báo cho biết đã xem tin nhắn
         await db.collection("users").doc(desID).update({
             notifications: admin.firestore.FieldValue.arrayUnion({
                 typeNotification: "seen-message",
-                srcID: srcId,
-                text: chatID, // Nội dung là id của cuộc trò chuyện
+                srcID: srcID,
+                text: srcID,
                 timeSend: new Date(),
             })
         });

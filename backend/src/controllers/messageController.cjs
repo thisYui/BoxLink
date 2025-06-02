@@ -1,6 +1,13 @@
 const { createChat, deleteChat } = require('../services/firebaseServices.cjs');
-const { startChat, sendMessage, getMessages, getSingle, loadMore } = require('../services/messageServices.cjs');
 const { downloadFile } = require('../services/fileServices.cjs');
+const { startChat,
+    sendMessage,
+    getMessages,
+    getSingle,
+    loadMore,
+    updateSeen,
+    turnNotification
+} = require('../services/messageServices.cjs');
 const logger = require('../config/logger.cjs');
 
 // Tạo cuộc trò chuyện
@@ -85,6 +92,21 @@ async function getSingleMessage(req, res) {
     }
 }
 
+// Cập nhật trạng thái đã đọc tin nhắn
+async function updateSeenMessage(req, res) {
+    const { friendID, uid } = req.body;
+
+    try {
+        // Cập nhật trạng thái đã đọc
+        await updateSeen(uid, friendID);
+        res.status(200).json({ message: 'Trạng thái đã được cập nhật!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi cập nhật trạng thái đã đọc:', error);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 // Tải thêm tin nhắn
 async function loadMoreMessages(req, res) {
     const { chatID } = req.body;
@@ -112,13 +134,30 @@ async function clickDownload(req, res) {
     }
 }
 
+// Bật tắt thông báo
+async function toggleNotification(req, res) {
+    const { uid, friendID } = req.body;
+
+    try {
+        // Thay đổi trạng thái thông báo
+        await turnNotification(uid, friendID);
+        res.status(200).json({ message: 'Trạng thái thông báo đã được cập nhật!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi cập nhật trạng thái thông báo:', error);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
     createNewChat,
     removeChat,
     startChatSession,
     sendMessages,
     getSingleMessage,
+    updateSeenMessage,
     fetchMessages,
     loadMoreMessages,
     clickDownload,
+    toggleNotification
 }

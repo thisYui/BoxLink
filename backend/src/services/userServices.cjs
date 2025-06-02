@@ -35,7 +35,9 @@ async function getInfo(uid) {
                 text = `${friendData.displayName} đã gửi một tệp đính kèm`;
             }
 
-            const timeSeen = chatData.seen[friendID]?.lastMessageSeen || chatData.lastMessage.timestamp;
+            const timeSeen = chatData.info[friendID]?.lastMessageSeen;
+            const clientTimeSeen = chatData.info[uid]?.lastMessageSeen;
+            const stateNotification = chatData.info[friendID]?.turnOnNotification;
 
             const data = {
                 displayName: friendData.displayName,
@@ -45,9 +47,11 @@ async function getInfo(uid) {
                     senderID: chatData.lastMessage.senderID,
                     text: text,
                     timeSend: chatData.lastMessage.timestamp,
-                    timeSeen: timeSeen
+                    timeSeen: timeSeen,
+                    clientTimeSeen: clientTimeSeen
                 },
                 lastOnline: friendData.lastOnline,
+                stateNotification: stateNotification || true, // nếu không có thì mặc định là true
             };
 
             friendList.push(data);

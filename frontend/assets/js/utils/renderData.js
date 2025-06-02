@@ -1,4 +1,4 @@
-import { isRichText } from "./renderMessage.js";
+import { isRichText } from "../chat/renderMessage.js";
 
 async function getDataFromDocument(typeData) {
     if (typeData === "text") {

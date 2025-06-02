@@ -1,8 +1,9 @@
 import { getFriendStatus, getUserInfo } from '../fetchers/request.js';
-import { fetchMessages, startChatSession } from '../fetchers/chatFetcher.js';
-import { addMessageToChatBoxServer } from '../utils/renderMessage.js';
-import { addBoxChatToList, transmitMessageContainer, updateSeenMessageStyle, updateOnlineStatus } from "../utils/chatProcessor.js";
+import { fetchMessages, startChatSession, updateTimestampMessage } from '../fetchers/chatFetcher.js';
+import { addMessageToChatBoxServer } from '../chat/renderMessage.js';
+import { addBoxChatToList, transmitMessageContainer, updateSeenMessageStyle, updateOnlineStatus } from "../chat/chatProcessor.js";
 import { convertToDate } from "../utils/renderData.js";
+import { addToListBoxNoNotice } from "../user/notificationProcessor.js";
 
 window.loadPage = async function (){
     // Tạo trang
@@ -26,9 +27,14 @@ window.loadPage = async function (){
     const friendList = data.friendList; // danh sách bạn bè
 
     // lưu trữ ID bạn bè với thời gian gửi tin nhắn
+    // Lưu trữ trạng thái thông báo của bạn bè
     friendList.forEach(friend => {
         const friendID = friend.uid;
         window.listChatBoxID[friendID] = convertToDate(friend.lastMessage.timeSend);
+
+        if (friend.stateNotification === false) {
+            addToListBoxNoNotice(friendID); // Thêm vào danh sách không có thông báo
+        }
     });
 
     // sắp xếp friendList theo thời gian gửi tin nhắn giảm dần (mới nhất trước)
@@ -58,6 +64,7 @@ window.loadChat = async function () {
     });
 
     updateSeenMessageStyle();  // cập nhật trạng thái đã đọc
+    await updateTimestampMessage();   // cập nhật thời gian gửi tin nhắn
 
     container.style.scrollBehavior = 'auto';
     container.scrollTop = container.scrollHeight;

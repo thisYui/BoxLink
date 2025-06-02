@@ -103,8 +103,8 @@ async function friend(uid, friendID, api){
 
 // Lấy profile người dùng
 async function getProfileUser(uid) {
-    const response = await fetch(`http://localhost:3000/api/profile/get-profile`, {
-        method: "GET",
+    const response = await fetch(`http://localhost:3000/api/get-profile`, {
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
         },

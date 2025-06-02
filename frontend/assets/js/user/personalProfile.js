@@ -7,7 +7,6 @@ async function getMyProfile() {
     return profile;
 }
 
-
 // Thay đổi ảnh đại diện
 function setAvatar() {
 

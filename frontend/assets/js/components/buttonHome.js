@@ -1,6 +1,6 @@
 import { sendMessages } from '../fetchers/chatFetcher.js';
 import { searchFriendByEmail, deleteNotification  } from '../fetchers/request.js';
-import { addMessageToChatBoxClient } from '../utils/renderMessage.js';
+import { addMessageToChatBoxClient } from '../chat/renderMessage.js';
 import { getDataFromDocument } from '../utils/renderData.js';
 import { removeNotificationFromList } from '../user/notificationProcessor.js';
 import { getMyProfile, setAvatar, setDisplayName, } from '../user/personalProfile.js';

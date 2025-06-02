@@ -63,49 +63,79 @@
     <!-- Profile Container -->
     <div class="profile-container hidden" id="profileContainer">
         <div class="profile-container-div">
-            <h3 class="profile-header">Thông tin cá nhân</h3>
+            <h3 class="profile-header" data-i18n="profile.title"></h3>
             <div class="profile-body">
                 <div class="profile-body-basic-info">
                     <img src="./assets/images/default-avatar.png" alt="" class="profile-body-basic-info-avatar">
-                    <p class="profile-body-basic-info-text profile-name">TEST01</p>
-                    <p class="profile-body-basic-info-text profile-email">test01@gmail.com</p>
-                    <p class="profile-body-basic-info-text profile-description">wuehquihwe qwqqqqweqweqwehequhwe qwu wqehquweh</p>
+                    <p class="profile-body-basic-info-text profile-name"></p>
+                    <p class="profile-body-basic-info-text profile-email"></p>
+                    <p class="profile-body-basic-info-text profile-description"></p>
                 </div>
                 <div class="profile-body-info">
                     <div class="profile-body-personal-info">
                         <div class="profile-body-personal-info-container">
-                            <h4 class="profile-body-personal-info-container-title">Giới tính:</h4>
-                            <p class="profile-body-personal-info-container-text profile-gender">50 - 50</p>
+                            <h4 class="profile-body-personal-info-container-title" data-i18n="profile.genderLabel"></h4>
+                            <p class="profile-body-personal-info-container-text profile-gender"></p>
                         </div>
                         <div class="profile-body-personal-info-container">
-                            <h4 class="profile-body-personal-info-container-title">Ngày sinh:</h4>
-                            <p class="profile-body-personal-info-container-text profile-birth">29/02/2004</p>
+                            <h4 class="profile-body-personal-info-container-title" data-i18n="profile.birthdayLabel"></h4>
+                            <p class="profile-body-personal-info-container-text profile-birth"></p>
                         </div>
                         <div class="profile-body-personal-info-container">
-                            <h4 class="profile-body-personal-info-container-title">Liên kết khác:</h4>
-                            <a href="https://chatgpt.com/" class="profile-body-personal-info-container-text profile-link">OpenAI</a>
+                            <h4 class="profile-body-personal-info-container-title" data-i18n="profile.socialLinkLabel"></h4>
+                            <a class="profile-body-personal-info-container-text profile-link"></a>
                         </div>
                     </div>
                     <div class="profile-body-additional-info">
                         <div class="profile-body-additional-info-container">
-                            <h4 class="profile-body-additional-info-container-title">Từ ngày</h4>
-                            <p class="profile-body-additional-info-container-text profile-started-day">29/02/2003</p>
+                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statStartDate"></h4>
+                            <p class="profile-body-additional-info-container-text profile-started-day"></p>
                         </div>
                         <div class="profile-body-additional-info-container">
-                            <h4 class="profile-body-additional-info-container-title">Bạn bè</h4>
-                            <p class="profile-body-additional-info-container-text profile-friend-num">2000</p>
+                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statFriends"></h4>
+                            <p class="profile-body-additional-info-container-text profile-friend-num"></p>
                         </div>
                         <div class="profile-body-additional-info-container">
-                            <h4 class="profile-body-additional-info-container-title">Số ngày</h4>
-                            <p class="profile-body-additional-info-container-text profile-day-num">2000</p>
+                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statDays"></h4>
+                            <p class="profile-body-additional-info-container-text profile-day-num" data-i18n="profile."></p>
                         </div>
                     </div>
-                    <button class="edit-profile-button">Chỉnh sửa thông tin cá nhân</button>
+                    <button class="edit-profile-button" data-i18n="profile.editButton"></button>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class ="notification-container hidden" id="notificationContainer">
+        <div class="notification-header">
+            <h2 data-i18n="notification.title"></h2>
+        </div>
+        <div class="notification-body">
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="notification-list" id="notificationList">
+                <!-- Notifications will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <div class ="search-container hidden" id="searchContainer">
+        <div class="search-header">
+            <h2 data-i18n="search.title"></h2>
+        </div>
+        <div class="search-body">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="search-input">
+                <input type="text" id="searchInput" placeholder="Search..." data-i18n-placeholder="search.placeholder">
+            </div>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be rendered here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Settings Container -->
     <div class="settings-container hidden" id="settingsContainer">
@@ -281,7 +311,7 @@
 
     <!-- Scripts -->
     <script type="module" defer src="assets/js/config/i18n.js"></script>
-    <script type="module" defer src="assets/js/utils/renderMessage.js"></script>
+    <script type="module" defer src="assets/js/chat/renderMessage.js"></script>
     <script type="module" defer src="assets/js/user/notificationProcessor.js"></script>
     <script type="module" defer src="assets/js/config/socketClient.js"></script>
     <script type="module" defer src="assets/js/components/domHome.js"></script>

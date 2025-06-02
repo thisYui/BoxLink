@@ -1,4 +1,4 @@
-import { convertToDate, formatRelativeTimeRead, formatRelativeTimeOnline, isOnline } from './renderData.js'
+import { convertToDate, formatRelativeTimeRead, formatRelativeTimeOnline, isOnline } from '../utils/renderData.js'
 
 // Dùng để truyền thông tin người dùng từ chat-list sáng message-container
 function transmitMessageContainer(chatID) {
@@ -60,6 +60,7 @@ function addBoxChatToList(chatData) {
     const senderID = chatData.lastMessage.senderID;
     const timeSend = convertToDate(chatData.lastMessage.timeSend);
     const timeSeen = convertToDate(chatData.lastMessage.timeSeen);
+    const clientTimeSeen = convertToDate(chatData.lastMessage.clientTimeSeen);
     const lastOnline = convertToDate(chatData.lastOnline);
 
     const formattedTime = formatRelativeTimeRead(timeSend);
@@ -85,7 +86,6 @@ function addBoxChatToList(chatData) {
         contentDiv.classList.add('chats-list-user-content-is-online');
     }
 
-
     //Name
     const h4 = document.createElement('h4');
     h4.textContent = friendName;
@@ -105,7 +105,7 @@ function addBoxChatToList(chatData) {
 
     lastMessageTime.textContent = " - " + formattedTime;
 
-    if (!isSeen && senderID !== localStorage.getItem('uid')) {
+    if (!isSeen && senderID !== localStorage.getItem('uid') && clientTimeSeen < timeSend) {
         h4.style.fontWeight = 'bold';
         lastMessageP.style.fontWeight = 'bold';
         lastMessageTime.style.fontWeight = 'bold';
@@ -121,7 +121,6 @@ function addBoxChatToList(chatData) {
     div.appendChild(contentDiv);
 
     if (isSeen) {
-        console.log("Đã xem tin nhắn");
         const seenImage = document.createElement('img');
         seenImage.src = friendAvatar;
         seenImage.classList.add('chats-list-user-seen');
@@ -132,17 +131,17 @@ function addBoxChatToList(chatData) {
 }
 
 // Sửa đổi tin nhắn để hiển thị trong chat box
-function fixMessageToChatBoxList(chatID, message, chatOpen = false) {
+function fixMessageToChatBoxList(chatID, message, chatOpen) {
     const senderID = message.senderID;  // ID người gửi
     const timeSend = message.timestamp;  // Thời gian gửi tin nhắn
     const type = message.type;  // Kiểu tin nhắn (text, image, video, file)
     const reply = message.replyTo;  // Tin nhắn trả lời (nếu có)
-    let textMessage;
+    let textMessage = "";
 
     moveChatIDToFirstInListBox(senderID);  // Di chuyển chatID lên đầu danh sách
 
     if (senderID === localStorage.getItem("uid")) {
-        textMessage = "Bạn: "
+        textMessage += "Bạn: "
     } else if (reply !== "") {
         textMessage += "Đã trả lời một tin nhắn:"
     }
@@ -183,7 +182,7 @@ function fixContentTextMessageToChatBoxList(chatID, senderID, text, timeSend, ch
         messageTime.textContent = " - " + formattedTime;
     }
 
-    // Hiện là online
+    // Chat đang mở hay không
     if (senderID !== localStorage.getItem("uid")) {
         updateOnlineStatus(chatID, timeSend);
     }
@@ -196,18 +195,19 @@ function fixContentTextMessageToChatBoxList(chatID, senderID, text, timeSend, ch
         messageText.style.fontWeight = 'normal';
         messageTime.style.fontWeight = 'normal';
 
+        updateSeenMessageIcon(chatID, senderID !== localStorage.getItem("uid"));
+
     } else {
         // In đậm tên người gửi và tin nhắn nếu chưa đọc
         userName.style.fontWeight = 'bold';
         messageText.style.fontWeight = 'bold';
         messageTime.style.fontWeight = 'bold';
-    }
 
-    // Di chuyển tin nhắn này lên đầu danh sách
-    moveChatIDToFirstInListBox(chatID);
+        updateSeenMessageIcon(chatID, false);
+    }
 }
 
-function updateSeenMessageIcon(chatID) {
+function updateSeenMessageIcon(chatID, seen) {
     const chatBox = document.getElementById(chatID);
     if (!chatBox) return; // không tìm thấy thì dừng
 
@@ -215,12 +215,15 @@ function updateSeenMessageIcon(chatID) {
     const friendAvatar = chatBox.querySelector('.chats-list-user-avatar').src;
 
     // Cập nhật trạng thái đã xem
-    const contentDiv = chatBox.querySelector('.chats-list-user');
-    if (contentDiv) {
+    const icon = chatBox.querySelector('.chats-list-user-seen');
+    if (!icon && seen) {
         const seenImage = document.createElement('img');
         seenImage.src = friendAvatar;
         seenImage.classList.add('chats-list-user-seen');
-        contentDiv.appendChild(seenImage);
+        chatBox.appendChild(seenImage);
+
+    } else if (icon && !seen) {
+        icon.remove();
     }
 }
 
@@ -262,15 +265,6 @@ function updateOnlineStatus(chatID, time) {
     if (chatOpen) {
         transmitMessageContainer(chatID); // Cập nhật thông tin người dùng trong message container
     }
-}
-
-function isOnline(inputDate) {
-    const now = new Date();
-    const date = new Date(inputDate);
-    const diffMs = now - date;
-
-    // Kiểm tra xem thời gian khác nhau có nhỏ hơn 2 phút không
-    return diffMs < 2 * 60 * 1000; // 2 phút
 }
 
 export {

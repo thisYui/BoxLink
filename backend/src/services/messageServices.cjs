@@ -184,12 +184,12 @@ async function startChat(uid, friendID){
 
         // Cập nhật thời gian trò chuyện
         await db.collection("chats").doc(chatID).update({
-            [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp()
+            [`info.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp()
         });
 
         // Thông báo đã xem
-        await seenMessageNotification(uid, friendID, chatID);
-        
+        await seenMessageNotification(uid, friendID);
+
         return chatID; // Trả về ID của cuộc trò chuyện hiện tại
 
     } catch (error) {
@@ -297,10 +297,57 @@ async function loadMore(chatID, limit = 100) {
     return messages.reverse(); // Hiển thị từ cũ đến mới
 }
 
+// Cập nhật tời gian truy cập nhật đã đọc
+async function updateSeen(uid, friendID) {
+    try {
+        // Tìm kiếm cuộc trò chuyện
+        const chatID = await findChat(uid, friendID);
+
+        // Cập nhật thời gian đã đọc
+        await db.collection("chats").doc(chatID).update({
+            [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+
+        await seenMessageNotification(uid, friendID);
+
+        return true;
+
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật trạng thái đã đọc:", error);
+        throw error;
+    }
+}
+
+// Bật/Tắt thông báo về phía uid
+async function turnNotification(uid, friendID) {
+    try {
+        // Tìm kiếm cuộc trò chuyện
+        const chatID = await findChat(uid, friendID);
+
+        // Lấy trạng thái hiện tại của thông báo
+        const chatDoc = await db.collection("chats").doc(chatID).get();
+        const stateNotification = chatDoc.data().info[uid]?.turnOnNotification;
+
+        // Cập nhật trạng thái thông báo
+        await db.collection("chats").doc(chatID).update({
+            [`info.${uid}.turnOnNotification`]: !stateNotification, // Đảo ngược trạng thái
+        });
+
+        return true;
+
+    } catch (error) {
+        logger.error("Lỗi khi tắt thông báo:", error);
+        throw error;
+    }
+}
+
 module.exports = {
     startChat,
     sendMessage,
     getMessages,
     getSingle,
     loadMore,
+    updateSeen,
+    turnNotification,
 }
