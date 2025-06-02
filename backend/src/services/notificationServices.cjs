@@ -20,6 +20,25 @@ async function messageNotification(srcId, desID, messID) {
     }
 }
 
+// Thông báo đã xem
+async function seenMessageNotification(srcId, desID, chatID) {
+    try {
+        // Thêm thông báo cho biết đã xem tin nhắn
+        await db.collection("users").doc(desID).update({
+            notifications: admin.firestore.FieldValue.arrayUnion({
+                typeNotification: "seen-message",
+                srcID: srcId,
+                text: chatID, // Nội dung là id của cuộc trò chuyện
+                timeSend: new Date(),
+            })
+        });
+
+    } catch (error) {
+        logger.error("Lỗi khi gửi thông báo đã xem tin nhắn:", error);
+        throw error;
+    }
+}
+
 // Gửi đi thông báo lời mời kết bạn
 async function friendRequestNotification(srcId, desID) {
     try {
@@ -125,20 +144,19 @@ async function deleteMessageNotification(uid) {
         const notifications = userDoc.data().notifications || [];
 
         // Tạo một mảng các thông báo cần xóa
-        const messagesToDelete = notifications.filter(noti => noti.type === 'message');
+        const messagesToDelete = notifications.filter(noti => noti.typeNotification === 'message');
 
-        // Nếu không có tin nhắn cần xóa, tức là messagesToDelete là null hoặc không có tin nhắn
-        if (messagesToDelete.length === 0) {
-            // Xóa toàn bộ thông báo nếu không có thông báo 'message' để xóa
+        if (messagesToDelete.length === notifications.length) {
+            // Nếu tất cả thông báo là tin nhắn, xóa toàn bộ mảng notifications
             db.collection("users").doc(uid).update({
                 notifications: []
             }).then().catch((error) => {
-                logger.error("Error deleting all notifications:", error);
+                logger.error("Error deleting messages:", error);
             });
-        } else {
+        } else if (messagesToDelete.length !== 0) {
             // Cập nhật tất cả thông báo cần xóa trong một lần
             db.collection("users").doc(uid).update({
-                notifications: db.firestore.FieldValue.arrayRemove(...messagesToDelete)
+                notifications: admin.firestore.FieldValue.arrayRemove(...messagesToDelete)
             }).then().catch((error) => {
                 logger.error("Error deleting messages:", error);
             });
@@ -151,12 +169,46 @@ async function deleteMessageNotification(uid) {
     }
 }
 
+async function deleteSeenMessageNotification(uid) {
+    try {
+        const userDoc = await db.collection("users").doc(uid).get();
+        const notifications = userDoc.data().notifications || [];
+
+        // Tạo một mảng các thông báo cần xóa
+        const seenMessagesToDelete = notifications.filter(noti => noti.typeNotification === 'seen-message');
+
+        // Nếu không có thông báo 'seen-message' để xóa
+        if (seenMessagesToDelete.length === notifications) {
+            // Cập nhật tất cả thông báo cần xóa trong một lần
+            db.collection("users").doc(uid).update({
+                notifications: []
+            }).then().catch((error) => {
+                logger.error("Error deleting seen messages:", error);
+            });
+        } else if (seenMessagesToDelete.length !== 0) {
+            // Cập nhật tất cả thông báo cần xóa trong một lần
+            db.collection("users").doc(uid).update({
+                notifications: admin.firestore.FieldValue.arrayRemove(...seenMessagesToDelete)
+            }).then().catch((error) => {
+                logger.error("Error deleting seen messages:", error);
+            });
+        }
+
+        return true;
+    } catch (error) {
+        logger.error("Lỗi khi xóa thông báo đã xem tin nhắn:", error);
+        throw error;
+    }
+}
+
 module.exports = {
     messageNotification,
+    seenMessageNotification,
     friendRequestNotification,
     friendAcceptNotification,
     updateUserNotification,
     otherNotification,
     deleteNotificationSpecific,
-    deleteMessageNotification
+    deleteMessageNotification,
+    deleteSeenMessageNotification
 }

@@ -4,7 +4,8 @@ import { formatRelativeTimeRead, formatRelativeTimeOnline } from "./renderData.j
 
 // Chỉ dùng cho server
 function addMessageToChatBoxServer(message) {
-    const senderID = message.senderId;  // ID người gửi
+    const messageID = message.messageID; // ID của tin nhắn
+    const senderID = message.senderID;  // ID người gửi
     const timeSend = message.timeSend;  // Thời gian gửi tin nhắn
     const type = message.type;  // Kiểu tin nhắn (text, image, video, file)
     const reply = message.replyTo;  // Tin nhắn trả lời (nếu có)
@@ -12,33 +13,33 @@ function addMessageToChatBoxServer(message) {
 
     if (type === "system" || type === "text") {
         const textMessage = content.text;  // Nội dung tin nhắn văn bản
-        addTextMessageToChatBox(textMessage, senderID, type, timeSend, reply);  // Thêm tin nhắn vào chat box
+        addTextMessageToChatBox(messageID, textMessage, senderID, type, timeSend, reply);  // Thêm tin nhắn vào chat box
 
     } else if (type === "image") {
         const urlImage = content.url;  // Đường dẫn đến ảnh
-        addImageMessageToChatBox(urlImage, senderID, timeSend, reply);  // Thêm tin nhắn ảnh vào chat box
+        addImageMessageToChatBox(messageID, urlImage, senderID, timeSend, reply);  // Thêm tin nhắn ảnh vào chat box
 
     } else if (type === "video") {
         const urlVideo = content.url;  // Đường dẫn đến video
         const duration = content.duration;  // Thời gian video
-        addVideoMessageToChatBox(urlVideo, duration, senderID, timeSend, reply);  // Thêm tin nhắn video vào chat box
+        addVideoMessageToChatBox(messageID, urlVideo, duration, senderID, timeSend, reply);  // Thêm tin nhắn video vào chat box
 
     } else if (type === "file") {
         const fileName = content.fileName;  // Tên tệp
         const size = content.size;  // Kích thước tệp
         const subtype = content.subtype;  // Loại tệp (file, audio)
-        addFileMessageToChatBox(fileName, size, subtype, senderID, timeSend, reply);  // Thêm tin nhắn tệp vào chat box
+        addFileMessageToChatBox(messageID, fileName, size, subtype, senderID, timeSend, reply);  // Thêm tin nhắn tệp vào chat box
 
     } else if (type === "link") {
         const title = content.title;  // Tiêu đề của trang web
         const description = content.description;  // Mô tả của trang web
         const thumbnail = content.thumbnail;  // Hình thu nhỏ của trang web
         const url = content.url;  // Đường dẫn đến trang web
-        addLinkMessageToChatBox(title, description, thumbnail, url, senderID, timeSend, reply);  // Thêm tin nhắn link vào chat box
+        addLinkMessageToChatBox(messageID, title, description, thumbnail, url, senderID, timeSend, reply);  // Thêm tin nhắn link vào chat box
 
     } else if (type === "rich-text") {
         const richText = convertContentToString(content);  // Chuyển đổi nội dung rich text thành chuỗi
-        addRichTextMessageToChatBox(richText, senderID, timeSend, reply);  // Thêm tin nhắn rich text vào chat box
+        addRichTextMessageToChatBox(messageID, richText, senderID, timeSend, reply);  // Thêm tin nhắn rich text vào chat box
 
     } else {
         console.warn("Loại tin nhắn không xác định:", type);
@@ -46,26 +47,26 @@ function addMessageToChatBoxServer(message) {
 }
 
 // Chỉ dùng cho client
-function addMessageToChatBoxClient(type, content, replyTo) {
+function addMessageToChatBoxClient(messageID, type, content, replyTo) {
     moveChatIDToFirstInListBox(sessionStorage.getItem("lastClickedUser"));  // Di chuyển đoạn chat của người gửi lên đầu danh sách
 
     const timeSend = new Date().toISOString();  // Thời gian gửi tin nhắn
     const senderID = localStorage.getItem("uid");  // ID người gửi
 
     if (type === "text") {
-        addTextMessageToChatBox(content, senderID);  // Thêm tin nhắn vào chat box
+        addTextMessageToChatBox(messageID, content, senderID);  // Thêm tin nhắn vào chat box
 
     } else if (type === "image") {
         const files = document.getElementById('attachment').files;
         const file = files[0];  // Giả sử chỉ lấy tệp đầu tiên nếu có nhiều tệp
         const imageUrl = URL.createObjectURL(file);
-        addImageMessageToChatBox(imageUrl, senderID);  // Gọi hàm để hiển thị hình ảnh
+        addImageMessageToChatBox(messageID, imageUrl, senderID);  // Gọi hàm để hiển thị hình ảnh
 
     } else if (type === "video") {
         const files = document.getElementById('attachment').files;
         const file = files[0];  // Giả sử chỉ lấy tệp video đầu tiên
         const videoUrl = URL.createObjectURL(file);
-        addVideoMessageToChatBox(videoUrl, senderID);  // Gọi hàm để hiển thị video
+        addVideoMessageToChatBox(messageID, videoUrl, senderID);  // Gọi hàm để hiển thị video
 
     } else if (type === "file") {
         const files = document.getElementById('attachment').files;
@@ -73,7 +74,7 @@ function addMessageToChatBoxClient(type, content, replyTo) {
         const fileName = file.name;
         const fileSize = file.size;
         const fileSubtype = file.type;  // Loại tệp (ví dụ: application/pdf, application/msword, ...)
-        addFileMessageToChatBox(fileName, fileSize, fileSubtype, senderID);  // Gọi hàm để hiển thị tệp tài liệu
+        addFileMessageToChatBox(messageID, fileName, fileSize, fileSubtype, senderID);  // Gọi hàm để hiển thị tệp tài liệu
 
     } else if (type === "link") {
         getHyperlinkInfo(content).then((data) => {
@@ -81,11 +82,11 @@ function addMessageToChatBoxClient(type, content, replyTo) {
             const description = data.description;  // Mô tả của trang web
             const thumbnail = data.thumbnail;  // Hình thu nhỏ của trang web
             const url = data.url;  // Đường dẫn đến trang web
-            addLinkMessageToChatBox(title, description, thumbnail, url, senderID, timeSend, replyTo);  // Thêm tin nhắn link vào chat box
+            addLinkMessageToChatBox(messageID, title, description, thumbnail, url, senderID, timeSend, replyTo);  // Thêm tin nhắn link vào chat box
         });
 
     } else if (type === "rich-text") {
-        addRichTextMessageToChatBox(content, senderID, timeSend, replyTo);  // Thêm tin nhắn rich text vào chat box
+        addRichTextMessageToChatBox(messageID, content, senderID, timeSend, replyTo);  // Thêm tin nhắn rich text vào chat box
 
     } else {
         console.warn("Loại tin nhắn không xác định:", type);
@@ -101,7 +102,7 @@ function addMessageToChatBoxClient(type, content, replyTo) {
         }
     }
 
-    fixMessageToChatBoxList(sessionStorage.getItem("lastClickedUser"), tempMessage);  // Sửa đổi tin nhắn trong chat box danh sách
+    fixMessageToChatBoxList(sessionStorage.getItem("lastClickedUser"), tempMessage, true);  // Sửa đổi tin nhắn trong chat box danh sách
     document.getElementById("message-input").value = '';
 }
 
@@ -119,10 +120,13 @@ function addTimestampToMessage(messageDiv, timeSend) {
     messageDiv.appendChild(timeElement);
 }
 
-function addTextMessageToChatBox(textMessage, senderID, type, timeSend, reply) {
+function addTextMessageToChatBox(messageID, textMessage, senderID, type, timeSend, reply) {
     const container = document.getElementById("messageContainer");
     const div = document.createElement("div");
     const p = document.createElement("p");
+
+    // Thêm data-message-id để nhận dạng tin nhắn
+    div.setAttribute('data-message-id', messageID);
 
     if (type === "system") {
         div.classList.add("message-content", "systemMessage");
@@ -146,11 +150,14 @@ function addTextMessageToChatBox(textMessage, senderID, type, timeSend, reply) {
     container.appendChild(div);
 }
 
-function addImageMessageToChatBox(urlImage, senderID) {
+function addImageMessageToChatBox(messageID, urlImage, senderID) {
     const messageContainer = document.querySelector('.message-container-body-message-area');
 
     const div = document.createElement('div');
     div.classList.add('message-content', 'sender', 'messageImage');
+
+    // Thêm data-message-id để nhận dạng tin nhắn
+    div.setAttribute('data-message-id', messageID);
 
     const img = document.createElement('img');
     img.src = urlImage;
@@ -168,12 +175,14 @@ function addImageMessageToChatBox(urlImage, senderID) {
     messageContainer.appendChild(div);
 }
 
-
-function addVideoMessageToChatBox(urlVideo, senderID) {
+function addVideoMessageToChatBox(messageID, urlVideo, senderID) {
     const messageContainer = document.querySelector('.message-container-body-message-area');
 
     const div = document.createElement('div');
     div.classList.add('message-content', 'sender', 'messageVideo');
+
+    // Thêm data-message-id để nhận dạng tin nhắn
+    div.setAttribute('data-message-id', messageID);
 
     const video = document.createElement('video');
     video.src = urlVideo;
@@ -192,11 +201,14 @@ function addVideoMessageToChatBox(urlVideo, senderID) {
     messageContainer.appendChild(div);
 }
 
-function addFileMessageToChatBox(fileName, size, subtype, senderID) {
+function addFileMessageToChatBox(messageID, fileName, size, subtype, senderID) {
     const messageContainer = document.querySelector('.message-container-body-message-area');
 
     const div = document.createElement('div');
     div.classList.add('message-content', 'sender', 'messageFile');
+
+    // Thêm data-message-id để nhận dạng tin nhắn
+    div.setAttribute('data-message-id', messageID);
 
     const icon = document.createElement('i');
     icon.classList.add('fa-solid', 'fa-file-lines');
@@ -230,11 +242,13 @@ function addFileMessageToChatBox(fileName, size, subtype, senderID) {
     messageContainer.appendChild(div);
 }
 
-
-function addLinkMessageToChatBox(title, description, thumbnail, url, senderID, timeSend, reply) {
+function addLinkMessageToChatBox(messageID, title, description, thumbnail, url, senderID, timeSend, reply) {
     // Tạo một div chứa thông tin tin nhắn
     const div = document.createElement('div');
     div.classList.add('message-content', 'sender', 'messageLink');
+
+    // Thêm data-message-id để nhận dạng tin nhắn
+    div.setAttribute('data-message-id', messageID);
 
     // Thêm thông tin về người gửi và thời gian gửi
     const header = document.createElement('div');
@@ -294,12 +308,15 @@ function addLinkMessageToChatBox(title, description, thumbnail, url, senderID, t
     messageContainer.appendChild(div);
 }
 
-function addRichTextMessageToChatBox(rich_text, senderID, timeSend, reply) {
+function addRichTextMessageToChatBox(messageID, rich_text, senderID, timeSend, reply) {
     const messageContainer = document.querySelector('.message-container-body-message-area'); // Chọn nơi hiển thị message
 
     // Tạo div chứa tin nhắn
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message-content', 'sender');
+
+    // Thêm data-message-id để nhận dạng tin nhắn
+    messageDiv.setAttribute('data-message-id', messageID);
 
     // Tạo thẻ <p> chứa nội dung
     const p = document.createElement('p');

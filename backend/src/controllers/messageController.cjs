@@ -48,8 +48,8 @@ async function sendMessages(req, res) {
     const { chatID, uid,  friendID, type, content, replyTo } = req.body;
 
     try {
-        await sendMessage(chatID, uid, friendID, type, content, replyTo);
-        res.status(200).json({ message: 'Tin nhắn đã được gửi thành công!' });
+        const messID = await sendMessage(chatID, uid, friendID, type, content, replyTo);
+        res.status(200).json({ messID });
 
     } catch (error) {
         logger.error('Lỗi khi lấy tin nhắn:', error);

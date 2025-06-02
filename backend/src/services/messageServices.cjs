@@ -1,6 +1,6 @@
 const { admin, db } = require("../config/firebaseConfig.cjs");
 const logger = require("../config/logger.cjs");
-const { messageNotification } = require("./notificationServices.cjs");
+const { messageNotification, seenMessageNotification } = require("./notificationServices.cjs");
 const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 const mine = require("mime-types");
 const { getWebsitePreview, getVideoDuration,formatRichTextFromPlain } = require("./utilityServices.cjs");
@@ -17,7 +17,7 @@ const { getWebsitePreview, getVideoDuration,formatRichTextFromPlain } = require(
  * Định dạng tin nhắn tiêu chuẩn
     JSON Message
     {
-      "senderId": "user",                // ai gửi
+      "senderID": "user",                // ai gửi
       "type": "text",                       // text | image | file | system | rich_text | ...
       "content": {},                        // nội dung (thay đổi theo type)
       "timestamp": "2025-04-09T15:32:00Z",  // thời gian gửi
@@ -181,10 +181,14 @@ async function findChat(uid, friendID) {
 async function startChat(uid, friendID){
     try {
         const chatID = await findChat(uid, friendID);
+
         // Cập nhật thời gian trò chuyện
         await db.collection("chats").doc(chatID).update({
             [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp()
         });
+
+        // Thông báo đã xem
+        await seenMessageNotification(uid, friendID, chatID);
         
         return chatID; // Trả về ID của cuộc trò chuyện hiện tại
 
@@ -201,7 +205,7 @@ async function sendMessage(chatID, uid, friendID, type, content, replyTo) {
 
         // Định dạng tin nhắn
         const message = {
-            senderId: uid,
+            senderID: uid,
             type: type,
             content: formattedMessage,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
@@ -224,6 +228,8 @@ async function sendMessage(chatID, uid, friendID, type, content, replyTo) {
             [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp(),
         });
 
+        return messID; // Trả về ID của tin nhắn vừa gửi
+
     } catch (error) {
         logger.error("Lỗi khi gửi tin nhắn:", error);
         throw error;
@@ -237,7 +243,11 @@ async function getMessages(chatID, limit = 100) {
 
         const messages = [];
         snapshot.forEach(doc => {
-            messages.push({ id: doc.id, ...doc.data() });
+            messages.push({
+                id: doc.id,
+                messageID: doc.id, // Added messageID field
+                ...doc.data()
+            });
         });
 
         return messages.reverse(); // Hiển thị từ cũ đến mới
@@ -254,6 +264,7 @@ async function getSingle(uid, srcID, messageID) {
         const chatFind = await findChat(uid, srcID);
         // Truy cập vào messages subcollection
         const messageDoc = await db.collection("chats").doc(chatFind).collection("messages").doc(messageID).get();
+        messageDoc.messageID = messageDoc.id; // Thêm ID của tin nhắn vào kết quả
         return messageDoc.data();
 
     } catch (error) {
@@ -276,7 +287,11 @@ async function loadMore(chatID, limit = 100) {
     const messages = [];
 
     snapshot.forEach(doc => {
-        messages.push({ id: doc.id, ...doc.data() });
+        messages.push({
+                id: doc.id,
+                messageID: doc.id, // Added messageID field
+                ...doc.data()
+            });
     });
 
     return messages.reverse(); // Hiển thị từ cũ đến mới

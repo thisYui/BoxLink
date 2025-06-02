@@ -113,8 +113,8 @@ async function deleteNotification(notification) {
     return await response.json();
 }
 
-// Lấy trạng thái online ucar bạn bè
-async function getFriendStatus(friendID) {
+// Lấy trạng thái online của bạn bè
+async function getFriendStatus() {
     const response = await fetch("http://localhost:3000/api/get-friend-status", {
         method: "POST",
         headers: {
@@ -122,7 +122,6 @@ async function getFriendStatus(friendID) {
         },
         body: JSON.stringify({
             uid: localStorage.getItem("uid"),
-            friendID: friendID
         })
     });
 

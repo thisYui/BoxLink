@@ -6,6 +6,7 @@ const { getInfo,
     acceptFriend,
     friendRequest,
     cancelFriend,
+    recall,
     updateLastOnline,
     getProfileUser
 } = require("../services/userServices.cjs");
@@ -111,6 +112,20 @@ async function cancelFriendRequest(req, res) {
     }
 }
 
+// Xóa lời mời kết bạn
+async function recallRequest(req, res) {
+    const { uid, friendID } = req.body;
+    try {
+        const user = await recall(uid, friendID);
+        if (!user) return res.status(404).json({ message: 'Thu hồi lời mời kết bạn thất bại!' });
+        res.status(200).json({ message: 'Đã thu hồi lời mời kết bạn!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi thu hồi lời mời kết bạn!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 // Thay đổi mật khẩu
 async function resetPassword(req, res) {
     const { uid, password } = req.body;
@@ -178,6 +193,7 @@ module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
     cancelFriendRequest,
+    recallRequest,
     deleteAccount,
     updateOnline,
     getProfile

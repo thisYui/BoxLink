@@ -42,7 +42,7 @@ async function getInfo(uid) {
                 uid: friendID,
                 avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
                 lastMessage: {
-                    senderID: chatData.lastMessage.senderId,
+                    senderID: chatData.lastMessage.senderID,
                     text: text,
                     timeSend: chatData.lastMessage.timestamp,
                     timeSeen: timeSeen
@@ -247,6 +247,11 @@ async function cancelFriend(uid, friendID) {
     }
 }
 
+// Thu hồi lời mời kết bạn
+async function recall(uid, friendID) {
+    await cancelFriend(friendID, uid); // Hủy lời mời kết bạn từ người nhận
+}
+
 // Cập nhật thời gian online
 async function updateLastOnline(uid) {
     try {
@@ -295,6 +300,7 @@ module.exports = {
     acceptFriend,
     friendRequest,
     cancelFriend,
+    recall,
     updateLastOnline,
     getProfileUser
 };

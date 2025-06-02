@@ -1,7 +1,7 @@
 import { getFriendStatus, getUserInfo } from '../fetchers/request.js';
 import { fetchMessages, startChatSession } from '../fetchers/chatFetcher.js';
 import { addMessageToChatBoxServer } from '../utils/renderMessage.js';
-import { addBoxChatToList, fixMessageContainer, updateSeenMessage } from "../utils/chatProcessor.js";
+import { addBoxChatToList, transmitMessageContainer, updateSeenMessageStyle, updateOnlineStatus } from "../utils/chatProcessor.js";
 import { convertToDate } from "../utils/renderData.js";
 
 window.loadPage = async function (){
@@ -50,14 +50,14 @@ window.loadChat = async function () {
     const chatData = await fetchMessages();
     const container = document.getElementById("messageContainer");
 
-    fixMessageContainer(window.lastClickedUser);
+    transmitMessageContainer(window.lastClickedUser);
 
     container.innerHTML = "";
     chatData.forEach(msg => {
         addMessageToChatBoxServer(msg);
     });
 
-    updateSeenMessage(chatID);  // cập nhật trạng thái đã đọc
+    updateSeenMessageStyle();  // cập nhật trạng thái đã đọc
 
     container.style.scrollBehavior = 'auto';
     container.scrollTop = container.scrollHeight;
@@ -66,10 +66,11 @@ window.loadChat = async function () {
 window.updateLastOnlineListFriend = async function () {
     const lastOnlineList = await getFriendStatus(); // <uid, lastonline>
 
-    for (const friendID of lastOnlineList) {
+    for (const friendID in lastOnlineList) {
         const lastOnline = lastOnlineList[friendID]; // <uid, lastonline>
+        const time = convertToDate(lastOnline);
 
-        // process
+        updateOnlineStatus(friendID, time);
     }
 }
 

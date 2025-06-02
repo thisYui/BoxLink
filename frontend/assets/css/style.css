@@ -419,7 +419,11 @@ body {
     border-radius: 50%;
     z-index: 1;
     margin-right: 10px;
+<<<<<<< Updated upstream
     
+=======
+
+>>>>>>> Stashed changes
 }
 
 .chats-info-features-button:hover {
@@ -703,7 +707,7 @@ body {
 .edit-profile-button {
     align-self: center;
     padding: 10px 30px;
-    background: back;
+    background: black;
     border: 1px solid var(--light-green);
     color: var(--light-green);
     border-radius: 20px;

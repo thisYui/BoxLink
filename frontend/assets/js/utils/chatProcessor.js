@@ -1,14 +1,16 @@
-import { convertToDate, formatRelativeTimeRead, formatRelativeTimeOnline } from './renderData.js'
+import { convertToDate, formatRelativeTimeRead, formatRelativeTimeOnline, isOnline } from './renderData.js'
 
-function fixMessageContainer(chatID) {
+// Dùng để truyền thông tin người dùng từ chat-list sáng message-container
+function transmitMessageContainer(chatID) {
     // Find the chat box for this user
     const box = document.getElementById(chatID);
     if (!box) return;
 
     // Get user information from the box
-    const name = box.querySelector('.displayName').textContent;
-    const avatar = box.querySelector('.chat-box-avatar').src;
-    const timeOnline = box.querySelector('.friend-status').textContent; // Tooltip chứa thời gian hoạt động
+    const name = box.querySelector('.chats-list-user-name').textContent;
+    const avatar = box.querySelector('.chats-list-user-avatar').src;
+    const stringTimeOnline = box.querySelector('.chats-list-user-content').dataset.date;
+    const timeOnline = new Date(stringTimeOnline);
 
     // Get header elements
     const displayNameElement = document.querySelector('.chat-info-display-name');
@@ -27,7 +29,7 @@ function fixMessageContainer(chatID) {
     }
 
     if (timeOnline) {
-        lastSeenElement.textContent = timeOnline;
+        lastSeenElement.textContent = formatRelativeTimeOnline(timeOnline);
     }
 }
 
@@ -44,7 +46,7 @@ function moveChatIDToFirstInListBox(chatID) {
     window.listChatBoxOrder.unshift(chatID);
 
     const chatBox = document.getElementById(chatID);
-    const chatsContainer = document.querySelector(".chat-box-area");
+    const chatsContainer = document.querySelector(".chats-list");
     if (chatBox && chatsContainer) {
         chatsContainer.prepend(chatBox);
     }
@@ -55,13 +57,13 @@ function addBoxChatToList(chatData) {
     const friendID = chatData.uid;
     const friendAvatar = chatData.avatar;
     const text = chatData.lastMessage.text;
-    const senderID = chatData.lastMessage.senderId;
+    const senderID = chatData.lastMessage.senderID;
     const timeSend = convertToDate(chatData.lastMessage.timeSend);
     const timeSeen = convertToDate(chatData.lastMessage.timeSeen);
     const lastOnline = convertToDate(chatData.lastOnline);
 
     const formattedTime = formatRelativeTimeRead(timeSend);
-    const formattedLastOnline = formatRelativeTimeOnline(lastOnline);
+    const isSeen = senderID === localStorage.getItem('uid') && timeSeen >= timeSend;
 
     const chatsContainer = document.querySelector(".chats-list");
 
@@ -76,12 +78,13 @@ function addBoxChatToList(chatData) {
 
     //Content div
     const contentDiv = document.createElement('div');
-    contentDiv.classList.add('chats-list-user-content')
+
+    contentDiv.classList.add('chats-list-user-content');
+    contentDiv.dataset.date = lastOnline.toISOString();
     if (isOnline(lastOnline)) {
         contentDiv.classList.add('chats-list-user-content-is-online');
     }
 
-    console.log(lastOnline);
 
     //Name
     const h4 = document.createElement('h4');
@@ -91,35 +94,57 @@ function addBoxChatToList(chatData) {
     //message
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('chats-list-user-message');
+
     const lastMessageP = document.createElement('p');
     lastMessageP.classList.add('chats-list-user-text');
+
     const lastMessageTime = document.createElement('p');
     lastMessageTime.classList.add('chats-list-user-time');
-    lastMessageP.textContent = text;
-    lastMessageTime.textContent = " - " + formatRelativeTimeRead(timeSend);
+
+    lastMessageP.textContent = senderID === localStorage.getItem('uid') ? "Bạn: " + text : text;
+
+    lastMessageTime.textContent = " - " + formattedTime;
+
+    if (!isSeen && senderID !== localStorage.getItem('uid')) {
+        h4.style.fontWeight = 'bold';
+        lastMessageP.style.fontWeight = 'bold';
+        lastMessageTime.style.fontWeight = 'bold';
+    }
+
     messageDiv.appendChild(lastMessageP);
     messageDiv.appendChild(lastMessageTime);
+
     contentDiv.appendChild(h4);
     contentDiv.appendChild(messageDiv);
+
     div.appendChild(avatar);
     div.appendChild(contentDiv);
+
+    if (isSeen) {
+        console.log("Đã xem tin nhắn");
+        const seenImage = document.createElement('img');
+        seenImage.src = friendAvatar;
+        seenImage.classList.add('chats-list-user-seen');
+        div.appendChild(seenImage);
+    }
+
     chatsContainer.appendChild(div);
 }
 
-// Thêm 1 tin nhắn vào đoạn chat
+// Sửa đổi tin nhắn để hiển thị trong chat box
 function fixMessageToChatBoxList(chatID, message, chatOpen = false) {
-    const senderID = message.senderId;  // ID người gửi
-    const timeSend = message.timeSend;  // Thời gian gửi tin nhắn
+    const senderID = message.senderID;  // ID người gửi
+    const timeSend = message.timestamp;  // Thời gian gửi tin nhắn
     const type = message.type;  // Kiểu tin nhắn (text, image, video, file)
     const reply = message.replyTo;  // Tin nhắn trả lời (nếu có)
-    let textMessage = "";
+    let textMessage;
 
     moveChatIDToFirstInListBox(senderID);  // Di chuyển chatID lên đầu danh sách
 
     if (senderID === localStorage.getItem("uid")) {
         textMessage = "Bạn: "
     } else if (reply !== "") {
-        textMessage += "Đã trả lời một tin nhắn."
+        textMessage += "Đã trả lời một tin nhắn:"
     }
 
     if (type === "text" || type === "system" || type === "link" || type === "rich-text") {
@@ -134,56 +159,109 @@ function fixMessageToChatBoxList(chatID, message, chatOpen = false) {
         console.warn("Loại tin nhắn không xác định:", type);
     }
 
-    fixContentTextMessageToChatBoxList(chatID, senderID, textMessage, timeSend,  timeSend, chatOpen);  // Thêm tin nhắn vào chat box
+    fixContentTextMessageToChatBoxList(chatID, senderID, textMessage, timeSend, chatOpen);  // Thêm tin nhắn vào chat box
 }
 
 // Thêm tin nhắn hiển thị phía chat list
-function fixContentTextMessageToChatBoxList(chatID, senderID, text, timeSend, lastOnline, chatOpen) {
-    // tìm chat box theo id
+function fixContentTextMessageToChatBoxList(chatID, senderID, text, timeSend, chatOpen) {
+    // Tìm chat box theo ID
+    const chatBox = document.getElementById(chatID);
+    if (!chatBox) return;
+
+    // Định dạng thời gian gửi
+    const formattedTime = formatRelativeTimeRead(timeSend);
+
+    // Cập nhật nội dung tin nhắn
+    const messageText = chatBox.querySelector('.chats-list-user-text');
+    if (messageText) {
+        messageText.textContent = text;
+    }
+
+    // Cập nhật thời gian tin nhắn
+    const messageTime = chatBox.querySelector('.chats-list-user-time');
+    if (messageTime) {
+        messageTime.textContent = " - " + formattedTime;
+    }
+
+    // Hiện là online
+    if (senderID !== localStorage.getItem("uid")) {
+        updateOnlineStatus(chatID, timeSend);
+    }
+
+    const userName = chatBox.querySelector('.chats-list-user-name');
+
+    // Kiểm tra xem chat box có đang mở không
+    if (chatOpen) {
+        userName.style.fontWeight = 'normal';
+        messageText.style.fontWeight = 'normal';
+        messageTime.style.fontWeight = 'normal';
+
+    } else {
+        // In đậm tên người gửi và tin nhắn nếu chưa đọc
+        userName.style.fontWeight = 'bold';
+        messageText.style.fontWeight = 'bold';
+        messageTime.style.fontWeight = 'bold';
+    }
+
+    // Di chuyển tin nhắn này lên đầu danh sách
+    moveChatIDToFirstInListBox(chatID);
+}
+
+function updateSeenMessageIcon(chatID) {
     const chatBox = document.getElementById(chatID);
     if (!chatBox) return; // không tìm thấy thì dừng
 
-    // cập nhật thời gian gửi và trạng thái đọc
-    const timeElement = chatBox.querySelector('.message-time');
-    if (timeElement) {
-        timeElement.textContent = formatRelativeTimeRead(timeSend);
-    }
+    // Lấy avatar của người bạn
+    const friendAvatar = chatBox.querySelector('.chats-list-user-avatar').src;
 
-    // cập nhật lastOnline (tooltip avatar)
-    const avatarImg = chatBox.querySelector('img.chat-box-avatar');
-    if (avatarImg) {
-        avatarImg.title = `Hoạt động: ${formatRelativeTimeRead(lastOnline)}`;
-    }
-
-    // cập nhật nội dung tin nhắn mới
-    const lastestMessage = chatBox.querySelector('.lastest-chat');
-    if (lastestMessage) {
-        lastestMessage.textContent = text;
-
-        // cập nhật kiểu chữ và màu dựa trên đã đọc hay chưa
-        const readStatus = chatBox.querySelector('.read-status');
-        if (readStatus) {
-            if (chatOpen) {
-                updateSeenMessage(chatID);
-            } else {
-                readStatus.textContent = window.t('chat.unread');
-                readStatus.style.color = '#0d6efd';
-                lastestMessage.style.fontWeight = 'bold';
-            }
-        }
+    // Cập nhật trạng thái đã xem
+    const contentDiv = chatBox.querySelector('.chats-list-user');
+    if (contentDiv) {
+        const seenImage = document.createElement('img');
+        seenImage.src = friendAvatar;
+        seenImage.classList.add('chats-list-user-seen');
+        contentDiv.appendChild(seenImage);
     }
 }
 
-function updateSeenMessage(chatID) {
+function updateSeenMessageStyle() {
+    const chatID = sessionStorage.getItem("lastClickedUser");
     const chatBox = document.getElementById(chatID);
     if (!chatBox) return; // không tìm thấy thì dừng
 
-    const lastestMessage = chatBox.querySelector('.lastest-chat');
-    const readStatus = chatBox.querySelector('.read-status');
+    // Lấy các phần tử cần thiết
+    const userName = chatBox.querySelector('.chats-list-user-name');
+    const messageText = chatBox.querySelector('.chats-list-user-text');
+    const messageTime = chatBox.querySelector('.chats-list-user-time');
 
-    readStatus.textContent = window.t('chat.read');
-    readStatus.style.color = '#5cb85c';
-    lastestMessage.style.fontWeight = 'normal';
+    // Cập nhật kiểu chữ
+    userName.style.fontWeight = 'normal';
+    messageText.style.fontWeight = 'normal';
+    messageTime.style.fontWeight = 'normal';
+}
+
+/**
+ * @param chatID {string} - ID của chat box
+ * @param time {Date} - Thời gian online của người dùng
+ */
+function updateOnlineStatus(chatID, time) {
+    const chatBox = document.getElementById(chatID);
+    if (!chatBox) return; // không tìm thấy thì dừng
+
+    const contentDiv = chatBox.querySelector('.chats-list-user-content');
+    if (contentDiv) {
+        if (isOnline(time)) {
+            contentDiv.dataset.date = time.toISOString(); // Cập nhật thời gian online
+            contentDiv.classList.add('chats-list-user-content-is-online');
+        } else {
+            contentDiv.classList.remove('chats-list-user-content-is-online');
+        }
+    }
+
+    const chatOpen = sessionStorage.getItem('chatID') === chatID;
+    if (chatOpen) {
+        transmitMessageContainer(chatID); // Cập nhật thông tin người dùng trong message container
+    }
 }
 
 function isOnline(inputDate) {
@@ -196,9 +274,11 @@ function isOnline(inputDate) {
 }
 
 export {
-    fixMessageContainer,
+    transmitMessageContainer,
     moveChatIDToFirstInListBox,
     addBoxChatToList,
     fixMessageToChatBoxList,
-    updateSeenMessage
+    updateSeenMessageIcon,
+    updateSeenMessageStyle,
+    updateOnlineStatus
 }

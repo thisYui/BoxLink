@@ -82,6 +82,8 @@ async function friend(uid, friendID, api){
     // api =  friend-request : gửi lời mời kết bạn
     //        accept-friend: đồng ý kết bạn
     //        cancel-friend: hủy lời mời kết bạn
+    //        unfriend: xóa bạn bè
+    //        recall-friend: thu hồi lời mời kết bạn
 
     const response = await fetch(`http://localhost:3000/api/${api}`, {
         method: "POST",
@@ -97,34 +99,6 @@ async function friend(uid, friendID, api){
     if (!response.ok) {
         throw new Error("Failed to send friend request");
     }
-
-    if (api === "friend-request") {
-        // Vô hiệu hóa button gửi lời mời kết bạn
-    }  else if (api === "accept-friend") {
-        // Tạo ngay một chat mới nằm ngay trên đầu danh sách
-    } else if (api === "cancel-friend") {
-        // Xóa lời mời kết bạn và xóa thông báo
-    }
-}
-
-// Xóa bạn bè
-async function unfriend(uid, emailFriend) {
-    const response = await fetch("http://localhost:3000/api/unfriend", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            uid: localStorage.getItem("uid"),
-            emailFriend: emailFriend
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to unfriend");
-    }
-
-    return await response.json();
 }
 
 // Lấy profile người dùng
@@ -152,6 +126,5 @@ export {
     changeDisplayName,
     deleteAccount,
     friend,
-    unfriend,
     getProfileUser
 }

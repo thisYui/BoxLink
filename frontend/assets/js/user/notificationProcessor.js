@@ -2,7 +2,7 @@ import { addMessageToChatBoxServer } from '../utils/renderMessage.js';
 import { getSingleMessage } from '../fetchers/chatFetcher.js';
 import { searchFriendByID } from '../fetchers/request.js';
 import { fixMessageToChatBoxList } from '../utils/chatProcessor.js';
-import { moveChatIDToFirstInListBox } from '../utils/chatProcessor.js';
+import { moveChatIDToFirstInListBox, updateSeenMessageIcon } from '../utils/chatProcessor.js';
 import { convertToDate } from '../utils/renderData.js';
 
 let turnOffNotification = false;
@@ -11,6 +11,12 @@ window.processingNotification = async function (notification) {
     // Xử lí theo loại notification
     const { typeNotification, srcID, text, timeSend } = notification;  // text chứa id document
 
+    // Dạng thông báo không âm thanh
+    if (typeNotification === 'seen-message') {
+        updateSeenMessageIcon(text);  // text chứa id của cuộc trò chuyện
+        return;
+    }
+
     if (turnOffNotification === false) {
         playNotificationSound();  // Phát âm thanh thông báo
     }
@@ -18,17 +24,23 @@ window.processingNotification = async function (notification) {
     if (typeNotification === "message") {
         // Theo srcID để tìm ra người gửi lấy thông tin
         const msg = await getSingleMessage(srcID, text);  // text chứa id document
-        msg.timeSend = convertToDate(msg.timeSend);  // Chuyển đổi thời gian gửi tin nhắn
-        moveChatIDToFirstInListBox(msg.senderId);
+        msg.timestamp = convertToDate(msg.timestamp);  // Chuyển đổi thời gian gửi tin nhắn
+        moveChatIDToFirstInListBox(msg.senderID);
 
         // Đưa tin nhắn vào chat cho 2 trường hợp
-        if (msg.senderId === window.lastClickedUser) {
+        if (msg.senderID === window.lastClickedUser) {
             // 1. Nếu chat là chat đang mở
-            fixMessageToChatBoxList(msg.senderId, msg, true);
+            fixMessageToChatBoxList(msg.senderID, msg, true);
             addMessageToChatBoxServer(msg);  // Thêm tin nhắn vào chat box
+            console.log(msg)
+
+            const container = document.getElementById("messageContainer");
+            container.style.scrollBehavior = 'auto';
+            container.scrollTop = container.scrollHeight;  // Cuộn xuống cuối chat box
+
         } else {
             // 2. Nếu chat không phải là chat đang mở
-            fixMessageToChatBoxList(msg.senderId, msg);  // Thêm tin nhắn vào chat box
+            fixMessageToChatBoxList(msg.senderID, msg);  // Thêm tin nhắn vào chat box
         }
 
     } else if (typeNotification === "friend-request"

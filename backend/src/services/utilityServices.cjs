@@ -1,4 +1,4 @@
-const { admin, db } = require("firebase-admin");
+const { admin, db } = require("../config/firebaseConfig.cjs");  // Import Firebase admin SDK
 const logger = require("../config/logger.cjs");
 const axios = require("axios");
 const cheerio = require("cheerio");

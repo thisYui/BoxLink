@@ -75,7 +75,7 @@ async function createChat(userId, emailFriend) {
         const messagesRef = chatRef.collection("messages");
 
         const messageSystem = {
-              senderId: "",           // ai gửi
+              senderID: "",           // ai gửi
               type: "system",          // kiểu tin nhắn
               content: {
                   text: "Bây giờ bạn có thể trò chuyện với nhau!" // nội dung tin nhắn

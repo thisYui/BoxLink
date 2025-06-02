@@ -1,7 +1,7 @@
 const { Server } = require("socket.io");
 const { admin, db } = require("../config/firebaseConfig.cjs");
 const logger = require("../config/logger.cjs");
-const { deleteMessageNotification } = require("./notificationServices.cjs");
+const { deleteMessageNotification, deleteSeenMessageNotification } = require("./notificationServices.cjs");
 
 // Đối tượng lưu trữ thông tin về tất cả các kết nối socket của user
 const userConnections = {};
@@ -33,12 +33,18 @@ function listenToUserNotifications(io, userId) {
             }
         });
 
+        deleteSeenMessageNotification(userId).then(r => {
+            if (!r) {
+                logger.error("Error deleting seen message notification");
+            }
+        });
+
         // Gửi thông báo cho tất cả kết nối của user này
         if (userConnections[userId]) {
             userConnections[userId].forEach(socketId => {
                 const socket = io.sockets.sockets.get(socketId);
                 if (socket) {
-                    socket.emit("notifications", {notifications});
+                    socket.emit("notifications", { notifications });
                 }
             });
         }

@@ -74,7 +74,7 @@ async function getSingleMessage(srcID, messageID) {
 // Gửi yêu cầu gửi tin nhắn
 async function sendMessages(friendID, type, content, replyTo) {
     try {
-        return (await fetch("http://localhost:3000/api/send-messages", {
+        const response = await fetch("http://localhost:3000/api/send-messages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -87,7 +87,13 @@ async function sendMessages(friendID, type, content, replyTo) {
                 content: content,
                 replyTo: replyTo
             })
-        })).ok;
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+
+        return await response.json();  // Trả về ID của tin nhắn đã gửi
     } catch (error) {
         console.error("Error sending messages:", error);
     }

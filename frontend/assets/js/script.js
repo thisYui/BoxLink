@@ -10,33 +10,17 @@ loadLanguage(getUserLanguage()).then();
 // Lấy dữ liệu từ database
 loadPage().then();
 
-// Load
+// Cập nhật thời gian online mỗi phút
 setInterval(() => {
     updateOnlineTime().catch(console.error);
 }, 60 * 1000);
 
-
-// Gửi khi ấn vào máy bay giấy
-document.getElementById("send-button").addEventListener("click", async (event) => {
-    event.preventDefault();
-    await sendMessage('text');
-});
-
-// Gửi khi ấn phím Enter
-document.getElementById("message-input").addEventListener("keydown", async (event) => {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        await sendMessage('text');
-    }
-});
-
-// Gửi file khi ấn vào nút open
-document.getElementById("attachment").addEventListener("change", async () => {
-    await sendMessage('file');
-});
+// Lấy trạng thái online của người dùng mỗi 2 phút
+setInterval(() => {
+    updateLastOnlineListFriend().catch(console.error);
+}, 2 * 60 * 1000);
 
 /*
-
 // Thay đổi ngôn ngữ khi ấn vào nút
 document.getElementById("reset-lang-button").addEventListener("click", async (event) => {
     event.preventDefault();
@@ -60,10 +44,11 @@ document.getElementById("search-button").addEventListener("click", async (event)
 
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
+    updateLastOnlineListFriend().then()
+
     document.addEventListener("click", (event) => {
-        console.log("gjhfdgdfghjfd");
-        const element = event.target.closest(".chat-box-area-box");
-        
+        const element = event.target.closest(".chats-list-user");
+
         // Kiểm tra nếu click vào phần tử có class chat-box-area-box
         if (element) {
             const elementId = element.id;
@@ -80,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 // Thêm class active cho phần tử hiện tại
                 element.classList.add("chat-box-choosen");
-                
+
                 window.lastClickedUser = elementId;
                 sessionStorage.setItem("lastClickedUser", elementId);
                 try {
@@ -93,6 +78,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
+    });
+
+    // Gửi khi ấn vào máy bay giấy
+    document.getElementById("send-button").addEventListener("click", async (event) => {
+        event.preventDefault();
+        await sendMessage('text');
+    });
+
+    // Gửi khi ấn phím Enter
+    document.getElementById("message-input").addEventListener("keydown", async (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            await sendMessage('text');
+        }
+    });
+
+    // Gửi file khi ấn vào nút open
+    document.getElementById("attachment").addEventListener("change", async () => {
+        await sendMessage('file');
     });
 
     // Set up event listeners for the profile edit buttons
@@ -123,9 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = 'auth.html';
     });
 });
-
-
-
 
 
 window.openChatInfo = function () {

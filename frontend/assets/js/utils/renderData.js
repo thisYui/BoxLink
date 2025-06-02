@@ -60,6 +60,15 @@ function convertToDate(timeSend) {
     return new Date(timeWithNano);
 }
 
+function isOnline(inputDate) {
+    const now = new Date();
+    const date = new Date(inputDate);
+    const diffMs = now - date;
+
+    // Kiểm tra xem thời gian khác nhau có nhỏ hơn 2 phút không
+    return diffMs < 2 * 60 * 1000; // 2 phút
+}
+
 function formatRelativeTimeRead(inputDate) {
     const now = new Date();
     const date = new Date(inputDate);
@@ -94,8 +103,8 @@ function formatRelativeTimeOnline(inputDate) {
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const diffYears = now.getFullYear() - date.getFullYear();
 
-    // Currently active (within last 5 minutes)
-    if (diffMs < 5 * 60 * 1000) {
+    // Currently active (within the last 2 minutes)
+    if (diffMs < 2 * 60 * 1000) {
         return "Đang hoạt động";
     }  else if (diffHours < 1) {
         return `Hoạt động ${diffMinutes} phút trước`;
@@ -123,6 +132,7 @@ export {
     getDataFromDocument,
     convertFileToBinary,
     convertToDate,
+    isOnline,
     formatRelativeTimeRead,
     formatRelativeTimeOnline
 };

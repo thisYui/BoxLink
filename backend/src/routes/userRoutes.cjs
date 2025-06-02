@@ -7,6 +7,7 @@ const { getUserInfo,
     sendFriendRequest,
     acceptFriendRequest,
     cancelFriendRequest,
+    recallRequest,
     deleteAccount,
     updateOnline,
     getProfile
@@ -18,6 +19,7 @@ router.post("/user-info", getUserInfo);
 router.post("/friend-request", sendFriendRequest);
 router.post("/accept-friend", acceptFriendRequest);
 router.post("/cancel-friend", cancelFriendRequest);
+router.post("/recall-friend", recallRequest);
 router.post("/change-avatar", changeAvatar);
 router.post("/change-display-name", changeDisplayName);
 router.post("/reset-password", resetPassword);

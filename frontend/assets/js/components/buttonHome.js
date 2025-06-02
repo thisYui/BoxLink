@@ -3,15 +3,15 @@ import { searchFriendByEmail, deleteNotification  } from '../fetchers/request.js
 import { addMessageToChatBoxClient } from '../utils/renderMessage.js';
 import { getDataFromDocument } from '../utils/renderData.js';
 import { removeNotificationFromList } from '../user/notificationProcessor.js';
-import { getMyProfile, getProfileFriend, setAvatar, setDisplayName, } from '../user/personalProfile.js';
+import { getMyProfile, setAvatar, setDisplayName, } from '../user/personalProfile.js';
 
 window.sendMessage = async function (typeInput) {
     // Xử lí dữ liệu trước khi gửi
     const { type, content, replyTo } = await getDataFromDocument(typeInput);
 
     if (content.length > 0) {
-        addMessageToChatBoxClient(type, content, replyTo); // Thêm tin nhắn vào chat box
-        await sendMessages(window.lastClickedUser, type, content, replyTo); // Gửi tin nhắn đến destination
+        const messageID = await sendMessages(window.lastClickedUser, type, content, replyTo); // Gửi tin nhắn đến destination
+        addMessageToChatBoxClient(messageID, type, content, replyTo); // Thêm tin nhắn vào chat box
     }
 }
 
@@ -63,13 +63,7 @@ window.updateDisplayName = async function (event) {
 }
 
 // Hiển thị profile cá nhân
-window.showProfile = async function (event, type) {
-    if (type === 'myProfile') {
-        const profile = await getMyProfile();
-        loadProfile(profile);
-        showSettingMyProfile();
-    } else {
-        const profile = await getProfileFriend();
-        loadProfile(profile);
-    }
+window.showProfile = async function () {
+    const profile = await getMyProfile();
+    loadProfile(profile);
 }
