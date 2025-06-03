@@ -203,7 +203,7 @@ body {
 }
 
 .chats-list-user-message {
-    width: 85%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -213,11 +213,9 @@ body {
 
 
 .chats-list-user-text {
-    max-width: 50%;
+    max-width: 70%;
     height: 95%;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     align-items: center;
 }
 
@@ -406,7 +404,7 @@ body {
     position: relative;
 }
 
-.chats-info-header-avatar-container-is-online::after {
+.chats-info-header-avatar-container::after {
     content: "";
     padding: 2px 12px;
     background-color: green;
