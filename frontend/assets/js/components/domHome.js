@@ -2,24 +2,12 @@ import { getFriendStatus, getUserInfo } from '../fetchers/request.js';
 import { fetchMessages, startChatSession, updateTimestampMessage } from '../fetchers/chatFetcher.js';
 import { addMessageToChatBoxServer } from '../chat/renderMessage.js';
 import { addBoxChatToList, transmitMessageContainer, updateSeenMessageStyle, updateOnlineStatus } from "../chat/chatProcessor.js";
-import { convertToDate } from "../utils/renderData.js";
+import { convertToDate, isOnline, formatRelativeTimeOnline } from "../utils/renderData.js";
 import { addToListBoxNoNotice } from "../user/notificationProcessor.js";
 
 window.loadPage = async function (){
     // Tạo trang
     const data = await getUserInfo();
-
-    /* {
-    avatar:
-    friendList: [
-    {
-        displayName:
-        uid:
-        avatar:
-        lastMessage: {}
-        lastOnline:
-    },..]
-    }*/
 
     const userAvatar = document.getElementById('mainAccountAvatar');
     userAvatar.src = data.avatar;
@@ -79,5 +67,28 @@ window.updateLastOnlineListFriend = async function () {
 
         updateOnlineStatus(friendID, time);
     }
+}
+
+window.loadChatInfo = async function() {
+    // Find the chat box for this user
+    const chatID = window.lastClickedUser;
+    const box = document.getElementById(chatID);
+    if (!box) return;
+
+    document.querySelector('.chats-info-header-avatar-container').classList.remove('chats-info-header-avatar-container-is-online');
+
+    // Get user information from the box
+    const name = box.querySelector('.chats-list-user-name').textContent;
+    const avatar = box.querySelector('.chats-list-user-avatar').src;
+    const stringTimeOnline = box.querySelector('.chats-list-user-content').dataset.date;
+    const timeOnline = new Date(stringTimeOnline);
+
+    document.querySelector('.chats-info-header-avatar').src = avatar;
+    document.querySelector('.chats-info-header-name').textContent = name;
+    document.querySelector('.chats-info-header-name-state').textContent = formatRelativeTimeOnline(timeOnline);
+    if (isOnline(timeOnline)) {
+        document.querySelector('.chats-info-header-avatar-container').classList.add('chats-info-header-avatar-container-is-online');
+    }
+
 }
 

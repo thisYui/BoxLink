@@ -300,6 +300,37 @@ body {
     border: 2px solid var(--light-green);
 }
 
+/* Icon chuông */
+.chats-info-features-button-icon {
+    font-size: 24px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+
+/* Khi bật thông báo (fa-bell) */
+.chats-info-features-button-icon.fa-bell {
+  color: #4CAF50; /* màu xanh khi bật */
+}
+
+/* Khi tắt thông báo (fa-bell-slash) */
+.chats-info-features-button-icon.fa-bell-slash {
+  color: #999; /* màu xám khi tắt */
+}
+
+/* (Tuỳ chọn) hiệu ứng rung khi bật */
+.chats-info-features-button-icon.shake {
+    animation: bell-shake 0.4s;
+}
+
+@keyframes bell-shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-15deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
 .options {
     display: flex;
     align-items: center;

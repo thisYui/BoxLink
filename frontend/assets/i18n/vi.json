@@ -12,6 +12,21 @@
     "unread": "Chưa xem",
     "read": "Đã xem"
   },
+  "chat_info": {
+    "title": "Thông tin cuộc trò chuyện",
+    "members": "Thành viên",
+    "leave_chat": "Rời khỏi cuộc trò chuyện",
+    "delete_chat": "Xóa cuộc trò chuyện",
+    "delete_confirmation": "Bạn có chắc chắn muốn xóa cuộc trò chuyện này?",
+    "leave_confirmation": "Bạn có chắc chắn muốn rời khỏi cuộc trò chuyện này?",
+    "change_nickname": "Thay đổi biệt danh",
+    "nickname_placeholder": "Nhập biệt danh mới...",
+    "nickname_change_success": "Biệt danh đã được thay đổi thành công",
+    "nickname_change_error": "Không thể thay đổi biệt danh, vui lòng thử lại sau",
+    "turn_on_notifications": "Bật thông báo",
+    "turn_off_notifications": "Tắt thông báo",
+    "personal_page": "Trang cá nhân"
+  },
   "friend": {
     "title": "Bạn bè",
     "search_placeholder": "Tìm bạn bè..."
@@ -20,22 +35,33 @@
     "title": "Hồ sơ của tôi",
     "name": "Tên",
     "noBiography": "Không có tiểu sử",
-    "dob": "Ngày sinh",
     "gender": "Giới tính",
     "noGender": "Chưa thiết lập",
+    "Male": "Nam",
+    "Female": "Nữ",
+    "Gay": "Gay",
+    "Lesbian": "Lesbian",
+    "Bisexual": "Song tính",
+    "OtherGender": "Khác",
     "email": "Email",
     "displayName": "Tên hiển thị",
     "biography": "Tiểu sử",
     "genderLabel": "Giới tính:",
     "birthdayLabel": "Ngày sinh:",
+    "noBirthday": "Chưa thiết lập",
     "socialLinkLabel": "Liên kết khác:",
     "statStartDate": "Từ ngày",
     "statFriends": "Bạn bè",
     "statDays": "Số ngày",
     "mutualFriends": "Bạn chung",
-    "editButton": "Chỉnh sửa hồ sơ"
+    "editButton": "Chỉnh sửa hồ sơ",
+    "finishEdit": "Hoàn thành chỉnh sửa hồ sơ"
   },
-
+  "search": {
+    "title": "Tìm kiếm",
+    "placeholder": "Tìm kiếm bạn bè...(email, ID)",
+    "noResults": "Không tìm thấy kết quả"
+  },
   "settings": {
     "title": "Cài đặt",
     "notifications": "Thông báo",

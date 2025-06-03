@@ -45,7 +45,25 @@ async function loadLanguage(lang = 'en') {
     });
 }
 
+function getListGender() {
+    return [
+        t("profile.Male"),
+        t("profile.Female"),
+        t("profile.Gay"),
+        t("profile.Lesbian"),
+        t("profile.Bisexual"),
+        t("profile.OtherGender")
+    ]
+}
+
+function getValueMappingGender(value) {
+    const genderList = getListGender();
+    return genderList[value] || t("profile.OtherGender");
+}
+
 export {
     loadLanguage,
-    getUserLanguage
+    getUserLanguage,
+    getListGender,
+    getValueMappingGender
 }

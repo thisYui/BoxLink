@@ -343,11 +343,7 @@ async function turnNotification(uid, friendID) {
 }
 
 module.exports = {
-    startChat,
-    sendMessage,
-    getMessages,
-    getSingle,
-    loadMore,
-    updateSeen,
-    turnNotification,
+    findChat, startChat, sendMessage,
+    getMessages, getSingle, loadMore,
+    updateSeen, turnNotification,
 }

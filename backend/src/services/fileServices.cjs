@@ -104,7 +104,5 @@ async function getDownloadUrl(filePath) {
 }
 
 module.exports = {
-    uploadFile,
-    downloadFile,
-    getDownloadUrl,
+    uploadFile, downloadFile, getDownloadUrl,
 }

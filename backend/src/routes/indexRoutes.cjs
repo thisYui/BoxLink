@@ -1,7 +1,5 @@
 const express = require('express');
-const { searchFriend,
-    deleteNotification,
-    getWebsiteInfo,
+const { searchFriend, deleteNotification, getWebsiteInfo,
     getFriendStatus
 } = require("../controllers/indexController.cjs");
 

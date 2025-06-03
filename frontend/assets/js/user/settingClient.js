@@ -20,11 +20,6 @@ async function changeLanguage() {
     }
 }
 
-// thay đổi mật khẩu
-async function changePassword() {
-
-}
-
 function applyTheme(theme) {
     // Áp dụng theme mới
     const themeStyleSheet = document.getElementById('theme-style');
@@ -34,7 +29,6 @@ function applyTheme(theme) {
 export {
     logout,
     changeLanguage,
-    changePassword,
     applyTheme
 }
 

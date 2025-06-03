@@ -212,10 +212,7 @@ async function getLastOnlineObject(uid) {
 
 
 module.exports = {
-    searchUserByEmail,
-    searchUserByID,
-    getWebsitePreview,
-    getVideoDuration,
-    formatRichTextFromPlain,
-    getLastOnlineObject
+    searchUserByEmail, searchUserByID,
+    getWebsitePreview, getVideoDuration,
+    formatRichTextFromPlain, getLastOnlineObject
 }

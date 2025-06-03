@@ -1,14 +1,7 @@
 const express = require('express');
-const {
-    createNewChat,
-    removeChat,
-    startChatSession,
-    sendMessages,
-    getSingleMessage,
-    updateSeenMessage,
-    fetchMessages,
-    loadMoreMessages,
-    clickDownload,
+const { createNewChat, removeChat, startChatSession,
+    sendMessages, getSingleMessage, updateSeenMessage,
+    fetchMessages, loadMoreMessages, clickDownload,
     toggleNotification
 } = require('../controllers/messageController.cjs');
 const {} = require('../controllers/indexController.cjs');

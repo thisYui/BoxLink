@@ -60,6 +60,14 @@ function convertToDate(timeSend) {
     return new Date(timeWithNano);
 }
 
+function dateToDMY(date) {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 function isOnline(inputDate) {
     const now = new Date();
     const date = new Date(inputDate);
@@ -132,6 +140,7 @@ export {
     getDataFromDocument,
     convertFileToBinary,
     convertToDate,
+    dateToDMY,
     isOnline,
     formatRelativeTimeRead,
     formatRelativeTimeOnline

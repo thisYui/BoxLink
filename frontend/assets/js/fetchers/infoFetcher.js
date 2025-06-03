@@ -1,7 +1,7 @@
 // Cập nhật thời gian online
 // Mỗi 1 phút 1 lần
 async function updateOnlineTime() {
-    const response = await fetch("http://localhost:3000/api/update-online-time", {
+    const response = await fetch("http://localhost:3000/api/user/update-online-time", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -20,7 +20,7 @@ async function updateOnlineTime() {
 
 // Thay đổi ảnh đại diện
 async function changeAvatar(avatar) {
-    const response = await fetch("http://localhost:3000/api/change-avatar", {
+    const response = await fetch("http://localhost:3000/api/user/change-avatar", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -40,7 +40,7 @@ async function changeAvatar(avatar) {
 
 // Thay đổi tên hiển thị
 async function changeDisplayName(displayName) {
-    const response = await fetch("http://localhost:3000/api/change-display-name", {
+    const response = await fetch("http://localhost:3000/api/user/change-display-name", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -60,7 +60,7 @@ async function changeDisplayName(displayName) {
 
 // Xóa tài khoản
 async function deleteAccount() {
-    const response = await fetch("http://localhost:3000/api/delete-account", {
+    const response = await fetch("http://localhost:3000/api/user/delete-account", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ async function friend(uid, friendID, api){
     //        unfriend: xóa bạn bè
     //        recall-friend: thu hồi lời mời kết bạn
 
-    const response = await fetch(`http://localhost:3000/api/${api}`, {
+    const response = await fetch(`http://localhost:3000/api/user/${api}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -103,7 +103,7 @@ async function friend(uid, friendID, api){
 
 // Lấy profile người dùng
 async function getProfileUser(uid) {
-    const response = await fetch(`http://localhost:3000/api/get-profile`, {
+    const response = await fetch(`http://localhost:3000/api/user/get-profile`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -120,11 +120,118 @@ async function getProfileUser(uid) {
     return await response.json();
 }
 
+// Thay đổi mật khẩu
+async function changePassword(password) {
+    const response = await fetch("http://localhost:3000/api/user/reset-password", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            password: password
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to change password");
+    }
+
+    return await response.json();
+}
+
+// Thay đổi ngày sinh
+async function changeBirthday(birthday) {
+    const response = await fetch("http://localhost:3000/api/user/change-birthday", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            birthday: birthday
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to change birthday");
+    }
+
+    return await response.json();
+}
+
+// Thay đổi giới tính
+async function changeGender(gender) {
+    const response = await fetch("http://localhost:3000/api/user/change-gender", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            gender: gender
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to change birthday");
+    }
+
+    return await response.json();
+}
+
+// Thay đổi tiểu sử cá nhân
+async function changeBiography(biography) {
+    const response = await fetch("http://localhost:3000/api/user/change-biography", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            biography: biography
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to change birthday");
+    }
+
+    return await response.json();
+}
+
+// Thêm đường liên kết mạng xã hội
+async function operaSocialLink(api, socialLink) {
+    // api = add-social-link: thêm đường liên kết mạng xã hội
+    //        remove-social-link: xóa đường liên kết mạng xã hội
+    const response = await fetch(`http://localhost:3000/api/user/${api}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            socialLink: socialLink
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to add social link");
+    }
+
+    return await response.json();
+}
+
 export {
     updateOnlineTime,
     changeAvatar,
     changeDisplayName,
     deleteAccount,
     friend,
-    getProfileUser
+    getProfileUser,
+    changePassword,
+    changeBirthday,
+    changeGender,
+    changeBiography,
+    operaSocialLink
 }

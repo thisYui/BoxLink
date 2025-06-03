@@ -12,6 +12,21 @@
     "unread": "Unread",
     "read": "Read"
   },
+  "chat_info": {
+    "title": "Chat Info",
+    "members": "Members",
+    "leave_chat": "Leave Chat",
+    "delete_chat": "Delete Chat",
+    "delete_confirmation": "Are you sure you want to delete this chat?",
+    "leave_confirmation": "Are you sure you want to leave this chat?",
+    "change_nickname": "Change Nickname",
+    "nickname_placeholder": "Enter new nickname...",
+    "nickname_change_success": "Nickname changed successfully",
+    "nickname_change_error": "Unable to change nickname, please try again later",
+    "turn_on_notifications": "Turn on notifications",
+    "turn_off_notifications": "Turn off notifications",
+    "personal_page": "Personal Page"
+  },
   "friend": {
     "title": "Friends",
     "search_placeholder": "Search friends..."
@@ -20,22 +35,33 @@
     "title": "My Profile",
     "name": "Name",
     "noBiography": "No biography available",
-    "dob": "Date of Birth",
     "gender": "Gender",
     "noGender": "Not set",
+    "Male": "Male",
+    "Female": "Female",
+    "Gay": "Gay",
+    "Lesbian": "Lesbian",
+    "Bisexual": "Bisexual",
+    "OtherGender": "Other",
     "displayName": "Display name",
     "email": "Email",
     "biography": "Biography",
     "genderLabel": "Gender:",
     "birthdayLabel": "BirthDay:",
+    "noBirthday": "Not set",
     "socialLinkLabel": "Social Links",
     "statStartDate": "Start Date",
     "statFriends": "Friends",
     "statDays": "Days",
     "mutualFriends": "Mutual Friends",
-    "editButton": "Edit profile"
+    "editButton": "Edit profile",
+    "finishEdit": "Finish editing profile"
   },
-
+  "search": {
+    "title": "Search",
+    "placeholder": "Search friends... (email, ID)",
+    "noResults": "No results found"
+  },
   "settings": {
     "title": "Settings",
     "notifications": "Notifications",

@@ -1,12 +1,7 @@
 const { createChat, deleteChat } = require('../services/firebaseServices.cjs');
 const { downloadFile } = require('../services/fileServices.cjs');
-const { startChat,
-    sendMessage,
-    getMessages,
-    getSingle,
-    loadMore,
-    updateSeen,
-    turnNotification
+const { findChat, startChat, sendMessage, getMessages,
+    getSingle, loadMore, updateSeen, turnNotification
 } = require('../services/messageServices.cjs');
 const logger = require('../config/logger.cjs');
 
@@ -25,9 +20,10 @@ async function createNewChat(req, res) {
 
 // Xóa cuộc trò chuyện
 async function removeChat(req, res) {
-    const { chatId } = req.body;
+    const { uid, friendID } = req.body;
     try {
-        await deleteChat(chatId);
+        const chatID = await findChat(uid, friendID);
+        await deleteChat(chatID);
         res.status(200).json({ message: 'Cuộc trò chuyện đã được xóa thành công!' });
 
     } catch (error) {
@@ -150,14 +146,8 @@ async function toggleNotification(req, res) {
 }
 
 module.exports = {
-    createNewChat,
-    removeChat,
-    startChatSession,
-    sendMessages,
-    getSingleMessage,
-    updateSeenMessage,
-    fetchMessages,
-    loadMoreMessages,
-    clickDownload,
+    createNewChat, removeChat, startChatSession,
+    sendMessages, getSingleMessage, updateSeenMessage,
+    fetchMessages,loadMoreMessages, clickDownload,
     toggleNotification
 }

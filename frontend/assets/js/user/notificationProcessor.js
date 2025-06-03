@@ -132,6 +132,10 @@ function removeFromListBoxNoNotice(chatID) {
     }
 }
 
+function isOnNotification(uid) {
+    return listBoxNoNotice.includes(uid) === false;
+}
+
 export {
     addNotificationToList,
     removeNotificationFromList,
@@ -139,4 +143,5 @@ export {
     turnOnOrOffNotification,
     addToListBoxNoNotice,
     removeFromListBoxNoNotice,
+    isOnNotification,
 }

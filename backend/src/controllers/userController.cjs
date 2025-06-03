@@ -1,14 +1,9 @@
-const { getInfo,
-    setPassword,
-    setAvatar,
-    setDisplayName,
-    removeFriend,
-    acceptFriend,
-    friendRequest,
-    cancelFriend,
-    recall,
-    updateLastOnline,
-    getProfileUser
+const { getInfo, setPassword, setAvatar,
+    setDisplayName, removeFriend, acceptFriend,
+    friendRequest, cancelFriend, recall,
+    updateLastOnline, getProfileUser, setBiography,
+    setBirthday, setGender, addSocialLink,
+    removeSocialLink
 } = require("../services/userServices.cjs");
 const { deleteAuth } = require("../services/firebaseServices.cjs");
 const logger = require("../config/logger.cjs");
@@ -184,17 +179,82 @@ async function getProfile(req, res) {
     }
 }
 
+// Thay đổi mô tả cá nhân
+async function changeBiography(req, res) {
+    const { uid, biography } = req.body;
+    try {
+        const user = await setBiography(uid, biography);
+        if (!user) return res.status(404).json({ message: 'Cập nhật mô tả cá nhân thất bại!' });
+        res.status(200).json({ message: 'Cập nhật mô tả cá nhân thành công!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi cập nhật mô tả cá nhân!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Thay đổi ngày sinh
+async function changeBirthday(req, res) {
+    const { uid, birthday } = req.body;
+    try {
+        const user = await setBirthday(uid, birthday);
+        if (!user) return res.status(404).json({ message: 'Cập nhật ngày sinh thất bại!' });
+        res.status(200).json({ message: 'Cập nhật ngày sinh thành công!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi cập nhật ngày sinh!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Thay đổi giới tính
+async function changeGender(req, res) {
+    const { uid, gender } = req.body;
+    try {
+        const user = await setGender(uid, gender);
+        if (!user) return res.status(404).json({ message: 'Cập nhật giới tính thất bại!' });
+        res.status(200).json({ message: 'Cập nhật giới tính thành công!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi cập nhật giới tính!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Thêm đường liên kết mạng xã hội
+async function addSocialLinkFromList(req, res) {
+    const { uid, socialLink } = req.body;
+    try {
+        const user = await addSocialLink(uid, socialLink);
+        if (!user) return res.status(404).json({ message: 'Thêm đường liên kết mạng xã hội thất bại!' });
+        res.status(200).json({ message: 'Đã thêm đường liên kết mạng xã hội!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi thêm đường liên kết mạng xã hội!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Xóa đường liên kết mạng xã hội
+async function removeSocialLinkFromList(req, res) {
+    const { uid, socialLinkId } = req.body;
+    try {
+        const user = await removeSocialLink(uid, socialLinkId);
+        if (!user) return res.status(404).json({ message: 'Xóa đường liên kết mạng xã hội thất bại!' });
+        res.status(200).json({ message: 'Đã xóa đường liên kết mạng xã hội!' });
+
+    } catch (error) {
+        logger.error('Lỗi khi xóa đường liên kết mạng xã hội!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
-    getUserInfo,
-    changeAvatar,
-    resetPassword,
-    changeDisplayName,
-    unfriend,
-    sendFriendRequest,
-    acceptFriendRequest,
-    cancelFriendRequest,
-    recallRequest,
-    deleteAccount,
-    updateOnline,
-    getProfile
+    getUserInfo, changeAvatar, resetPassword,
+    changeDisplayName, unfriend, sendFriendRequest,
+    acceptFriendRequest, cancelFriendRequest,
+    recallRequest, deleteAccount, updateOnline,
+    getProfile, changeBiography, changeBirthday,
+    changeGender, addSocialLinkFromList,
+    removeSocialLinkFromList
 };

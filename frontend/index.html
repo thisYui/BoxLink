@@ -100,7 +100,7 @@
                             <p class="profile-body-additional-info-container-text profile-day-num" data-i18n="profile."></p>
                         </div>
                     </div>
-                    <button class="edit-profile-button" data-i18n="profile.editButton"></button>
+                    <button class="edit-profile-button" data-i18n="profile.editButton" onclick="editProfileMode()"></button>
                 </div>
             </div>
         </div>
@@ -235,19 +235,25 @@
     <div class="chats-info" id="chatInfoContainer">
         <div class="chats-info-header">
             <p class="chats-info-header-avatar-container">
-                <img src="./assets/images/default-avatar.png" alt=""
-
-                class="chats-info-header-avatar">
+                <img src="./assets/images/default-avatar.png" alt="" class="chats-info-header-avatar">
             </p>
-            <p class="chats-info-header-name">Userqweqweq weqweqweqw wqweweeq w XYZ</p>
-            <p class="chats-info-header-name-state">
-                Đang hoạt động
-            </p>
+            <p class="chats-info-header-name"></p>
+            <p class="chats-info-header-name-state"></p>
         </div>
         <div class="chats-info-features">
             <div class="chats-info-features-button" id="change-display-name-button">
                 <i class="fa-solid fa-a chats-info-features-button"></i>
-                <p>Thay đổi biệt danh</p>
+                <i class="fa-solid fa-a chats-info-features-button-icon"></i>
+                <p data-i18n="chat_info.change_nickname"></p>
+            </div>
+            <div class="chats-info-features-button" id="user-profile-link" onclick="">
+                <i class="fa-solid fa-circle-user chats-info-features-button-icon"></i>
+                <p href="#" data-i18n="chat_info.personal_page"></p>
+            </div>
+            <div class="chats-info-features-button" id="turn-off-notification-button">
+                <i id="bellIcon" class="fa-solid fa-bell-slash chats-info-features-button-icon"></i>
+                <p id="notification-state-text" data-i18n="chat_info.turn_of_notification"></p>
+                <input type="checkbox" id="notifyToggle" style="display: none;">
             </div>
         </div>
     </div>

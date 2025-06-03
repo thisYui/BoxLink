@@ -60,8 +60,6 @@ async function getFriendStatus(req, res) {
 }
 
 module.exports = {
-    searchFriend,
-    deleteNotification,
-    getWebsiteInfo,
-    getFriendStatus,
+    searchFriend, deleteNotification,
+    getWebsiteInfo, getFriendStatus,
 }

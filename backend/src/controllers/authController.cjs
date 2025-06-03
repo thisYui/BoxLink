@@ -1,4 +1,4 @@
-const {admin} = require("../config/firebaseConfig.cjs");
+const { admin } = require("../config/firebaseConfig.cjs");
 const { checkEmailExists, sendOTP , verifyOTP} = require("../services/emailServices.cjs");
 const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
@@ -70,8 +70,5 @@ async function resetPassword(req, res) {
 }
 
 module.exports = {
-    signUp,
-    confirmOTP,
-    requestOTP,
-    resetPassword
+    signUp, confirmOTP, requestOTP, resetPassword
 };

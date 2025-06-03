@@ -295,16 +295,72 @@ async function getProfileUser(uid) {
     }
 }
 
+async function setGender(uid, gender) {
+    try {
+        // Cập nhật giới tính mới
+        await db.collection("users").doc(uid).update({
+            gender: gender
+        });
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật giới tính:", error);
+        return false;
+    }
+}
+
+async function setBirthday(uid, birthday) {
+    try {
+        // Cập nhật ngày sinh mới
+        await db.collection("users").doc(uid).update({
+            birthday: birthday
+        });
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật ngày sinh:", error);
+        return false;
+    }
+}
+
+async function setBiography(uid, biography) {
+    try {
+        // Cập nhật mô tả cá nhân mới
+        await db.collection("users").doc(uid).update({
+            biography: biography // Kiểu date
+        });
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật mô tả cá nhân:", error);
+        return false;
+    }
+}
+
+async function addSocialLink(uid, socialLink) {
+    try {
+        // Cập nhật đường liên kết mạng xã hội mới
+        await db.collection("users").doc(uid).update({
+            socialLinks: admin.firestore.FieldValue.arrayUnion(socialLink)
+        });
+    } catch (error) {
+        logger.error("Lỗi khi thêm đường liên kết mạng xã hội:", error);
+        return false;
+    }
+}
+
+async function removeSocialLink(uid, socialLinkId) {
+    try {
+        // Xóa đường liên kết mạng xã hội
+        await db.collection("users").doc(uid).update({
+            socialLinks: admin.firestore.FieldValue.arrayRemove(socialLinkId)
+        });
+    } catch (error) {
+        logger.error("Lỗi khi xóa đường liên kết mạng xã hội:", error);
+        return false;
+    }
+}
+
+
 module.exports = {
-    getInfo,
-    setPassword,
-    setDisplayName,
-    setAvatar,
-    removeFriend,
-    acceptFriend,
-    friendRequest,
-    cancelFriend,
-    recall,
-    updateLastOnline,
-    getProfileUser
+    getInfo, setPassword, setDisplayName,
+    setAvatar, removeFriend, acceptFriend,
+    friendRequest, cancelFriend, recall,
+    updateLastOnline, getProfileUser,
+    setGender, setBirthday, setBiography,
+    addSocialLink, removeSocialLink
 };

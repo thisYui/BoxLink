@@ -111,7 +111,7 @@ window.requestSignUp = async function (formData) {
 
     try {
         // Gửi thông tin đăng ký đến server
-        const response = await fetch('http://localhost:3000/api/signup', {
+        const response = await fetch('http://localhost:3000/api/auth/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -146,7 +146,7 @@ window.confirmCodeSignUp = async function (formData) {
 
     try {
         // Gửi thông tin đăng ký đến server
-        const response = await fetch('http://localhost:3000/api/confirm', {
+        const response = await fetch('http://localhost:3000/api/auth/confirm', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -182,7 +182,7 @@ window.sendCode = async function (formData) {
 
     try {
         // Gửi yêu cầu xác thực
-        const response = await fetch('http://localhost:3000/api/request', {
+        const response = await fetch('http://localhost:3000/api/auth/send-otp', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -214,7 +214,7 @@ window.confirmCode = async function (formData) {
     const code = formData.get("confirmationCode");
 
     try {
-        const response = await fetch('http://localhost:3000/api/confirm', {
+        const response = await fetch('http://localhost:3000/api/auth/confirm', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -252,7 +252,7 @@ window.confirmResetPassword = async function (formData) {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/resetPassword', {
+        const response = await fetch('http://localhost:3000/api/auth/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON

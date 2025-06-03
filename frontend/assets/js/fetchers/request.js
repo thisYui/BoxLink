@@ -5,7 +5,7 @@ async function getUserInfo() {
     // 2. Danh sách bạn bè và tin nhắn cuối cùng cảu mỗi đoạn chat
     // 3. Danh sách lời mời kết bạn và các thông báo khác
 
-    const response = await fetch("http://localhost:3000/api/user-info", {
+    const response = await fetch("http://localhost:3000/api/user/user-info", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -25,7 +25,7 @@ async function getUserInfo() {
 
 // Tìm kiếm
 async function searchFriendByEmail(emailFriend) {
-    const response = await fetch("http://localhost:3000/api/search", {
+    const response = await fetch("http://localhost:3000/api/index/search", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -50,7 +50,7 @@ async function searchFriendByEmail(emailFriend) {
 }
 
 async function searchFriendByID(friendID) {
-    const response = await fetch("http://localhost:3000/api/search", {
+    const response = await fetch("http://localhost:3000/api/index/search", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -76,7 +76,7 @@ async function searchFriendByID(friendID) {
 
 // Lấy các thông tin của 1 hyperlink
 async function getHyperlinkInfo(url) {
-    const response = await fetch("http://localhost:3000/api/get-website-info", {
+    const response = await fetch("http://localhost:3000/api/index/get-website-info", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -95,7 +95,7 @@ async function getHyperlinkInfo(url) {
 
 // Xóa thông báo
 async function deleteNotification(notification) {
-    const response = await fetch("http://localhost:3000/api/delete-notification", {
+    const response = await fetch("http://localhost:3000/api/index/delete-notification", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -115,7 +115,7 @@ async function deleteNotification(notification) {
 
 // Lấy trạng thái online của bạn bè
 async function getFriendStatus() {
-    const response = await fetch("http://localhost:3000/api/get-friend-status", {
+    const response = await fetch("http://localhost:3000/api/index/get-friend-status", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
