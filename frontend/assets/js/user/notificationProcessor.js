@@ -105,29 +105,9 @@ function turnOnOrOffNotification() {
     turnOffNotification = turnOffNotification !== true;
 }
 
-function addToListBoxNoNotice(chatID) {
-    if (!listBoxNoNotice.includes(chatID)) {
-        listBoxNoNotice.push(chatID);
-    }
-}
-
-function removeFromListBoxNoNotice(chatID) {
-    const index = listBoxNoNotice.indexOf(chatID);
-    if (index !== -1) {
-        listBoxNoNotice.splice(index, 1);
-    }
-}
-
-function isOnNotification(uid) {
-    return listBoxNoNotice.includes(uid) === false;
-}
-
 export {
     addNotificationToList,
     removeNotificationFromList,
     addFriendRequestToList,
     turnOnOrOffNotification,
-    addToListBoxNoNotice,
-    removeFromListBoxNoNotice,
-    isOnNotification,
 }

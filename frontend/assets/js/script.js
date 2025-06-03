@@ -56,29 +56,7 @@ document.getElementById("search-button").addEventListener("click", async (event)
 });
 
 */
-const notifyButton = document.getElementById('turn-off-notification-button');
-const checkbox = document.getElementById('notifyToggle');
-const bellIcon = document.getElementById('bellIcon');
 
-    // Mặc định: tắt thông báo
-    checkbox.checked = false;
-    bellIcon.classList.add('fa-bell-slash');
-
-    // Click icon để toggle
-    notifyButton.addEventListener('click', () => {
-    checkbox.checked = !checkbox.checked;
-
-    // Cập nhật icon
-    if (checkbox.checked) {
-        bellIcon.classList.remove('fa-bell-slash');
-        bellIcon.classList.add('fa-bell');
-        document.getElementById('notification-state-text').textContent = "Bật thông báo";
-    } else {
-        bellIcon.classList.remove('fa-bell');
-        bellIcon.classList.add('fa-bell-slash');
-        document.getElementById('notification-state-text').textContent = "Tắt thông báo";
-    }
-});
 
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
@@ -90,21 +68,24 @@ document.addEventListener("DOMContentLoaded", () => {
         if (element) {
             const elementId = element.id;
 
+            if (!elementId) {
+                console.warn("Phần tử được click không có ID");
+                return;
+            }
+
             if (window.lastClickedUser !== elementId) {
-
+                // Xóa class active khỏi phần tử được chọn trước đó
                 if (window.lastClickedUser) {
-                    document.getElementById(window.lastClickedUser).classList.remove("chat-box-choosen");
+                    document.getElementById(window.lastClickedUser)?.classList.remove("chat-box-choosen");
                 }
-
+                // Thêm class active cho phần tử hiện tại
                 element.classList.add("chat-box-choosen");
                 
                 window.lastClickedUser = elementId;
                 sessionStorage.setItem("lastClickedUser", elementId);
                 try {
-                    if (typeof loadChat === "function" && typeof loadChatInfo === "function") {
-                        console.log('load Chat')
+                    if (typeof loadChat === "function") {
                         loadChat().then();
-                        loadChatInfo().then();
                     }
                     console.log(`Người dùng được chọn: ${window.lastClickedUser}`);
                 } catch (error) {
