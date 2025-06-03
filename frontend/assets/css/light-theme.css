@@ -227,3 +227,7 @@ body {
 .chats-list-user:hover {
     background-color: rgba(0, 0, 0, 0.15);    
 }
+
+.chat-box-choosen {
+    background-color: rgba(0, 0, 0, 0.1);
+}
