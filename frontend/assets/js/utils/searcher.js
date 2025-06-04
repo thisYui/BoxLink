@@ -1,58 +1,103 @@
-import { getProfileUser, friend } from '../fetchers/infoFetcher.js'
-import { searchFriendByEmail } from "../fetchers/request.js";
+import { searchFriendByEmail, searchByName, getFriendProfile } from "../fetchers/request.js";
+import { fixStatusFriend } from "./friendProcessor.js";
+import { showProfile } from "../components/domProfile.js";
 
 
-async function search(email) {
-    const { uid } = await searchFriendByEmail(email);
-    sessionStorage.setItem("searchUID", uid);
+window.showListSearch = async function () {
+    await removeListSearch(); // Xóa danh sách tìm kiếm cũ
 
-    const profile = await getProfileUser(uid);
-
-    // Tìm số bạn chung
-    let countFriendMutual = 0;
-    profile.friendList.forEach(friend => {
-        if (friend in window.listChatBoxID) {
-            countFriendMutual++;
-        }
-    });
-
-    profile.countFriendMutual= countFriendMutual;
-    return profile;
-}
-
-async function friendAction() {
-    // Lấy trạng thái hiện tại của người dùng
-    const status = ""; // Lấy thừ thẻ
-    let typeAction;
-
-    if (status === "friend") {
-        // Xóa bạn bè
-        typeAction = "unfriend";
-    } else if (status === "friend-request") {
-        // Thu hồi lời mời kết bạn
-        typeAction = "recall-friend";
-    } else if (status === "receiver-request") {
-        if (confirm("Bạn có chắc chắn muốn đồng ý kết bạn?")) {
-            // Đồng ý kết bạn
-            // Tạo ngay một chat mới nằm ngay trên đầu danh sách
-            typeAction = "accept-friend";
-        } else {
-            // Từ chối lời mời kết bạn
-            typeAction = "cancel-friend";
-        }
-    } else if (status === "none") {
-        // Gửi lời mời kết bạn
-        typeAction = "friend-request";
+    const inputValue = document.getElementById('searchInput').value;
+    if (inputValue.trim() === "") {
+        // Nếu không có giá trị tìm kiếm, không làm gì cả
+        return;
     }
 
-    // Gọi API tương ứng
-    await friend(localStorage.getItem("uid"), sessionStorage.getItem("searchUID"), typeAction);
+    const listSearch = await search(inputValue);
 
-    // Cập nhật giao diện người dùng
-    // chỉ cần sửa lại div
+    const searchResult = document.querySelector(".search-results");
+    listSearch.forEach(user => {
+        addUserToListSearch(user, searchResult);
+    });
 }
 
-export {
-    search,
-    friendAction
+async function chooseUserItem(uid) {
+    await changeTab("FriendProfile");
+    const profile = await getFriendProfile(uid);
+    showFriendProfile(profile);
+}
+
+function showFriendProfile(profile) {
+    const profileContainer = document.querySelector(".profile-friend-container");
+
+    showProfile(profile, profileContainer);
+
+    const mutualCount = profileContainer.querySelector('.profile-mutual-friends')
+    mutualCount.textContent = profile.countFriendMutual;
+
+    fixStatusFriend(profile.status);
+}
+
+async function search(dataString) {
+    // Kiểm tra xem có phải là email hay không
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (emailPattern.test(dataString)) {
+        let listFriend = [];
+        const user = await searchFriendByEmail(dataString);
+        if (user && user.uid) {
+            // Nếu tìm thấy người dùng, thêm vào danh sách
+            listFriend.push(user);
+        }
+
+        return listFriend;
+
+    } else {
+        // Nếu không phải email, tìm kiếm theo tên
+        return searchByName(dataString);
+    }
+}
+
+function addUserToListSearch(user, searchResult) {
+    if (user.uid === localStorage.getItem('uid')) {
+        return;
+    }
+
+    const userItem = document.createElement('div');
+    userItem.className = 'search-result-item';
+    userItem.id = user.uid;
+
+    userItem.addEventListener('click', async (event) => {
+        const uid = event.currentTarget.id;
+        await chooseUserItem(uid);
+    });
+
+    const avatar = document.createElement('img');
+    avatar.src = user.avatar;
+    avatar.classList.add('search-result-item-avatar');
+
+    const content = document.createElement('div');
+    content.classList.add('search-result-item-content');
+
+    const name = document.createElement('h3');
+    name.textContent = user.displayName;
+    name.classList.add('search-result-item-content-name');
+
+    const email = document.createElement('p');
+    email.textContent = user.email;
+    email.classList.add('search-result-item-content-email');
+
+    content.appendChild(name);
+    content.appendChild(email);
+
+    userItem.appendChild(avatar);
+    userItem.appendChild(content);
+
+    searchResult.appendChild(userItem);
+}
+
+window.removeListSearch = async function () {
+    const searchResult = document.querySelector(".search-results");
+    while (searchResult.firstChild) {
+        searchResult.removeChild(searchResult.firstChild);
+    }
 }

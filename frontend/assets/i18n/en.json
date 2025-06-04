@@ -60,7 +60,15 @@
   "search": {
     "title": "Search",
     "placeholder": "Search friends... (email, ID)",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "friend": "Friend",
+    "add_friend": "Add Friend",
+    "request_sent": "Friend request sent",
+    "request_received": "Friend request received",
+    "accept_request": "Accept Request",
+    "decline_request": "Decline Request",
+    "remove_friend": "Remove Friend",
+    "recall_request": "Recall Request"
   },
   "settings": {
     "title": "Settings",

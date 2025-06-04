@@ -71,7 +71,7 @@ window.updateLastOnlineListFriend = async function () {
 
 window.loadChatInfo = async function() {
     // Find the chat box for this user
-    const chatID = window.lastClickedUser;
+    const chatID = sessionStorage.getItem('chatID');
     const box = document.getElementById(chatID);
     if (!box) return;
 
@@ -86,9 +86,9 @@ window.loadChatInfo = async function() {
     document.querySelector('.chats-info-header-avatar').src = avatar;
     document.querySelector('.chats-info-header-name').textContent = name;
     document.querySelector('.chats-info-header-name-state').textContent = formatRelativeTimeOnline(timeOnline);
+
     if (isOnline(timeOnline)) {
         document.querySelector('.chats-info-header-avatar-container').classList.add('chats-info-header-avatar-container-is-online');
     }
-
 }
 

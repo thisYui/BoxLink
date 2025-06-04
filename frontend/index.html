@@ -48,12 +48,27 @@
         </div>
     </div>
 
+
+    <div class ="search-container hidden" id="searchContainer">
+        <div class="search-header">
+            <h2 data-i18n="search.title"></h2>
+        </div>
+        <div class="search-body">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" data-i18n="search.placeholder"/>
+            <div class="clear-icon-wrapper" id="clearButton">
+                <i class="fas fa-times close-icon"></i>
+            </div>
+        </div>
+        <div class="search-results" id="searchResults">
+                <!-- Search results will be rendered here -->
+        </div>
+    </div>
+
     <!-- Chat Container -->
     <div class="chat-container" id="chatContainer">
         <div class="chats-header">
-            <p class="chats-header-text">
-                Đoạn chat
-            </p>
+            <p class="chats-header-text" data-i18n="chat.title"></p>
         </div>
         <div class="chats-list">
 
@@ -63,7 +78,47 @@
     <!-- Profile Container -->
     <div class="profile-container hidden" id="profileContainer">
         <div class="profile-container-div">
-            <h3 class="profile-header" data-i18n="profile.title"></h3>
+            <div class="profile-body">
+                <div class="profile-body-basic-info">
+                    <img src="./assets/images/default-avatar.png" alt="" class="profile-body-basic-info-avatar">
+                    <p class="profile-body-basic-info-text profile-name"></p>
+                    <p class="profile-body-basic-info-text profile-email"></p>
+                    <p class="profile-body-basic-info-text profile-description"></p>
+                </div>
+                <div class="profile-body-info">
+                    <div class="profile-body-personal-info">
+                        <div class="profile-body-personal-info-container">
+                            <h4 class="profile-body-personal-info-container-title" data-i18n="profile.genderLabel"></h4>
+                            <p class="profile-body-personal-info-container-text profile-gender"></p>
+                        </div>
+                        <div class="profile-body-personal-info-container">
+                            <h4 class="profile-body-personal-info-container-title" data-i18n="profile.birthdayLabel"></h4>
+                            <p class="profile-body-personal-info-container-text profile-birth"></p>
+                        </div>
+                        <div class="profile-body-personal-info-container">
+                            <h4 class="profile-body-personal-info-container-title" data-i18n="profile.socialLinkLabel"></h4>
+                            <a class="profile-body-personal-info-container-text profile-link"></a>
+                        </div>
+                    </div>
+                    <div class="profile-body-additional-info">
+                        <div class="profile-body-additional-info-container">
+                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statStartDate"></h4>
+                            <p class="profile-body-additional-info-container-text profile-started-day"></p>
+                        </div>
+                        <div class="profile-body-additional-info-container">
+                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statFriends"></h4>
+                            <p class="profile-body-additional-info-container-text profile-friend-num"></p>
+                        </div>
+                    </div>
+                    <button class="edit-profile-button" data-i18n="profile.editButton" onclick="editProfileMode()"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile friend Container -->
+    <div class="profile-friend-container hidden" id="friendProfileContainer">
+        <div class="profile-container-div">
             <div class="profile-body">
                 <div class="profile-body-basic-info">
                     <img src="./assets/images/default-avatar.png" alt="" class="profile-body-basic-info-avatar">
@@ -96,11 +151,18 @@
                             <p class="profile-body-additional-info-container-text profile-friend-num"></p>
                         </div>
                         <div class="profile-body-additional-info-container">
-                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statDays"></h4>
-                            <p class="profile-body-additional-info-container-text profile-day-num" data-i18n="profile."></p>
+                            <h4 class="profile-body-additional-info-container-title" data-i18n="profile.mutualFriends"></h4>
+                            <p class="profile-body-additional-info-container-text profile-mutual-friends"></p>
                         </div>
                     </div>
-                    <button class="edit-profile-button" data-i18n="profile.editButton" onclick="editProfileMode()"></button>
+                    <button class="friend-action-button friend hidden" data-i18n="search.friend"></button>
+                    <button class="friend-action-button add-friend hidden" data-i18n="search.add_friend" onclick="addFriend()"></button>
+                    <button class="friend-action-button request-sent hidden" data-i18n="search.request_sent"></button>
+                    <button class="friend-action-button request-received hidden" data-i18n="search.request_received"></button>
+                    <button class="friend-action-button accept-request hidden" data-i18n="search.accept_request" onclick="acceptFriend()"></button>
+                    <button class="friend-action-button decline-request hidden" data-i18n="search.decline_request" onclick="declineFriend()"></button>
+                    <button class="friend-action-button remove-friend hidden" data-i18n="search.remove_friend" onclick="removeFriend()"></button>
+                    <button class="friend-action-button recall-request hidden" data-i18n="search.recall_request" onclick="recallFriend()"></button>
                 </div>
             </div>
         </div>
@@ -116,23 +178,6 @@
             </div>
             <div class="notification-list" id="notificationList">
                 <!-- Notifications will be rendered here -->
-            </div>
-        </div>
-    </div>
-
-    <div class ="search-container hidden" id="searchContainer">
-        <div class="search-header">
-            <h2 data-i18n="search.title"></h2>
-        </div>
-        <div class="search-body">
-            <div class="search-icon">
-                <i class="fas fa-search"></i>
-            </div>
-            <div class="search-input">
-                <input type="text" id="searchInput" placeholder="Search..." data-i18n-placeholder="search.placeholder">
-            </div>
-            <div class="search-results" id="searchResults">
-                <!-- Search results will be rendered here -->
             </div>
         </div>
     </div>
@@ -252,7 +297,7 @@
             </div>
             <div class="chats-info-features-button" id="turn-off-notification-button">
                 <i id="bellIcon" class="fa-solid fa-bell-slash chats-info-features-button-icon"></i>
-                <p id="notification-state-text" data-i18n="chat_info.turn_of_notification"></p>
+                <p id="notification-state-text" data-i18n="chat_info.turn_off_notifications"></p>
                 <input type="checkbox" id="notifyToggle" style="display: none;">
             </div>
         </div>
@@ -318,6 +363,8 @@
     <!-- Scripts -->
     <script type="module" defer src="assets/js/config/i18n.js"></script>
     <script type="module" defer src="assets/js/chat/renderMessage.js"></script>
+    <script type="module" defer src="assets/js/utils/searcher.js"></script>
+    <script type="module" defer src="assets/js/user/settingAccount.js"></script>
     <script type="module" defer src="assets/js/user/notificationProcessor.js"></script>
     <script type="module" defer src="assets/js/config/socketClient.js"></script>
     <script type="module" defer src="assets/js/components/domHome.js"></script>

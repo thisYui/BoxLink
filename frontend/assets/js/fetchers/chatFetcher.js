@@ -1,7 +1,9 @@
+import { host } from "../config/firebaseConfig.js";
+
 //Tạo trang chat mới
 async function createChat() {
     try {
-        const response = await fetch("http://localhost:3000/api/message/create-chat", {
+        const response = await fetch(`http://${host}/api/message/create-chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -25,7 +27,7 @@ async function createChat() {
 //Xóa đoạn chat
 async function removeChat() {
     try {
-        const response = await fetch("http://localhost:3000/api/message/remove-chat", {
+        const response = await fetch(`http://${host}/api/message/remove-chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -50,7 +52,7 @@ async function removeChat() {
 // Tạo phiên mới với user được chọn thông qua email
 async function startChatSession(friendID) {
     try {
-        const response  = await fetch("http://localhost:3000/api/message/start-chat-session", {
+        const response  = await fetch(`http://${host}/api/message/start-chat-session`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -75,7 +77,7 @@ async function startChatSession(friendID) {
 // Gửi yêu cầu lấy đoạn tin nhắn
 async function fetchMessages() {
     try {
-        const response = await fetch("http://localhost:3000/api/message/fetch-messages", {
+        const response = await fetch(`http://${host}/api/message/fetch-messages`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -98,7 +100,7 @@ async function fetchMessages() {
 // Lấy 1 đoạn tin nhắn
 async function getSingleMessage(srcID, messageID) {
     try {
-        const response = await fetch("http://localhost:3000/api/message/get-single-message", {
+        const response = await fetch(`http://${host}/api/message/get-single-message`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -123,7 +125,7 @@ async function getSingleMessage(srcID, messageID) {
 // Gửi yêu cầu gửi tin nhắn
 async function sendMessages(friendID, type, content, replyTo) {
     try {
-        const response = await fetch("http://localhost:3000/api/message/send-messages", {
+        const response = await fetch(`http://${host}/api/message/send-messages`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -151,7 +153,7 @@ async function sendMessages(friendID, type, content, replyTo) {
 // Cập nhật thời gian truy cập
 async function updateTimestampMessage() {
     try {
-        const response = await fetch("http://localhost:3000/api/message/update-seen-message", {
+        const response = await fetch(`http://${host}/api/message/update-seen-message`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -175,7 +177,7 @@ async function updateTimestampMessage() {
 // Tải thêm tin nhắn
 async function loadMoreMessages() {
     try {
-        const response = await fetch("http://localhost:3000/api/message/load-more-messages", {
+        const response = await fetch(`http://${host}/api/message/load-more-messages`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -198,7 +200,7 @@ async function loadMoreMessages() {
 // Click vào file cần tải
 async function downloadFile(filePath) {
     try {
-        const response = await fetch("http://localhost:3000/api/message/download-file", {
+        const response = await fetch(`http://${host}/api/message/download-file`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -221,7 +223,7 @@ async function downloadFile(filePath) {
 // Bật tắt thông báo
 async function toggleNotification() {
     try {
-        const response = await fetch("http://localhost:3000/api/message/toggle-notification", {
+        const response = await fetch(`http://${host}/api/message/toggle-notification`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

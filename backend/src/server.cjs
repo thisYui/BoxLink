@@ -1,5 +1,5 @@
 require("dotenv").config({ path: "../.env" });
-const { app, port } = require("./config/appConfig.cjs");  // Import Express app
+const { app, port, host } = require("./config/appConfig.cjs");  // Import Express app
 const authRoutes = require("./routes/authRoutes.cjs");  // Import router auth
 const userRoutes = require("./routes/userRoutes.cjs");  // Import router user
 const messageRoutes = require("./routes/messageRoutes.cjs");  // Import router message
@@ -15,6 +15,6 @@ app.use("/api/message", messageRoutes);  // Tức là endpoint sẽ là /api/mes
 app.use("/api/index", indexRoutes);  // Tức là endpoint sẽ là /api/user/...
 
 // Khởi động server HTTP và Socket.IO
-server.listen(port, () => {
-    console.log(`Server đang chạy trên http://localhost:${port}`);
+server.listen(port, host, () => {
+    console.log(`Server đang chạy trên http://${host}:${port}`);
 });

@@ -1,7 +1,9 @@
+import { host } from "../config/firebaseConfig.js";
+
 // Cập nhật thời gian online
 // Mỗi 1 phút 1 lần
 async function updateOnlineTime() {
-    const response = await fetch("http://localhost:3000/api/user/update-online-time", {
+    const response = await fetch(`http://${host}/api/user/update-online-time`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -20,7 +22,7 @@ async function updateOnlineTime() {
 
 // Thay đổi ảnh đại diện
 async function changeAvatar(avatar) {
-    const response = await fetch("http://localhost:3000/api/user/change-avatar", {
+    const response = await fetch(`http://${host}/api/user/change-avatar`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -40,7 +42,7 @@ async function changeAvatar(avatar) {
 
 // Thay đổi tên hiển thị
 async function changeDisplayName(displayName) {
-    const response = await fetch("http://localhost:3000/api/user/change-display-name", {
+    const response = await fetch(`http://${host}/api/user/change-display-name`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -60,7 +62,7 @@ async function changeDisplayName(displayName) {
 
 // Xóa tài khoản
 async function deleteAccount() {
-    const response = await fetch("http://localhost:3000/api/user/delete-account", {
+    const response = await fetch(`http://${host}/api/user/delete-account`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -85,7 +87,7 @@ async function friend(uid, friendID, api){
     //        unfriend: xóa bạn bè
     //        recall-friend: thu hồi lời mời kết bạn
 
-    const response = await fetch(`http://localhost:3000/api/user/${api}`, {
+    const response = await fetch(`http://${host}/api/user/${api}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -103,7 +105,7 @@ async function friend(uid, friendID, api){
 
 // Lấy profile người dùng
 async function getProfileUser(uid) {
-    const response = await fetch(`http://localhost:3000/api/user/get-profile`, {
+    const response = await fetch(`http://${host}/api/user/get-profile`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -122,7 +124,7 @@ async function getProfileUser(uid) {
 
 // Thay đổi mật khẩu
 async function changePassword(password) {
-    const response = await fetch("http://localhost:3000/api/user/reset-password", {
+    const response = await fetch(`http://${host}/api/user/reset-password`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -142,7 +144,7 @@ async function changePassword(password) {
 
 // Thay đổi ngày sinh
 async function changeBirthday(birthday) {
-    const response = await fetch("http://localhost:3000/api/user/change-birthday", {
+    const response = await fetch(`http://${host}/api/user/change-birthday`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -162,7 +164,7 @@ async function changeBirthday(birthday) {
 
 // Thay đổi giới tính
 async function changeGender(gender) {
-    const response = await fetch("http://localhost:3000/api/user/change-gender", {
+    const response = await fetch(`http://${host}/api/user/change-gender`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -182,7 +184,7 @@ async function changeGender(gender) {
 
 // Thay đổi tiểu sử cá nhân
 async function changeBiography(biography) {
-    const response = await fetch("http://localhost:3000/api/user/change-biography", {
+    const response = await fetch(`http://${host}/api/user/change-biography`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -204,7 +206,7 @@ async function changeBiography(biography) {
 async function operaSocialLink(api, socialLink) {
     // api = add-social-link: thêm đường liên kết mạng xã hội
     //        remove-social-link: xóa đường liên kết mạng xã hội
-    const response = await fetch(`http://localhost:3000/api/user/${api}`, {
+    const response = await fetch(`http://${host}/api/user/${api}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

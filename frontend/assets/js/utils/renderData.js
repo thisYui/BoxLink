@@ -90,7 +90,7 @@ function formatRelativeTimeRead(inputDate) {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     } else if (diffDays < 10) {
-        return `${Math.floor(diffDays)} ngày trước`;
+        return `${Math.floor(diffDays)} ngày`;
     } else if (diffYears < 1) {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');

@@ -60,7 +60,15 @@
   "search": {
     "title": "Tìm kiếm",
     "placeholder": "Tìm kiếm bạn bè...(email, ID)",
-    "noResults": "Không tìm thấy kết quả"
+    "noResults": "Không tìm thấy kết quả",
+    "friend": "Bạn bè",
+    "add_friend": "Thêm bạn",
+    "request_sent": "Đã gửi",
+    "request_received": "Đã nhận",
+    "accept_request": "Chấp nhận",
+    "decline_request": "Từ chối",
+    "remove_friend": "Xóa bạn",
+    "recall_request": "Thu hồi"
   },
   "settings": {
     "title": "Cài đặt",

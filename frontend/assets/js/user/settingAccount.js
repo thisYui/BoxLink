@@ -1,7 +1,15 @@
 import { changeAvatar, changeBiography, changeBirthday,
         changePassword, changeGender, changeDisplayName,
-        operaSocialLink, deleteAccount
+        operaSocialLink, deleteAccount, updateOnlineTime
 } from '../fetchers/infoFetcher.js';
+
+window.sendTimeOnline = async function () {
+    // Gửi thời gian online của người dùng
+    const response = await updateOnlineTime();
+    if (!response.ok) {
+        console.error("Failed to update online time");
+    }
+}
 
 // thay đổi mật khẩu
 async function changePassword() {

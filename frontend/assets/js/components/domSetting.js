@@ -1,4 +1,4 @@
-import { changeLanguage } from "../user/settingClient";
+import { changeLanguage } from "../user/settingClient.js";
 
 window.chooseTheme = function (event) {
     // Hiện các theme có sẵn

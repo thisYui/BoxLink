@@ -1,73 +1,27 @@
 import { loadLanguage, getUserLanguage } from "./config/i18n.js";
-import { updateOnlineTime } from "./fetchers/infoFetcher.js";
 
 window.lastClickedUser = sessionStorage.getItem("lastClickedUser") || null;
 window.listChatBoxID = {}
 
-// Lấy ngôn ngữ dựa trên cài đặt của người dùng
-loadLanguage(getUserLanguage()).then();
-
-// Lấy dữ liệu từ database
-loadPage().then();
-
-// Cập nhật thời gian online mỗi phút
-setInterval(() => {
-    updateOnlineTime().catch(console.error);
-}, 60 * 1000);
-
-// Lấy trạng thái online của người dùng mỗi 2 phút
-setInterval(() => {
-    updateLastOnlineListFriend().catch(console.error);
-}, 2 * 60 * 1000);
-
-/*
-// Thay đổi ngôn ngữ khi ấn vào nút
-document.getElementById("reset-lang-button").addEventListener("click", async (event) => {
-    event.preventDefault();
-    await resetLanguage();
-});
-
-// Khi ấn vào profile
-document.getElementById("profile-button").addEventListener("click", async (event) => {
-    event.preventDefault();
-    await showProfile("myProfile");
-});
-
-// Khi submit vào ô tìm kiếm
-document.getElementById("search-button").addEventListener("click", async (event) => {
-    event.preventDefault();
-    await showProfile("search");
-});
-
-*/
-
-const notifyButton = document.getElementById('turn-off-notification-button');
-const checkbox = document.getElementById('notifyToggle');
-const bellIcon = document.getElementById('bellIcon');
-
-// Mặc định: tắt thông báo
-checkbox.checked = false;
-bellIcon.classList.add('fa-bell-slash');
-
-// Click icon để toggle
-notifyButton.addEventListener('click', () => {
-    checkbox.checked = !checkbox.checked;
-
-    // Cập nhật icon
-    if (checkbox.checked) {
-        bellIcon.classList.remove('fa-bell-slash');
-        bellIcon.classList.add('fa-bell');
-        document.getElementById('notification-state-text').textContent = "Bật thông báo";
-    } else {
-        bellIcon.classList.remove('fa-bell');
-        bellIcon.classList.add('fa-bell-slash');
-        document.getElementById('notification-state-text').textContent = "Tắt thông báo";
-    }
-});
-
-
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
+    // Lấy ngôn ngữ dựa trên cài đặt của người dùng
+    loadLanguage(getUserLanguage()).then();
+
+    // Lấy dữ liệu từ database
+    loadPage().then();
+
+    // Cập nhật thời gian online mỗi phút
+    setInterval(() => {
+        sendTimeOnline().catch(console.error);
+    }, 60 * 1000);
+
+    // Lấy trạng thái online của người dùng mỗi 2 phút
+    setInterval(() => {
+        updateLastOnlineListFriend().catch(console.error);
+    }, 2 * 60 * 1000);
+
+
     document.addEventListener("click", (event) => {
         const element = event.target.closest(".chats-list-user");
 
@@ -85,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 window.lastClickedUser = elementId;
                 sessionStorage.setItem("lastClickedUser", elementId);
-                sessionStorage.setItem("chatID", elementId); // Xóa chatID cũ
 
                 try {
                     if (typeof loadChat === "function" && typeof loadChatInfo === "function") {
@@ -99,6 +52,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+
+    // Xóa nội dung ô tìm kiếm khi nhấn nút xóa
+    document.getElementById('clearButton').addEventListener('click', async () => {
+        const input = document.getElementById('searchInput');
+        input.value = '';
+        input.focus();
+        await removeListSearch(); // Xóa danh sách tìm kiếm cũ
+    });
+
+    // Gắn sự kiện
+    const debouncedSearch = debounce(showListSearch, 500);
+    document.getElementById("searchInput").addEventListener("input", debouncedSearch);
+
+    document.getElementById("search-result-item").
 
     // Gửi khi ấn vào máy bay giấy
     document.getElementById("send-button").addEventListener("click", async (event) => {
@@ -119,6 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
         await sendMessage('file');
     });
 
+    document.getElementById('turn-off-notification-button').addEventListener('click', () => {
+        const checkbox = document.getElementById('notifyToggle');
+        const bellIcon = document.getElementById('bellIcon');
+        const stateText = document.getElementById('notification-state-text');
+
+        // Toggle trạng thái checkbox
+        checkbox.checked = !checkbox.checked;
+
+        // Cập nhật icon và nội dung trạng thái
+        if (checkbox.checked) {
+            bellIcon.classList.remove('fa-bell-slash');
+            bellIcon.classList.add('fa-bell');
+            stateText.textContent = t("chat_info.turn_on_notifications");
+        } else {
+            bellIcon.classList.remove('fa-bell');
+            bellIcon.classList.add('fa-bell-slash');
+            stateText.textContent = t("chat_info.turn_off_notifications");
+        }
+    });
+
     // Set up event listeners for the profile edit buttons
     setupProfileEditButtons();
 
@@ -134,20 +121,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load saved theme
     loadSavedTheme();
 
-    // Set up event handler for Settings button in logout box
-    document.getElementById('SettingButton').addEventListener('click', function() {
-        changeTab('Settings');
-        document.getElementById('logOutBox').classList.add('hidden');
-    });
-
     // Handle the main logout button
     document.getElementById('logOutButton').addEventListener('click', function() {
-        // Implement logout logic here
-        console.log('Logging out...');
         window.location.href = 'auth.html';
     });
 });
 
+function debounce(fn, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+}
 
 window.openChatInfo = function () {
     const chatInfor = document.getElementById('chatInfoContainer');
@@ -158,6 +146,7 @@ window.openChatInfo = function () {
 // Manage tab switching functionality
 window.changeTab = async function (tabName) {
     document.getElementById('chatInfoContainer').style.display = 'none';
+
     const containers = {
         chatContainer: document.getElementById('chatContainer'),
         messageGroupContainer: document.getElementById('messageGroupContainer'),
@@ -165,12 +154,24 @@ window.changeTab = async function (tabName) {
         settingsContainer: document.getElementById('settingsContainer'),
         searchContainer: document.getElementById('searchContainer'),
         notificationContainer: document.getElementById('notificationContainer'),
+        friendProfileContainer: document.getElementById('friendProfileContainer'),
     };
 
     const menuButtons = document.querySelectorAll('.menu-bar-button');
 
+    if (tabName === "Search") {
+        containers.chatContainer.classList.add('hidden');  // Ẩn đoạn chatContainer nếu nó đang hiển thị
+        if (containers.searchContainer.classList.contains('hidden')) {
+            containers.searchContainer.classList.remove('hidden');
+        } else {
+            containers.searchContainer.classList.add('hidden')
+        }
+        return;
+    }
+
     // Toggle FriendList riêng
     if (tabName === 'ChatList' && !containers.messageGroupContainer.classList.contains('hidden')) {
+        containers.searchContainer.classList.add('hidden');  // Ẩn đoạn chatContainer nếu nó đang hiển thị
         if (containers.chatContainer.classList.contains('hidden')) {
             containers.chatContainer.classList.remove('hidden');
         } else {
@@ -204,20 +205,25 @@ window.changeTab = async function (tabName) {
             show: ['settingsContainer'],
             buttonId: 'Settings'
         },
-        Search: {
-            show: ['searchContainer'],
-            buttonId: 'Search'
-        },
         Notification: {
             show: ['notificationContainer'],
             buttonId: 'Notification'
+        },
+        FriendProfile: {
+            show: ['friendProfileContainer'],
         },
     };
 
     if (tabMap[tabName]) {
         tabMap[tabName].show.forEach(id => containers[id].classList.remove('hidden'));
-        document.getElementById(tabMap[tabName].buttonId).classList.add('menu-bar-button-choosen');
-        if (tabMap[tabName].onShow) await tabMap[tabName].onShow();
+
+        if (tabMap[tabName].buttonId) {
+            document.getElementById(tabMap[tabName].buttonId).classList.add('menu-bar-button-choosen');
+        }
+
+        if (tabMap[tabName].onShow) {
+            await tabMap[tabName].onShow();
+        }
     }
 };
 
@@ -346,8 +352,6 @@ window.changeTheme = function (themeName) {
         themeStylesheet.href = 'assets/css/light-theme.css';
     } else if (themeName === 'dark') {
         themeStylesheet.href = 'assets/css/dark-theme.css';
-    } else if (themeName === 'custom') {
-        themeStylesheet.href = 'assets/css/custom-theme.css';
     }
 
     // Save theme preference to localStorage
@@ -398,33 +402,6 @@ window.setupEditFormSubmission = function () {
 
         // Update the profile field
         document.getElementById(fieldId).textContent = newValue;
-
-        // Here you would typically send an API request to update the server
-        /*
-        fetch('/api/user/profile/update', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                field: fieldId.replace('profile', '').toLowerCase(),
-                value: newValue
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update was successful
-                closeAllModals();
-            } else {
-                // Handle error
-                alert('Failed to update profile: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error updating profile:', error);
-        });
-        */
 
         // For demo purposes, close the modal
         closeAllModals();

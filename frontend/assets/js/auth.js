@@ -1,7 +1,13 @@
 import {
+    host,
     auth,
     signInWithEmailAndPassword,
 } from "./config/firebaseConfig.js";
+
+if (localStorage.getItem("uid") !== null) {
+    // Nếu đã đăng nhập, chuyển hướng đến trang chính
+    window.location.href = `http://${host}/index.html`;
+}
 
 // Hiển thị form tương ứng
 window.showOnly = function (id) {
@@ -85,7 +91,7 @@ window.logIn = async function (formData) {
         // Lưu UID vào localStorage
         localStorage.setItem("uid", uid);
 
-        window.location.href = "index.html";
+        window.location.href = `http://${host}/index.html`;
     } catch (error) {
         if (error.code === "auth/wrong-password") {
             alert("Mật khẩu không đúng!");
@@ -111,7 +117,7 @@ window.requestSignUp = async function (formData) {
 
     try {
         // Gửi thông tin đăng ký đến server
-        const response = await fetch('http://localhost:3000/api/auth/signup', {
+        const response = await fetch(`http://${host}/api/auth/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -146,7 +152,7 @@ window.confirmCodeSignUp = async function (formData) {
 
     try {
         // Gửi thông tin đăng ký đến server
-        const response = await fetch('http://localhost:3000/api/auth/confirm', {
+        const response = await fetch(`http://${host}/api/auth/confirm`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -182,7 +188,7 @@ window.sendCode = async function (formData) {
 
     try {
         // Gửi yêu cầu xác thực
-        const response = await fetch('http://localhost:3000/api/auth/send-otp', {
+        const response = await fetch(`http://${host}/api/auth/send-otp`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -214,7 +220,7 @@ window.confirmCode = async function (formData) {
     const code = formData.get("confirmationCode");
 
     try {
-        const response = await fetch('http://localhost:3000/api/auth/confirm', {
+        const response = await fetch(`http://${host}/api/auth/confirm`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON
@@ -252,7 +258,7 @@ window.confirmResetPassword = async function (formData) {
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/auth/reset-password', {
+        const response = await fetch(`http://${host}/api/auth/reset-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',  // Xác định kiểu dữ liệu là JSON

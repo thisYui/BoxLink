@@ -1,12 +1,13 @@
 import { getMyProfile } from "../user/personalProfile.js";
 import { convertToDate, dateToDMY } from "../utils/renderData.js";
 import { getListGender, getValueMappingGender } from "../config/i18n.js";
+import { fixStatusFriend } from "../utils/friendProcessor.js";
 
 let stateEdit = false; // Biến để theo dõi chế độ chỉnh sửa
 
 window.loadProfile = async function () {
     const profile = await getMyProfile();
-    showProfile(profile);
+    showMyProfile(profile);
 }
 
 // Bật tắt chế độ chỉnh sửa thông tin cá nhân
@@ -35,7 +36,17 @@ function viewMode() {
     // Chuyển trang hiện tại thành dạng không thể chỉnh sửa
 }
 
-function showProfile(profile) {
+function showMyProfile(profile) {
+    const profileContainer = document.querySelector(".profile-container");
+
+    showProfile(profile, profileContainer);
+
+    const editProfileButton = profileContainer.querySelector(".edit-profile-button");
+    editProfileButton.style.display = profile.countFriendMutual;
+
+}
+
+function showProfile(profile, profileContainer) {
     // displayName: userData.displayName,
     // email: userData.email,
     // avatar: userData.avatar,
@@ -49,20 +60,19 @@ function showProfile(profile) {
     // countFriendMutual: userData.countFriendMutual, (myprofile có giá trị -1)
 
     // Cập nhật thông tin cơ bản của người dùng
-    const profileAvatar = document.querySelector(".profile-body-basic-info-avatar");
-    const profileName = document.querySelector(".profile-name");
-    const profileEmail = document.querySelector(".profile-email");
-    const profileDescription = document.querySelector(".profile-description");
+    const profileAvatar = profileContainer.querySelector(".profile-body-basic-info-avatar");
+    const profileName = profileContainer.querySelector(".profile-name");
+    const profileEmail = profileContainer.querySelector(".profile-email");
+    const profileDescription = profileContainer.querySelector(".profile-description");
 
     // Cập nhật thông tin cá nhân
-    const profileGender = document.querySelector(".profile-gender");
-    const profileBirth = document.querySelector(".profile-birth");
-    const profileLink = document.querySelector(".profile-link");
+    const profileGender = profileContainer.querySelector(".profile-gender");
+    const profileBirth = profileContainer.querySelector(".profile-birth");
+    const profileLink = profileContainer.querySelector(".profile-link");
 
     // Cập nhật thông tin bổ sung
-    const profileStartedDay = document.querySelector(".profile-started-day");
-    const profileFriendNum = document.querySelector(".profile-friend-num");
-    const profileDayNum = document.querySelector(".profile-day-num");
+    const profileStartedDay = profileContainer.querySelector(".profile-started-day");
+    const profileFriendNum = profileContainer.querySelector(".profile-friend-num");
 
     // Cập nhật thông tin cơ bản
     if (profileAvatar) {
@@ -123,23 +133,8 @@ function showProfile(profile) {
     if (profileFriendNum) {
         profileFriendNum.textContent = profile.countFriends?.toString() || "0";
     }
+}
 
-    if (profileDayNum) {
-        // Tính số ngày từ ngày tạo tài khoản đến hiện tại
-        if (profile.createdAt) {
-            const createdDate = convertToDate(profile.createdAt);
-            const currentDate = new Date();
-            const diffTime = Math.abs(currentDate - createdDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            profileDayNum.textContent = diffDays.toString();
-        } else {
-            profileDayNum.textContent = "0";
-        }
-    }
-
-    // Hiển thị nút chỉnh sửa chỉ khi đây là profile của người dùng hiện tại
-    if (profile.countFriendMutual === -1) {
-        const editProfileButton = document.querySelector(".edit-profile-button");
-        editProfileButton.style.display = profile.countFriendMutual === -1 ? "block" : "none";
-    }
+export {
+    showProfile
 }

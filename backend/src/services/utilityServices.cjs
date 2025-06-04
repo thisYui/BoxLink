@@ -6,6 +6,7 @@ const urlModule = require("url");
 const { execFile } = require('child_process');
 const ffprobePath = require('ffprobe-static').path;
 const emojiList = require('emoji.json');// array
+const { getProfileUser } = require("./userServices.cjs");
 
 const emojiMap = {};
 
@@ -56,34 +57,20 @@ async function getWebsitePreview(url) {
 }
 
 // Tìm kiếm người dùng
-async function searchUserByID(uid, friendID) {
+async function searchUserByID(friendID) {
     try {
-        //
-        const userRef = db.collection("users").doc(uid).get();
-        const friendRef = db.collection("users").doc(friendID).get();
+        const friendRef = await db.collection("users").doc(friendID).get();
+        const friendData = friendRef.data();
+        const authFriend = await admin.auth().getUser(friendID);
 
         // Tìm trạng thái
         let status = "none"; // Trạng thái mặc định là không có gì
 
-        // Kiểm tra xem người dùng đã kết bạn hay chưa
-        const friendList = userRef.friendList || [];  // List email
-        const friendRequests = userRef.friendRequests || [];  // List email
-        const friendReceived = userRef.friendReceived || [];  // List email
-
-        if (friendList.includes(friendID)) {
-            status = "friend"; // Đã kết bạn
-        } else if (friendRequests.includes(friendID)) {
-            status = "sender-request"; // Đã gửi lời mời kết bạn
-        } else if (friendReceived.includes(friendID)) {
-            status = "receiver-request"; // Đã nhận lời mời kết bạn
-        }
-
         return {
-            uid: friendRef.uid,
-            displayName: friendRef.displayName,
-            email: friendRef.email,
-            avatar: friendRef.avatar,
-            status: status
+            uid: friendID,
+            displayName: friendData.displayName,
+            avatar: friendData.avatar,
+            email: authFriend.email,
         }
 
     } catch (error) {
@@ -93,12 +80,12 @@ async function searchUserByID(uid, friendID) {
 }
 
 // Tìm kiếm người dùng
-async function searchUserByEmail(uid, email) {
+async function searchUserByEmail(email) {
     try {
         // Tìm user từ email
         const userRecord = await admin.auth().getUserByEmail(email);
 
-        return await searchUserByID(uid, userRecord.uid);
+        return await searchUserByID(userRecord.uid);
 
     } catch (error) {
         logger.warn("Lỗi khi tìm kiếm người dùng:", error);
@@ -210,9 +197,74 @@ async function getLastOnlineObject(uid) {
     }
 }
 
+// tìm kiếm nhiều người dùng
+async function searchByName(name) {
+    try {
+        const usersRef = db.collection("users");
+        const snapshot = await usersRef.where("displayName", ">=", name)
+                                       .where("displayName", "<=", "\uf8ff" + name + "\uf8ff")
+                                       .limit(10)
+                                       .get();
+
+        if (snapshot.empty) {
+            return [];
+        }
+
+        const results = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            results.push({
+                uid: doc.id,
+                displayName: data.displayName,
+                avatar: data.avatar,
+            });
+        });
+
+        await Promise.all(
+            results.map(async (item) => {
+                const user = await admin.auth().getUser(item.uid);
+                item.email = user.email;
+            })
+        );
+
+        return results;
+    } catch (error) {
+        logger.warn("Lỗi khi tìm kiếm người dùng:", error);
+        return [];
+    }
+}
+
+async function friendProfile(uid, friendID) {
+    try {
+        const profile = await getProfileUser(friendID);
+        const userData = (await db.collection('users').doc(uid).get()).data();
+
+        const countFriendMutual = userData.friendList.filter(friend => profile.listFriend.includes(friend)).length;
+
+        let status = "none"; // Trạng thái mặc định là không có gì
+
+        if (userData.friendList.includes(friendID)) {
+            status = "friend"; // Đã là bạn bè
+        } else if (userData.friendRequests.includes(friendID)) {
+            status = "friend-request"; // Đã gửi lời mời kết bạn
+        } else if (userData.friendReceived.includes(friendID)) {
+            status = "receiver-request"; // Đã nhận lời mời kết bạn
+        }
+
+        profile.countFriendMutual = countFriendMutual;
+        profile.status = status;
+
+        return profile;
+    } catch (error) {
+        logger.warn("Lỗi khi lấy thông tin bạn bè:", error);
+        return null;
+    }
+}
+
 
 module.exports = {
     searchUserByEmail, searchUserByID,
     getWebsitePreview, getVideoDuration,
-    formatRichTextFromPlain, getLastOnlineObject
+    formatRichTextFromPlain, getLastOnlineObject,
+    searchByName, friendProfile
 }

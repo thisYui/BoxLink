@@ -1,19 +1,33 @@
-const { searchUserByEmail, searchUserByID } = require("../services/utilityServices.cjs");
+const { searchUserByEmail, searchUserByID, searchByName,
+    getWebsitePreview, getLastOnlineObject, friendProfile
+} = require("../services/utilityServices.cjs");
 const { deleteNotificationSpecific } = require("../services/notificationServices.cjs");
-const { getWebsitePreview, getLastOnlineObject } = require("../services/utilityServices.cjs");
 const logger = require("../config/logger.cjs");
 
 // Tìm kiếm bạn bè
 async function searchFriend(req, res) {
-    const { uid, emailFriend, friendID } = req.body;
+    const { emailFriend, friendID } = req.body;
 
     try {
-        const user =  (emailFriend === "no-email") ? await searchUserByID(uid, friendID) : await searchUserByEmail(uid, emailFriend);
+        const user =  (emailFriend === "no-email") ? await searchUserByID(friendID) : await searchUserByEmail(emailFriend);
         if (!user)  return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
         res.status(200).json(user);
 
     } catch (error) {
         logger.error(`Lỗi khi tìm kiếm bạn bè: ${error.message}`);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+async function searchFriendByName(req, res) {
+    const { name } = req.body;
+    try {
+        const users = await searchByName(name);
+        if (!users || users.length === 0) return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
+        res.status(200).json(users);
+
+    } catch (error) {
+        logger.error(`Lỗi khi tìm kiếm bạn bè theo tên: ${error.message}`);
         res.status(500).json({ message: 'Lỗi hệ thống!' });
     }
 }
@@ -59,7 +73,24 @@ async function getFriendStatus(req, res) {
     }
 }
 
+// Lấy trạng thái online của bạn bè
+async function getFriendProfile(req, res) {
+    const { uid, friendID } = req.body;
+
+    try {
+        const profile = await friendProfile(uid, friendID);
+        if (!profile) return res.status(404).json({ message: 'Không tìm thấy thông tin bạn bè!' });
+        res.status(200).json(profile);
+
+    } catch (error) {
+        logger.error(`Lỗi khi lấy thông tin bạn bè: ${error.message}`);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+
 module.exports = {
     searchFriend, deleteNotification,
     getWebsiteInfo, getFriendStatus,
+    searchFriendByName, getFriendProfile
 }

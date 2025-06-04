@@ -278,6 +278,7 @@ async function getProfileUser(uid) {
         const userData = user.data();
 
         return {
+            uid: user.id,
             displayName: userData.displayName,
             email: userData.email,
             avatar: userData.avatar,
@@ -289,6 +290,7 @@ async function getProfileUser(uid) {
             socialLinks: userData.socialLinks,
             createdAt: userData.createdAt,
         };
+
     } catch (error) {
         logger.error("Lỗi khi lấy thông tin người dùng:", error);
         return null;
