@@ -21,37 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
         updateLastOnlineListFriend().catch(console.error);
     }, 2 * 60 * 1000);
 
-
-    document.addEventListener("click", (event) => {
+    document.getElementById("chatContainer").addEventListener("click", (event) => {
         const element = event.target.closest(".chats-list-user");
 
         // Kiểm tra nếu click vào phần tử có class chat-box-area-box
         if (element) {
-            const elementId = element.id;
-
-            if (window.lastClickedUser !== elementId) {
-                // Xóa class active khỏi phần tử được chọn trước đó
-                if (window.lastClickedUser) {
-                    document.getElementById(window.lastClickedUser).classList.remove("chat-box-choosen");
-                }
-                // Thêm class active cho phần tử hiện tại
-                element.classList.add("chat-box-choosen");
-
-                window.lastClickedUser = elementId;
-                sessionStorage.setItem("lastClickedUser", elementId);
-
-                try {
-                    if (typeof loadChat === "function" && typeof loadChatInfo === "function") {
-                        loadChat().then();
-                        loadChatInfo().then();
-                    }
-
-                } catch (error) {
-                    console.error("Lỗi khi tải chat:", error);
-                }
-            }
+            handleUserClick(element);
         }
-    });
+    })
+
+    document.getElementById("openChatInfoButton").addEventListener("click", (event) => {
+        loadChatInfo().then();
+    })
 
     // Xóa nội dung ô tìm kiếm khi nhấn nút xóa
     document.getElementById('clearButton').addEventListener('click', async () => {
@@ -62,10 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Gắn sự kiện
+    // Gọi hàm showListSearch khi người dùng nhập vào ô tìm kiếm
+    // Trong 500ms nếu không có sự kiện mới, hàm sẽ được gọi
     const debouncedSearch = debounce(showListSearch, 500);
     document.getElementById("searchInput").addEventListener("input", debouncedSearch);
-
-    document.getElementById("search-result-item").
 
     // Gửi khi ấn vào máy bay giấy
     document.getElementById("send-button").addEventListener("click", async (event) => {
@@ -104,6 +85,25 @@ document.addEventListener("DOMContentLoaded", () => {
             bellIcon.classList.add('fa-bell-slash');
             stateText.textContent = t("chat_info.turn_off_notifications");
         }
+    });
+
+    // Khi click vào nút reply
+    document.getElementById("messageContainer").addEventListener("click", (event) => {
+        const replyButton = event.target.closest(".reply-button");
+        if (!replyButton) return;
+
+        const messageID = replyButton.id;
+        sessionStorage.setItem("replyMessageID", messageID);
+
+        // Lấy thông tin của tin nhắn để reply
+        loadMessageRelyTo(messageID);
+    });
+
+     // Close reply
+    document.getElementById('closeReplyTo').addEventListener('click', () => {
+        const replyMessageContainer = document.getElementById('replyMessageContainer');
+        replyMessageContainer.classList.add("hidden");
+        sessionStorage.setItem("replyMessageID", "");
     });
 
     // Set up event listeners for the profile edit buttons

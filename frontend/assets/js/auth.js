@@ -1,12 +1,12 @@
 import {
-    host,
     auth,
     signInWithEmailAndPassword,
 } from "./config/firebaseConfig.js";
 
+const host = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+
 if (localStorage.getItem("uid") !== null) {
-    // Nếu đã đăng nhập, chuyển hướng đến trang chính
-    window.location.href = `http://${host}/index.html`;
+    window.location.href = `/index.html`;
 }
 
 // Hiển thị form tương ứng
@@ -91,7 +91,7 @@ window.logIn = async function (formData) {
         // Lưu UID vào localStorage
         localStorage.setItem("uid", uid);
 
-        window.location.href = `http://${host}/index.html`;
+        window.location.href = `/index.html`;
     } catch (error) {
         if (error.code === "auth/wrong-password") {
             alert("Mật khẩu không đúng!");
@@ -277,7 +277,7 @@ window.confirmResetPassword = async function (formData) {
         }
 
         alert("Đặt lại mật khẩu thành công!");
-        window.location.href = "auth.html";
+        window.location.href = "/auth.html";
     } catch (error) {
         console.error("Lỗi đặt lại mật khẩu:", error.message);
         alert("Không thể đặt lại mật khẩu. Vui lòng thử lại.");

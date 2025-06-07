@@ -1,5 +1,5 @@
 :root {
-    --send_message_area_height: 60px;
+    --send_message_area_height: 80px;
     --dark-green: #1a5d54;
     --light-green: #2a9d8f;
     --dark-purple: #6930c3;
@@ -161,6 +161,13 @@ body {
     width: 300px; /* hoặc điều chỉnh lại tùy layout */
 }
 
+.line-search {
+  border: 1px solid black;
+  height: 2px;
+  width: 95%;
+  margin: 20px 0;
+}
+
 /* Input chính */
 .search-body input {
     width: 100%;
@@ -199,7 +206,7 @@ body {
 }
 
 /* Icon “×” bên trong (màu trắng) */
-.clear-icon-wrapper .close-icon {
+.clear-icon-wrapper .close-icon-search {
     font-size: 10px;
     color: white;
     line-height: 1;
@@ -276,6 +283,7 @@ body {
     height: 95%;
     overflow: hidden;
     align-items: center;
+    text-overflow: ellipsis;
 }
 
 .chats-list-user-time {
@@ -414,16 +422,24 @@ body {
 .message-container-body {
     height: calc(100% - 60px);
     width: 100%;
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 .message-container-body-message-area {
-    height: calc(100% - var(--send_message_area_height));
+    flex: 1;
     display: flex;
     flex-direction: column;
     padding: 20px 15px 5px;
     overflow-y: auto;
     scroll-behavior: smooth;
+}
+
+.message-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .message-content {
@@ -436,8 +452,94 @@ body {
     animation: messageAppear 0.3s ease;
 }
 
-/* Chats Info */
+.message-reply-source {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+}
 
+.message-reply-source:hover {
+    cursor: pointer;
+    color: var(--dark-bg);
+}
+
+.vertical-line {
+    width: 1px;
+    height: 20px;
+    background-color: rgba(38, 35, 35, 0.7);
+}
+
+.message-meta {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.message-time {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: gray;
+}
+
+.reply-button {
+    margin-top: 5px;
+    color: gray;
+}
+
+.reply-button:hover {
+    cursor: pointer;
+    color: var(--light-green);
+}
+
+.message-container-reply-message {
+    width: 100%;
+    height: fit-content;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.reply-user-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.reply-message-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 85%;
+    font-size: 0.8rem;
+}
+
+.line-reply {
+    border: 1px solid black;
+    height: 2px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.close-icon-reply-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Chats Info */
 .chats-info {
     min-width: 275px;
     display: none;
@@ -509,11 +611,6 @@ body {
     border-radius: 50%;
     z-index: 1;
     margin-right: 10px;
-<<<<<<< Updated upstream
-    
-=======
-
->>>>>>> Stashed changes
 }
 
 .chats-info-features-button:hover {
@@ -527,7 +624,11 @@ body {
 }
 
 .sender {
-    align-self: flex-end;
+    justify-content: flex-end;
+}
+
+.replyMessage {
+
 }
 
 .systemMessage {

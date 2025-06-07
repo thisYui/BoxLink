@@ -4,6 +4,7 @@ const { messageNotification, seenMessageNotification } = require("./notification
 const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 const mine = require("mime-types");
 const { getWebsitePreview, getVideoDuration,formatRichTextFromPlain } = require("./utilityServices.cjs");
+const { deleteChat } = require("./firebaseServices.cjs");
 
 /*
 2. Cloud Firestore:
@@ -342,8 +343,40 @@ async function turnNotification(uid, friendID) {
     }
 }
 
+// Xóa cuộc trò chuyện và thông tin người dùng
+async function deleteChatInformation(uid, friendID) {
+    try {
+        // Lấy thông tin cuộc trò chuyện giữa hai người dùng
+        const chatID = await findChat(uid, friendID);
+
+        // Xóa cuộc trò chuyện
+        await deleteChat(chatID);
+
+        // Xóa thông tin người dùng
+        const userRef = db.collection("users").doc(uid);
+        const friendRef = db.collection("users").doc(friendID);
+
+        // Xóa cuộc trò chuyện khỏi danh sách chatList của người dùng
+        await userRef.update({
+            chatList: admin.firestore.FieldValue.arrayRemove(chatID)
+        });
+
+        // Xóa cuộc trò chuyện khỏi danh sách chatList của bạn bè
+        await friendRef.update({
+            chatList: admin.firestore.FieldValue.arrayRemove(chatID)
+        });
+
+        return true;
+    } catch (error) {
+        logger.error("Lỗi khi xóa người dùng:", error);
+        return false;
+    }
+}
+
+
 module.exports = {
     findChat, startChat, sendMessage,
     getMessages, getSingle, loadMore,
     updateSeen, turnNotification,
+    deleteChatInformation
 }

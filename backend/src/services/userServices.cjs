@@ -4,56 +4,65 @@ const { friendRequestNotification, friendAcceptNotification,
     updateUserNotification, otherNotification } = require("./notificationServices.cjs");
 const { uploadFile, getDownloadUrl } = require("./fileServices.cjs");
 
+// Lấy thông tin 1 box chat
+async function getDataBoxListChat(chatId, uid) {
+    try {
+        const chatSnapshot = await db.collection("chats").doc(chatId).get();
+        const chatData = chatSnapshot.data();
+
+        const friendID = chatData.participants.find(id => id !== uid);
+        const friend = await db.collection("users").doc(friendID).get();
+        const friendData = friend.data();
+
+        let text = null;
+        const type = chatData.lastMessage.type;
+
+        if (type === "text" || type === "system") {
+            text = chatData.lastMessage.content.text;
+        } else if (type === "image") {
+            text = `${friendData.displayName} đã gửi một ảnh`;
+        } else if (type === "video") {
+            text = `${friendData.displayName} đã gửi một video`;
+        } else if (type === "audio") {
+            text = `${friendData.displayName} đã gửi một audio`;
+        } else if (type === "file") {
+            text = `${friendData.displayName} đã gửi một tệp đính kèm`;
+        }
+
+        const timeSeen = chatData.info[friendID]?.lastMessageSeen;
+        const clientTimeSeen = chatData.info[uid]?.lastMessageSeen;
+        const stateNotification = chatData.info[friendID]?.turnOnNotification;
+
+        return {
+            displayName: friendData.displayName,
+            uid: friendID,
+            avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
+            lastMessage: {
+                senderID: chatData.lastMessage.senderID,
+                text: text,
+                timeSend: chatData.lastMessage.timestamp,
+                timeSeen: timeSeen,
+                clientTimeSeen: clientTimeSeen
+            },
+            lastOnline: friendData.lastOnline,
+            stateNotification: stateNotification || true, // nếu không có thì mặc định là true
+        };
+
+    } catch (error) {
+        logger.error("Lỗi khi lấy dữ liệu box chat:", error);
+        return null;
+    }
+}
+
 // Lấy dữ liệu người dùng từ uid
 async function getInfo(uid) {
     try {
-        const userRecord = await admin.auth().getUser(uid);
         const user = await db.collection("users").doc(uid).get();
         const userData = user.data();
 
         let friendList = [];
         for (const chatId of userData.chatList) {
-            const chatSnapshot = await db.collection("chats").doc(chatId).get();
-            const chatData = chatSnapshot.data();
-
-            const friendID = chatData.participants.find(id => id !== uid);
-            const friend = await db.collection("users").doc(friendID).get();
-            const friendData = friend.data();
-
-            let text = null;
-            const type = chatData.lastMessage.type;
-
-            if (type === "text" || type === "system") {
-                text = chatData.lastMessage.content.text;
-            } else if (type === "image") {
-               text = `${friendData.displayName} đã gửi một ảnh`;
-            } else if (type === "video") {
-                text = `${friendData.displayName} đã gửi một video`;
-            } else if (type === "audio") {
-                text = `${friendData.displayName} đã gửi một audio`;
-            } else if (type === "file") {
-                text = `${friendData.displayName} đã gửi một tệp đính kèm`;
-            }
-
-            const timeSeen = chatData.info[friendID]?.lastMessageSeen;
-            const clientTimeSeen = chatData.info[uid]?.lastMessageSeen;
-            const stateNotification = chatData.info[friendID]?.turnOnNotification;
-
-            const data = {
-                displayName: friendData.displayName,
-                uid: friendID,
-                avatar: friendData.avatar, // lưu ý: đang dùng avatar của chính user
-                lastMessage: {
-                    senderID: chatData.lastMessage.senderID,
-                    text: text,
-                    timeSend: chatData.lastMessage.timestamp,
-                    timeSeen: timeSeen,
-                    clientTimeSeen: clientTimeSeen
-                },
-                lastOnline: friendData.lastOnline,
-                stateNotification: stateNotification || true, // nếu không có thì mặc định là true
-            };
-
+            const data = await getDataBoxListChat(chatId, uid);
             friendList.push(data);
         }
 
@@ -181,10 +190,19 @@ async function acceptFriend(uid, friendID) {
             friendList: admin.firestore.FieldValue.arrayUnion(uid)
         });
 
+        // Xóa friendID khỏi mảng friendReceived của user
+        await userRef.update({
+            friendReceived: admin.firestore.FieldValue.arrayRemove(friendID)
+        });
+
+        // Xóa uid khỏi mảng friendRequests của friend
+        await friendRef.update({
+            friendRequests: admin.firestore.FieldValue.arrayRemove(uid)
+        });
+
         // Thông báo cháp nhận lời mời kết bạn
         await friendAcceptNotification(uid, friendID);
 
-        logger.debug("Đã chấp nhận lời mời kết bạn thành công.");
         return true;
     } catch (error) {
         logger.error("Lỗi khi chấp nhận lời mời kết bạn:", error);
@@ -226,16 +244,13 @@ async function friendRequest(uid, friendID) {
 // Xóa lời mời kết bạn
 async function cancelFriend(uid, friendID) {
     try {
-        // Lấy thông tin bạn bè từ uid
-        const friend = await admin.auth().getUser(friendID);
-
         // Truy cập document của user trong Firestore
         const userRef = db.collection("users").doc(uid);
-        const friendRef = db.collection("users").doc(friend.uid);
+        const friendRef = db.collection("users").doc(friendID);
 
         // Dùng arrayRemove để xóa friendId ra khỏi mảng friendReceived
         await userRef.update({
-            friendReceived: admin.firestore.FieldValue.arrayRemove(friend.uid)
+            friendReceived: admin.firestore.FieldValue.arrayRemove(friendID)
         });
 
         // Dùng arrayRemove để xóa myId ra khỏi mảng friendRequest của friend
@@ -243,7 +258,6 @@ async function cancelFriend(uid, friendID) {
             friendRequests: admin.firestore.FieldValue.arrayRemove(uid)
         });
 
-        logger.debug("Đã hủy lời mời kết bạn thành công.");
         return true;
     } catch (error) {
         logger.error("Lỗi khi hủy lời mời kết bạn:", error);
@@ -253,7 +267,13 @@ async function cancelFriend(uid, friendID) {
 
 // Thu hồi lời mời kết bạn
 async function recall(uid, friendID) {
-    await cancelFriend(friendID, uid); // Hủy lời mời kết bạn từ người nhận
+    try {
+        // Hủy lời mời kết bạn từ người nhận
+        return await cancelFriend(friendID, uid);
+    } catch (error) {
+        logger.error("Lỗi khi thu hồi lời mời kết bạn:", error);
+        return false;
+    }
 }
 
 // Cập nhật thời gian online
@@ -357,12 +377,12 @@ async function removeSocialLink(uid, socialLinkId) {
     }
 }
 
-
 module.exports = {
     getInfo, setPassword, setDisplayName,
     setAvatar, removeFriend, acceptFriend,
     friendRequest, cancelFriend, recall,
     updateLastOnline, getProfileUser,
     setGender, setBirthday, setBiography,
-    addSocialLink, removeSocialLink
+    addSocialLink, removeSocialLink,
+    getDataBoxListChat
 };

@@ -1,10 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const { ip } = require("./ipConfig.cjs");
 
 const app = express();
-const port = process.env.PORT || 3000; // Cổng mặc định là 3000 nếu không có biến môi trường PORT
-const host = process.env.HOST || "127.0.0.1";
+const host = ip || "localhost"; // Host mặc định là localhost nếu không có biến môi trường IP
 
 // Bật CORS cho tất cả origin (có thể giới hạn lại nếu muốn)
 app.use(cors({
@@ -22,4 +22,4 @@ app.get("/", (req, res) => {
 
 app.use(express.static(path.join(__dirname, "../../../frontend")));
 
-module.exports = { app, port, host};
+module.exports = { app, host};

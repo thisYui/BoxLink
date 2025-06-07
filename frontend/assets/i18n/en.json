@@ -3,33 +3,33 @@
     "logout": "Log Out",
     "settings": "Settings",
     "home": "Home",
-    "friend_list": "Friend List",
+    "friend-list": "Friend List",
     "profile": "Profile"
   },
   "chat": {
     "title": "Chats",
-    "search_placeholder": "Search conversations...",
+    "search-placeholder": "Search conversations...",
     "unread": "Unread",
     "read": "Read"
   },
-  "chat_info": {
+  "chat-info": {
     "title": "Chat Info",
     "members": "Members",
-    "leave_chat": "Leave Chat",
-    "delete_chat": "Delete Chat",
-    "delete_confirmation": "Are you sure you want to delete this chat?",
-    "leave_confirmation": "Are you sure you want to leave this chat?",
-    "change_nickname": "Change Nickname",
-    "nickname_placeholder": "Enter new nickname...",
-    "nickname_change_success": "Nickname changed successfully",
-    "nickname_change_error": "Unable to change nickname, please try again later",
-    "turn_on_notifications": "Turn on notifications",
-    "turn_off_notifications": "Turn off notifications",
-    "personal_page": "Personal Page"
+    "leave-chat": "Leave Chat",
+    "delete-chat": "Delete Chat",
+    "delete-confirmation": "Are you sure you want to delete this chat?",
+    "leave-confirmation": "Are you sure you want to leave this chat?",
+    "change-nickname": "Change Nickname",
+    "nickname-placeholder": "Enter new nickname...",
+    "nickname-change-success": "Nickname changed successfully",
+    "nickname-change-error": "Unable to change nickname, please try again later",
+    "turn-on-notifications": "Turn on notifications",
+    "turn-off-notifications": "Turn off notifications",
+    "personal-page": "Personal Page"
   },
   "friend": {
     "title": "Friends",
-    "search_placeholder": "Search friends..."
+    "search-placeholder": "Search friends..."
   },
   "profile": {
     "title": "My Profile",
@@ -62,30 +62,50 @@
     "placeholder": "Search friends... (email, ID)",
     "noResults": "No results found",
     "friend": "Friend",
-    "add_friend": "Add Friend",
-    "request_sent": "Friend request sent",
-    "request_received": "Friend request received",
-    "accept_request": "Accept Request",
-    "decline_request": "Decline Request",
-    "remove_friend": "Remove Friend",
-    "recall_request": "Recall Request"
+    "add-friend": "Add Friend",
+    "request-sent": "Friend request sent",
+    "request-received": "Friend request received",
+    "accept-request": "Accept Request",
+    "decline-request": "Decline Request",
+    "remove-friend": "Remove Friend",
+    "recall-request": "Recall Request",
+    "open-chat": "Open Chat"
   },
   "settings": {
     "title": "Settings",
     "notifications": "Notifications",
-    "theme_mode": "Theme Mode",
+    "theme-mode": "Theme Mode",
     "language": "Language",
-    "change_password": "Change Password",
+    "change-password": "Change Password",
     "logout": "Log Out",
-    "delete_account": "Delete Account",
-    "select_theme": "Select Theme",
-    "light_theme": "Light Theme",
-    "dark_theme": "Dark Theme",
-    "custom_theme": "Custom Theme"
+    "delete-account": "Delete Account",
+    "select-theme": "Select Theme",
+    "light-theme": "Light Theme",
+    "dark-theme": "Dark Theme",
+    "custom-theme": "Custom Theme"
   },
   "message": {
-    "display_name": "User Name",
-    "last_seen": "Last seen today",
-    "placeholder": "Type a message..."
+    "relying": "Replying to",
+    "display-name": "User Name",
+    "last-seen": "Last seen today",
+    "placeholder": "Type a message...",
+    "send-image": "Send Image",
+    "send-file": "Send File",
+    "send-voice": "Send Voice Message",
+    "send-video": "Send Video",
+    "send-link": "Send Link"
+  },
+  "notification": {
+    "title": "Notifications",
+    "no-notifications": "No notifications",
+    "friend-request": "Friend Request",
+    "friend-accepted": "Friend Request Accepted",
+    "accepted-request": "Your friend request to {{name}} has been accepted",
+    "declined-request": "Your friend request to {{name}} has been declined",
+    "accept": "Accept",
+    "decline": "Decline",
+    "updated-avatar": "Your avatar has been updated",
+    "updated-display-name": "Your display name has been updated",
+    "updated-password": "Your password has been updated"
   }
 }

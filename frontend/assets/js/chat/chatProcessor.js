@@ -3,7 +3,8 @@ import { convertToDate, formatRelativeTimeRead, formatRelativeTimeOnline, isOnli
 // Dùng để truyền thông tin người dùng từ chat-list sáng message-container
 function transmitMessageContainer(chatID) {
     // Find the chat box for this user
-    const box = document.getElementById(chatID);
+    const chatContainer = document.getElementById("chatContainer");
+    const box = chatContainer.querySelector(`[id="${chatID}"]`);
     if (!box) return;
 
     // Get user information from the box
@@ -13,9 +14,10 @@ function transmitMessageContainer(chatID) {
     const timeOnline = new Date(stringTimeOnline);
 
     // Get header elements
-    const displayNameElement = document.querySelector('.chat-info-display-name');
-    const lastSeenElement = document.querySelector('.chat-info-display-actived');
-    const avatarElement = document.getElementById('messageContainerAvatar');
+    const messageContainer = document.getElementById("messageGroupContainer");
+    const displayNameElement = messageContainer.querySelector('.chat-info-display-name');
+    const lastSeenElement = messageContainer.querySelector('.chat-info-display-actived');
+    const avatarElement = messageContainer.querySelector('.chat-info-avatar');
 
     // Update avatar
     if (avatar) {
@@ -26,6 +28,7 @@ function transmitMessageContainer(chatID) {
     // Update display name
     if (name) {
         displayNameElement.textContent = name;
+        sessionStorage.setItem("friendName", name);
     }
 
     if (timeOnline) {
@@ -45,7 +48,8 @@ function moveChatIDToFirstInListBox(chatID) {
     }
     window.listChatBoxOrder.unshift(chatID);
 
-    const chatBox = document.getElementById(chatID);
+    const chatContainer = document.getElementById("messageContainer");
+    const chatBox = chatContainer.querySelector(`[id="${chatID}"]`);
     const chatsContainer = document.querySelector(".chats-list");
     if (chatBox && chatsContainer) {
         chatsContainer.prepend(chatBox);
@@ -164,7 +168,8 @@ function fixMessageToChatBoxList(chatID, message, chatOpen) {
 // Thêm tin nhắn hiển thị phía chat list
 function fixContentTextMessageToChatBoxList(chatID, senderID, text, timeSend, chatOpen) {
     // Tìm chat box theo ID
-    const chatBox = document.getElementById(chatID);
+    const chatContainer = document.getElementById("messageContainer");
+    const chatBox = chatContainer.querySelector(`[id="${chatID}"]`);
     if (!chatBox) return;
 
     // Định dạng thời gian gửi
@@ -208,7 +213,8 @@ function fixContentTextMessageToChatBoxList(chatID, senderID, text, timeSend, ch
 }
 
 function updateSeenMessageIcon(chatID, seen) {
-    const chatBox = document.getElementById(chatID);
+    const chatContainer = document.getElementById("messageContainer");
+    const chatBox = chatContainer.querySelector(`[id="${chatID}"]`);
     if (!chatBox) return; // không tìm thấy thì dừng
 
     // Lấy avatar của người bạn
@@ -228,8 +234,9 @@ function updateSeenMessageIcon(chatID, seen) {
 }
 
 function updateSeenMessageStyle() {
+    const chatContainer = document.getElementById("messageContainer");
     const chatID = sessionStorage.getItem("lastClickedUser");
-    const chatBox = document.getElementById(chatID);
+    const chatBox = chatContainer.querySelector(`[id="${chatID}"]`);
     if (!chatBox) return; // không tìm thấy thì dừng
 
     // Lấy các phần tử cần thiết
@@ -248,7 +255,8 @@ function updateSeenMessageStyle() {
  * @param time {Date} - Thời gian online của người dùng
  */
 function updateOnlineStatus(chatID, time) {
-    const chatBox = document.getElementById(chatID);
+    const chatContainer = document.getElementById("messageContainer");
+    const chatBox = chatContainer.querySelector(`[id="${chatID}"]`);
     if (!chatBox) return; // không tìm thấy thì dừng
 
     const contentDiv = chatBox.querySelector('.chats-list-user-content');

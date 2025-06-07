@@ -1,5 +1,3 @@
-import { host } from "../config/firebaseConfig.js";
-
 // Lấy thông tin cần thiết khi đăng nhập thành công
 async function getUserInfo() {
     // Các thông tin cần thiết  bao gồm
@@ -7,7 +5,7 @@ async function getUserInfo() {
     // 2. Danh sách bạn bè và tin nhắn cuối cùng cảu mỗi đoạn chat
     // 3. Danh sách lời mời kết bạn và các thông báo khác
 
-    const response = await fetch(`http://${host}/api/user/user-info`, {
+    const response = await fetch(`${host}/api/user/user-info`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -27,7 +25,7 @@ async function getUserInfo() {
 
 // Tìm kiếm
 async function searchFriendByEmail(emailFriend) {
-    const response = await fetch(`http://${host}/api/index/search`, {
+    const response = await fetch(`${host}/api/index/search`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -46,7 +44,7 @@ async function searchFriendByEmail(emailFriend) {
 }
 
 async function searchFriendByID(friendID) {
-    const response = await fetch(`http://${host}/api/index/search`, {
+    const response = await fetch(`${host}/api/index/search`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -65,7 +63,7 @@ async function searchFriendByID(friendID) {
 }
 
 async function searchByName(name) {
-    const response = await fetch(`http://${host}/api/index/search-by-name`, {
+    const response = await fetch(`${host}/api/index/search-by-name`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -84,7 +82,7 @@ async function searchByName(name) {
 
 // Lấy các thông tin của 1 hyperlink
 async function getHyperlinkInfo(url) {
-    const response = await fetch(`http://${host}/api/index/get-website-info`, {
+    const response = await fetch(`${host}/api/index/get-website-info`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -103,7 +101,7 @@ async function getHyperlinkInfo(url) {
 
 // Xóa thông báo
 async function deleteNotification(notification) {
-    const response = await fetch(`http://${host}/api/index/delete-notification`, {
+    const response = await fetch(`${host}/api/index/delete-notification`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -123,7 +121,7 @@ async function deleteNotification(notification) {
 
 // Lấy trạng thái online của bạn bè
 async function getFriendStatus() {
-    const response = await fetch(`http://${host}/api/index/get-friend-status`, {
+    const response = await fetch(`${host}/api/index/get-friend-status`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -141,7 +139,7 @@ async function getFriendStatus() {
 }
 
 async function getFriendProfile(friendID) {
-    const response = await fetch(`http://${host}/api/index/get-friend-profile`, {
+    const response = await fetch(`${host}/api/index/get-friend-profile`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -159,6 +157,26 @@ async function getFriendProfile(friendID) {
     return await response.json();
 }
 
+// Lấy thông tin chó 1 box
+async function getBoxChatInfo(chatID) {
+    const response = await fetch(`${host}/api/index/get-box-chat`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            chatID: chatID
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch box chat info");
+    }
+
+    return await response.json();
+}
+
 export {
     getUserInfo,
     searchFriendByEmail,
@@ -167,5 +185,6 @@ export {
     getHyperlinkInfo,
     deleteNotification,
     getFriendStatus,
-    getFriendProfile
+    getFriendProfile,
+    getBoxChatInfo
 }

@@ -2,6 +2,7 @@ const { searchUserByEmail, searchUserByID, searchByName,
     getWebsitePreview, getLastOnlineObject, friendProfile
 } = require("../services/utilityServices.cjs");
 const { deleteNotificationSpecific } = require("../services/notificationServices.cjs");
+const { getDataBoxListChat } = require("../services/userServices.cjs")
 const logger = require("../config/logger.cjs");
 
 // Tìm kiếm bạn bè
@@ -88,9 +89,24 @@ async function getFriendProfile(req, res) {
     }
 }
 
+async function getBoxChat(req, res) {
+    const { uid, chatID } = req.body;
+
+    try {
+        const box = await getDataBoxListChat(chatID, uid);
+        if (!box) return res.status(404).json({ message: 'Không tìm thấy danh sách chat!' });
+        res.status(200).json(box);
+
+    } catch (error) {
+        logger.error(`Lỗi khi lấy danh sách chat: ${error.message}`);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 
 module.exports = {
     searchFriend, deleteNotification,
     getWebsiteInfo, getFriendStatus,
-    searchFriendByName, getFriendProfile
+    searchFriendByName, getFriendProfile,
+    getBoxChat
 }

@@ -21,6 +21,8 @@ window.showListSearch = async function () {
 }
 
 async function chooseUserItem(uid) {
+    sessionStorage.setItem("searchUID", uid);
+
     await changeTab("FriendProfile");
     const profile = await getFriendProfile(uid);
     showFriendProfile(profile);

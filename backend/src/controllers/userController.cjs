@@ -5,7 +5,8 @@ const { getInfo, setPassword, setAvatar,
     setBirthday, setGender, addSocialLink,
     removeSocialLink
 } = require("../services/userServices.cjs");
-const { deleteAuth } = require("../services/firebaseServices.cjs");
+const { deleteChatInformation } = require("../services/messageServices.cjs");
+const { deleteAuth, createChat } = require("../services/firebaseServices.cjs");
 const logger = require("../config/logger.cjs");
 
 // Lấy thông tin người dùng từ
@@ -54,8 +55,9 @@ async function changeDisplayName(req, res) {
 async function unfriend(req, res) {
     const { uid, friendID } = req.body;
     try {
+        const chatInfo = await deleteChatInformation(uid, friendID);
         const user = await removeFriend(uid, friendID);
-        if (!user) return res.status(404).json({ message: 'Hủy kết bạn thất bại!' });
+        if (!user || !chatInfo) return res.status(404).json({ message: 'Hủy kết bạn thất bại!' });
         res.status(200).json({ message: 'Đã hủy kết bạn!' });
 
     } catch (error) {
@@ -83,9 +85,10 @@ async function sendFriendRequest(req, res) {
 async function acceptFriendRequest(req, res) {
     const { uid, friendID } = req.body;
     try {
+        const chatID = await createChat(uid, friendID);
         const user = await acceptFriend(uid, friendID);
-        if (!user) return res.status(404).json({ message: 'Chấp nhận lời mời thất bại!' });
-        res.status(200).json({ message: 'Đã chấp nhận lời mời kết bạn!' });
+        if (!user || !chatID) return res.status(404).json({ message: 'Chấp nhận lời mời thất bại!' });
+        res.status(200).json({ chatID });
 
     } catch (error) {
         logger.error('Lỗi khi chấp nhận lời mời kết bạn!', { uid });

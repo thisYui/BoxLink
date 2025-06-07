@@ -3,33 +3,33 @@
     "logout": "Đăng xuất",
     "settings": "Cài đặt",
     "home": "Trang chủ",
-    "friend_list": "Danh sách bạn bè",
+    "friend-list": "Danh sách bạn bè",
     "profile": "Hồ sơ"
   },
   "chat": {
     "title": "Đoạn chat",
-    "search_placeholder": "Tìm cuộc trò chuyện...",
+    "search-placeholder": "Tìm cuộc trò chuyện...",
     "unread": "Chưa xem",
     "read": "Đã xem"
   },
-  "chat_info": {
+  "chat-info": {
     "title": "Thông tin cuộc trò chuyện",
     "members": "Thành viên",
-    "leave_chat": "Rời khỏi cuộc trò chuyện",
-    "delete_chat": "Xóa cuộc trò chuyện",
-    "delete_confirmation": "Bạn có chắc chắn muốn xóa cuộc trò chuyện này?",
-    "leave_confirmation": "Bạn có chắc chắn muốn rời khỏi cuộc trò chuyện này?",
-    "change_nickname": "Thay đổi biệt danh",
-    "nickname_placeholder": "Nhập biệt danh mới...",
-    "nickname_change_success": "Biệt danh đã được thay đổi thành công",
-    "nickname_change_error": "Không thể thay đổi biệt danh, vui lòng thử lại sau",
-    "turn_on_notifications": "Bật thông báo",
-    "turn_off_notifications": "Tắt thông báo",
-    "personal_page": "Trang cá nhân"
+    "leave-chat": "Rời khỏi cuộc trò chuyện",
+    "delete-chat": "Xóa cuộc trò chuyện",
+    "delete-confirmation": "Bạn có chắc chắn muốn xóa cuộc trò chuyện này?",
+    "leave-confirmation": "Bạn có chắc chắn muốn rời khỏi cuộc trò chuyện này?",
+    "change-nickname": "Thay đổi biệt danh",
+    "nickname-placeholder": "Nhập biệt danh mới...",
+    "nickname-change-success": "Biệt danh đã được thay đổi thành công",
+    "nickname-change-error": "Không thể thay đổi biệt danh, vui lòng thử lại sau",
+    "turn-on-notifications": "Bật thông báo",
+    "turn-off-notifications": "Tắt thông báo",
+    "personal-page": "Trang cá nhân"
   },
   "friend": {
     "title": "Bạn bè",
-    "search_placeholder": "Tìm bạn bè..."
+    "search-placeholder": "Tìm bạn bè..."
   },
   "profile": {
     "title": "Hồ sơ của tôi",
@@ -62,30 +62,50 @@
     "placeholder": "Tìm kiếm bạn bè...(email, ID)",
     "noResults": "Không tìm thấy kết quả",
     "friend": "Bạn bè",
-    "add_friend": "Thêm bạn",
-    "request_sent": "Đã gửi",
-    "request_received": "Đã nhận",
-    "accept_request": "Chấp nhận",
-    "decline_request": "Từ chối",
-    "remove_friend": "Xóa bạn",
-    "recall_request": "Thu hồi"
+    "add-friend": "Thêm bạn",
+    "request-sent": "Đã gửi",
+    "request-received": "Đã nhận",
+    "accept-request": "Chấp nhận",
+    "decline-request": "Từ chối",
+    "remove-friend": "Xóa bạn",
+    "recall-request": "Thu hồi",
+    "open-chat": "Nhắn tin"
   },
   "settings": {
     "title": "Cài đặt",
     "notifications": "Thông báo",
-    "theme_mode": "Chế độ giao diện",
+    "theme-mode": "Chế độ giao diện",
     "language": "Ngôn ngữ",
-    "change_password": "Đổi mật khẩu",
+    "change-password": "Đổi mật khẩu",
     "logout": "Đăng xuất",
-    "delete_account": "Xóa tài khoản",
-    "select_theme": "Chọn giao diện",
-    "light_theme": "Giao diện sáng",
-    "dark_theme": "Giao diện tối",
-    "custom_theme": "Giao diện tùy chỉnh"
+    "delete-account": "Xóa tài khoản",
+    "select-theme": "Chọn giao diện",
+    "light-theme": "Giao diện sáng",
+    "dark-theme": "Giao diện tối",
+    "custom-theme": "Giao diện tùy chỉnh"
   },
   "message": {
-    "display_name": "Tên người dùng",
-    "last_seen": "Hoạt động gần đây",
-    "placeholder": "Nhập tin nhắn..."
+    "replying": "Đang trả lời tin nhắn của ",
+    "display-name": "Tên người dùng",
+    "last-seen": "Hoạt động gần đây",
+    "placeholder": "Nhập tin nhắn...",
+    "send-image": "Đã gửi một hình ảnh",
+    "send-file": "Đã gửi một tệp tin",
+    "send-voice": "Đã gửi một tin nhắn thoại",
+    "send-video": "Đã gửi một video",
+    "send-link": "Đã gửi một liên kết"
+  },
+  "notification": {
+    "title": "Thông báo",
+    "no-notifications": "Không có thông báo mới",
+    "friend-request": "Yêu cầu kết bạn từ {{name}}",
+    "friend-accepted": "{{name}} đã chấp nhận lời mời kết bạn",
+    "accepted-request": "Bạn đã chấp nhận lời mời kết bạn từ {{name}}",
+    "declined-request": "Bạn đã từ chối lời mời kết bạn từ {{name}}",
+    "accept": "Chấp nhận",
+    "decline": "Từ chối",
+    "updated-avatar": "Bạn đã cập nhật ảnh đại diện",
+    "updated-display-name": "Bạn đã cập nhật tên hiển thị",
+    "updated-password": "Bạn đã cập nhật mật khẩu thành công"
   }
 }

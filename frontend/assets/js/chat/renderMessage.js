@@ -1,12 +1,12 @@
 import {getHyperlinkInfo} from '../fetchers/request.js';
 import {fixMessageToChatBoxList, moveChatIDToFirstInListBox} from './chatProcessor.js';
-import { formatRelativeTimeRead, formatRelativeTimeOnline } from "../utils/renderData.js";
+import { formatRelativeTimeRead, formatRelativeTimeSend, convertToDate } from "../utils/renderData.js";
 
 // Chỉ dùng cho server
 function addMessageToChatBoxServer(message) {
     const messageID = message.messageID; // ID của tin nhắn
     const senderID = message.senderID;  // ID người gửi
-    const timeSend = message.timeSend;  // Thời gian gửi tin nhắn
+    const timeSend = convertToDate(message.timestamp);  // Thời gian gửi tin nhắn
     const type = message.type;  // Kiểu tin nhắn (text, image, video, file)
     const reply = message.replyTo;  // Tin nhắn trả lời (nếu có)
     const content = message.content;  // Nội dung tin nhắn
@@ -50,31 +50,31 @@ function addMessageToChatBoxServer(message) {
 function addMessageToChatBoxClient(messageID, type, content, replyTo) {
     moveChatIDToFirstInListBox(sessionStorage.getItem("lastClickedUser"));  // Di chuyển đoạn chat của người gửi lên đầu danh sách
 
-    const timeSend = new Date().toISOString();  // Thời gian gửi tin nhắn
+    const timeSend = new Date();  // Thời gian gửi tin nhắn
     const senderID = localStorage.getItem("uid");  // ID người gửi
 
     if (type === "text") {
-        addTextMessageToChatBox(messageID, content, senderID);  // Thêm tin nhắn vào chat box
+        addTextMessageToChatBox(messageID, content, senderID, type, timeSend, replyTo);  // Thêm tin nhắn vào chat box
 
     } else if (type === "image") {
         const files = document.getElementById('attachment').files;
         const file = files[0];  // Giả sử chỉ lấy tệp đầu tiên nếu có nhiều tệp
         const imageUrl = URL.createObjectURL(file);
-        addImageMessageToChatBox(messageID, imageUrl, senderID);  // Gọi hàm để hiển thị hình ảnh
+        addImageMessageToChatBox(messageID, imageUrl, senderID, timeSend, replyTo);  // Gọi hàm để hiển thị hình ảnh
 
     } else if (type === "video") {
         const files = document.getElementById('attachment').files;
         const file = files[0];  // Giả sử chỉ lấy tệp video đầu tiên
         const videoUrl = URL.createObjectURL(file);
-        addVideoMessageToChatBox(messageID, videoUrl, senderID);  // Gọi hàm để hiển thị video
+        addVideoMessageToChatBox(messageID, videoUrl, senderID, timeSend, replyTo);  // Gọi hàm để hiển thị video
 
-    } else if (type === "file") {
+    } else if (type === "application") { // ở phía server sẽ là file
         const files = document.getElementById('attachment').files;
         const file = files[0];  // Giả sử chỉ lấy tệp tài liệu đầu tiên
         const fileName = file.name;
         const fileSize = file.size;
         const fileSubtype = file.type;  // Loại tệp (ví dụ: application/pdf, application/msword, ...)
-        addFileMessageToChatBox(messageID, fileName, fileSize, fileSubtype, senderID);  // Gọi hàm để hiển thị tệp tài liệu
+        addFileMessageToChatBox(messageID, fileName, fileSize, fileSubtype, senderID, timeSend, replyTo);  // Gọi hàm để hiển thị tệp tài liệu
 
     } else if (type === "link") {
         getHyperlinkInfo(content).then((data) => {
@@ -106,76 +106,151 @@ function addMessageToChatBoxClient(messageID, type, content, replyTo) {
     document.getElementById("message-input").value = '';
 }
 
-function addTimestampToMessage(messageDiv, timeSend) {
-    const timeElement = document.createElement("span");
+function addTimestampAndReplyToMessage(messageDiv, timeSend, messageID) {
+    const timeElement = document.createElement("div");
     timeElement.classList.add("message-time");
+    const p = document.createElement("span");
+    p.textContent = formatRelativeTimeSend(timeSend);
 
     // Format the time
     const date = new Date(timeSend);
-    timeElement.textContent = formatRelativeTimeRead(date);
-    timeElement.style.fontSize = '12px';
-    timeElement.style.color = '#888';
-    timeElement.style.marginLeft = '8px';
+    timeElement.textContent = formatRelativeTimeSend(date);
+
+    const reply = document.createElement("div");
+    reply.classList.add("reply-button");
+    reply.id = messageID;
+
+    const i = document.createElement("i");
+    i.classList.add("fa-solid", "fa-reply");
+    reply.appendChild(i);
 
     messageDiv.appendChild(timeElement);
+    messageDiv.appendChild(reply);
+}
+
+function getDataFromMessageID(messageID) {
+    const messageContainer = document.getElementById("messageContainer");
+    const messageWrapper = messageContainer.querySelector(`[id="${messageID}"]`);
+
+    if (!messageWrapper) {
+        // Data quá cũ chưa fetch đến
+
+        return null;
+    }
+
+    const messageContent = messageWrapper.querySelector(".message-content");
+
+    if (messageContent.classList.contains('messageImage')) {
+        return t("message.send-image");
+
+    } else if (messageContent.classList.contains('messageFile')) {
+        return t("message.send-file");
+
+    } else if (messageContent.classList.contains('messageVideo')) {
+        return t("message.send-video");
+
+    } else if (messageContent.classList.contains('messageLink')) {
+        return t("message.send-link");
+
+    } else {
+        const pList = messageContent.querySelectorAll("p");
+        const p = pList[pList.length - 1]; // Lấy phần tử <p> cuối cùng
+        return p.textContent;
+    }
+}
+
+function addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message-meta");
+
+    if (localStorage.getItem("uid") === senderID) {
+        messageWrapper.classList.add("sender");
+        messageDiv.style.alignItems = 'flex-end';
+
+        addTimestampAndReplyToMessage(messageDiv, timeSend, messageID);
+
+        messageWrapper.appendChild(messageDiv);
+        messageWrapper.appendChild(div);
+
+    } else {
+        messageDiv.style.alignItems = 'flex-start';
+
+        addTimestampAndReplyToMessage(messageDiv, timeSend, messageID);
+
+        messageWrapper.appendChild(div);
+        messageWrapper.appendChild(messageDiv);
+    }
+}
+
+function addReplyToMessageContent(messageContent, reply) {
+    const replyDiv = document.createElement("div");
+    replyDiv.classList.add("message-reply-source");
+
+    const lineDiv = document.createElement("div");
+    lineDiv.classList.add("vertical-line")
+    replyDiv.appendChild(lineDiv);
+
+    const p = document.createElement("p");
+    p.textContent = getDataFromMessageID(reply); // Lấy nội dung tin nhắn từ messageID
+    replyDiv.appendChild(p);
+
+    messageContent.appendChild(replyDiv);
 }
 
 function addTextMessageToChatBox(messageID, textMessage, senderID, type, timeSend, reply) {
     const container = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div")
+    messageWrapper.classList.add("message-wrapper");
+    messageWrapper.id = messageID; // Thêm ID cho messageWrapper để nhận diện
+
     const div = document.createElement("div");
+    div.classList.add("message-content");
+
+    if (reply !== "") {
+        console.log("reply", reply);
+        addReplyToMessageContent(div, reply); // Thêm phần trả lời nếu có
+    }
+
     const p = document.createElement("p");
-
-    // Thêm data-message-id để nhận dạng tin nhắn
-    div.setAttribute('data-message-id', messageID);
-
-    if (type === "system") {
-        div.classList.add("message-content", "systemMessage");
-    } else {
-        div.classList.add("message-content", "messageText");
-    }
-
-    if (localStorage.getItem("uid") === senderID) {
-        div.classList.add("sender");
-    }
-
-    // Create message content
     p.textContent = textMessage;
     div.appendChild(p);
 
-    // Add a timestamp if provided
-    if (timeSend) {
-        addTimestampToMessage(div, timeSend);
+    if (type === "system") {
+        div.classList.add("systemMessage");
+        messageWrapper.classList.add("systemMessage");
+
+    } else {
+        div.classList.add("messageText");
+
+        // Thêm wrapper
+        addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend); // Thêm messageDiv và div vào messageWrapper
     }
 
-    container.appendChild(div);
+    container.appendChild(messageWrapper);
 }
 
-function addImageMessageToChatBox(messageID, urlImage, senderID) {
+function addImageMessageToChatBox(messageID, urlImage, senderID, timeSend, reply) {
     const messageContainer = document.querySelector('.message-container-body-message-area');
+    const container = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div")
+    messageWrapper.classList.add("message-wrapper");
+    messageWrapper.id = messageID; // Thêm ID cho messageWrapper để nhận diện
 
     const div = document.createElement('div');
-    div.classList.add('message-content', 'sender', 'messageImage');
-
-    // Thêm data-message-id để nhận dạng tin nhắn
-    div.setAttribute('data-message-id', messageID);
+    div.classList.add('message-content', 'messageImage');
 
     const img = document.createElement('img');
     img.src = urlImage;
     img.style.maxWidth = '200px';
-    img.alt = `Ảnh: ${senderID}`;
 
     div.appendChild(img);
 
-    // Thêm thông tin người gửi
-    const metaInfo = document.createElement('p');
-    metaInfo.classList.add('messageMeta');
-    metaInfo.innerHTML = `${senderID}`;
-    div.appendChild(metaInfo);
+    addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend); // Thêm messageDiv và div vào messageWrapper
 
-    messageContainer.appendChild(div);
+    container.appendChild(messageWrapper);
 }
 
-function addVideoMessageToChatBox(messageID, urlVideo, senderID) {
+function addVideoMessageToChatBox(messageID, urlVideo, senderID, timeSend, reply) {
     const messageContainer = document.querySelector('.message-container-body-message-area');
 
     const div = document.createElement('div');
@@ -201,7 +276,7 @@ function addVideoMessageToChatBox(messageID, urlVideo, senderID) {
     messageContainer.appendChild(div);
 }
 
-function addFileMessageToChatBox(messageID, fileName, size, subtype, senderID) {
+function addFileMessageToChatBox(messageID, fileName, size, subtype, senderID, timeSend, reply) {
     const messageContainer = document.querySelector('.message-container-body-message-area');
 
     const div = document.createElement('div');
@@ -348,24 +423,22 @@ function convertContentToString(content) {
     }).join(''); // Kết hợp thành một chuỗi duy nhất
 }
 
-function isRichText(inputText) {
-    // Regex kiểm tra URL
-    const urlRegex = /https?:\/\/[^\s]+/g;
-    // Regex kiểm tra emoji (Unicode)
-    const emojiRegex = /[\u{1F600}-\u{1F64F}|\u{1F300}-\u{1F5FF}|\u{1F680}-\u{1F6FF}|\u{1F700}-\u{1F77F}|\u{1F780}-\u{1F7FF}|\u{1F800}-\u{1F8FF}|\u{1F900}-\u{1F9FF}|\u{1FA00}-\u{1FA6F}|\u{1FA70}-\u{1FAFF}|\u{2600}-\u{26FF}|\u{2700}-\u{27BF}]/gu;
+// Hiện tin nhắn đang được chọn để rep
+window.loadMessageRelyTo = function (messageID) {
+    const replyToMessageContainer = document.getElementById("replyMessageContainer");
+    replyToMessageContainer.classList.remove("hidden");
 
-    // Kiểm tra sự tồn tại của URL hoặc emoji
-    const hasUrl = urlRegex.test(inputText);
-    const hasEmoji = emojiRegex.test(inputText);
+    const replyUsername = document.getElementById("replyUserName");
+    const h = replyUsername.querySelector("h4");
+    h.textContent = t("message.replying") + sessionStorage.getItem("friendName");
 
-    // Nếu có URL hoặc emoji, trả về true (rich text)
-    return hasUrl || hasEmoji;
+    const replyMessageText = replyToMessageContainer.querySelector(".reply-message-text")
+    replyMessageText.textContent = getDataFromMessageID(messageID); // Lấy nội dung tin nhắn từ messageID
 }
 
 export {
     addMessageToChatBoxClient,
     addMessageToChatBoxServer,
-    fixMessageToChatBoxList,
-    isRichText
+    fixMessageToChatBoxList
 };
 

@@ -40,6 +40,7 @@ window.loadPage = async function (){
 window.loadChat = async function () {
     const { chatID } = await startChatSession(window.lastClickedUser);
     sessionStorage.setItem('chatID', chatID);
+    sessionStorage.setItem("replyMessageID", "");
 
     const chatData = await fetchMessages();
     const container = document.getElementById("messageContainer");
@@ -67,6 +68,26 @@ window.updateLastOnlineListFriend = async function () {
 
         updateOnlineStatus(friendID, time);
     }
+}
+
+window.handleUserClick = function (element) {
+    const elementId = element.id;
+
+    // Xóa class active khỏi phần tử trước đó nếu có
+    if (window.lastClickedUser) {
+        const chatContainer = document.getElementById("chatContainer");
+        const lastEl = chatContainer.querySelector(`[id="${window.lastClickedUser}"]`);
+        if (lastEl) lastEl.classList.remove("chat-box-choosen");
+    }
+
+    // Thêm class active cho phần tử hiện tại
+    element.classList.add("chat-box-choosen");
+
+    // Cập nhật biến theo dõi
+    window.lastClickedUser = elementId;
+    sessionStorage.setItem("lastClickedUser", elementId);
+
+    loadChat().then();
 }
 
 window.loadChatInfo = async function() {

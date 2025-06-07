@@ -1,7 +1,9 @@
 import { io } from "https://cdn.jsdelivr.net/npm/socket.io-client@4.6.1/dist/socket.io.esm.min.js";
 
+window.host = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+
 // Khởi tạo kết nối tới server
-const socket = io("http://localhost:3000");
+const socket = io(window.host);
 
 socket.on("connect", () => {
     const uid = localStorage.getItem("uid"); // Lấy email từ localStorage

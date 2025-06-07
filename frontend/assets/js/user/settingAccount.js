@@ -12,32 +12,32 @@ window.sendTimeOnline = async function () {
 }
 
 // thay đổi mật khẩu
-async function changePassword() {
+async function setPassword() {
 
 }
 
 // Thay đổi ảnh đại diện
-async function changeAvatar(avatar) {
+async function setAvatar(avatar) {
 
 }
 
 // Thay đổi tên hiển thị
-async function changeDisplayName(displayName) {
+async function setDisplayName(displayName) {
 
 }
 
 // Thay đổi ngày sinh
-async function changeBirthday(birthday) {
+async function setBirthday(birthday) {
 
 }
 
 // Thay đổi giới tính
-async function changeGender(gender) {
+async function setGender(gender) {
 
 }
 
 // Thay đổi mô tả cá nhân
-async function changeBiography(biography) {
+async function setBiography(biography) {
 
 }
 

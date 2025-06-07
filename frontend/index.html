@@ -48,7 +48,6 @@
         </div>
     </div>
 
-
     <div class ="search-container hidden" id="searchContainer">
         <div class="search-header">
             <h2 data-i18n="search.title"></h2>
@@ -57,11 +56,12 @@
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="searchInput" data-i18n="search.placeholder"/>
             <div class="clear-icon-wrapper" id="clearButton">
-                <i class="fas fa-times close-icon"></i>
+                <i class="fas fa-times close-icon close-icon-search"></i>
             </div>
         </div>
+        <hr class="line-search">  <!-- Horizontal line to separate header and results -->
         <div class="search-results" id="searchResults">
-                <!-- Search results will be rendered here -->
+            <!-- Search results will be rendered here -->
         </div>
     </div>
 
@@ -71,7 +71,7 @@
             <p class="chats-header-text" data-i18n="chat.title"></p>
         </div>
         <div class="chats-list">
-
+            <!-- Chats will be rendered here -->
         </div>
     </div>
 
@@ -156,13 +156,14 @@
                         </div>
                     </div>
                     <button class="friend-action-button friend hidden" data-i18n="search.friend"></button>
-                    <button class="friend-action-button add-friend hidden" data-i18n="search.add_friend" onclick="addFriend()"></button>
-                    <button class="friend-action-button request-sent hidden" data-i18n="search.request_sent"></button>
-                    <button class="friend-action-button request-received hidden" data-i18n="search.request_received"></button>
-                    <button class="friend-action-button accept-request hidden" data-i18n="search.accept_request" onclick="acceptFriend()"></button>
-                    <button class="friend-action-button decline-request hidden" data-i18n="search.decline_request" onclick="declineFriend()"></button>
-                    <button class="friend-action-button remove-friend hidden" data-i18n="search.remove_friend" onclick="removeFriend()"></button>
-                    <button class="friend-action-button recall-request hidden" data-i18n="search.recall_request" onclick="recallFriend()"></button>
+                    <button class="friend-action-button add-friend hidden" data-i18n="search.add-friend" onclick="addFriend()"></button>
+                    <button class="friend-action-button request-sent hidden" data-i18n="search.request-sent"></button>
+                    <button class="friend-action-button request-received hidden" data-i18n="search.request-received"></button>
+                    <button class="friend-action-button accept-request hidden" data-i18n="search.accept-request" onclick="acceptFriend()"></button>
+                    <button class="friend-action-button decline-request hidden" data-i18n="search.decline-request" onclick="declineFriend()"></button>
+                    <button class="friend-action-button remove-friend hidden" data-i18n="search.remove-friend" onclick="removeFriend()"></button>
+                    <button class="friend-action-button recall-request hidden" data-i18n="search.recall-request" onclick="recallFriend()"></button>
+                    <button class="friend-action-button open-chat hidden" data-i18n="search.open-chat" onclick="openChat()"></button>
                 </div>
             </div>
         </div>
@@ -202,7 +203,7 @@
                 <div class="settings-option" id="themeToggle">
                     <div class="settings-option-text">
                         <i class="fas fa-moon"></i>
-                        <span data-i18n="settings.theme_mode"></span>
+                        <span data-i18n="settings.theme-mode"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
@@ -216,7 +217,7 @@
                 <div class="settings-option">
                     <div class="settings-option-text">
                         <i class="fas fa-key"></i>
-                        <span data-i18n="settings.change_password"></span>
+                        <span data-i18n="settings.change-password"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
@@ -230,7 +231,7 @@
                 <div class="settings-option danger">
                     <div class="settings-option-text">
                         <i class="fas fa-trash-alt"></i>
-                        <span data-i18n="settings.delete_account"></span>
+                        <span data-i18n="settings.delete-account"></span>
                     </div>
                     <i class="fas fa-chevron-right"></i>
                 </div>
@@ -243,8 +244,8 @@
             <div class="chat-info">
                 <img src="assets/images/default-avatar.png" alt="" class="chat-info-avatar" id="messageContainerAvatar">
                 <div class="chat-info-display">
-                    <h4 class="chat-info-display-name" data-i18n="message.display_name"></h4>
-                    <p class="chat-info-display-actived" data-i18n="message.last_seen"></p>
+                    <h4 class="chat-info-display-name" data-i18n="message.display-name"></h4>
+                    <p class="chat-info-display-actived" data-i18n="message.last-seen"></p>
                 </div>
             </div>
             <div class="options">
@@ -256,6 +257,42 @@
         <div class="message-container-body">
             <div class="message-container-body-message-area" id="messageContainer">
                 <!-- Messages will be rendered here -->
+<!--                <div class="message-wrapper sender" id="e9UL9erfLPU2rLAgJ8Zb">-->
+<!--                    <div class="message-meta" style="align-items: flex-end;">-->
+<!--                        <div class="message-time">03/06</div>-->
+<!--                        <div class="reply-button" id="e9UL9erfLPU2rLAgJ8Zb">-->
+<!--                            <i class="fa-solid fa-reply" aria-hidden="true"></i>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="message-content sender">-->
+<!--                        <div class="message-reply-source">-->
+<!--                            <div class="vertical-line"></div>-->
+<!--                            <p>test</p>-->
+<!--                        </div>-->
+<!--                        <p class="message-text">Tin nhắn chính</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="message-wrapper sender" id="e9UL9erfLPU2rAgJ8Zb">-->
+<!--                    <div class="message-meta" style="align-items: flex-end;">-->
+<!--                        <div class="message-time">03/06</div>-->
+<!--                        <div class="reply-button" id="e9UL9erfLPU2rAgJ8Zb">-->
+<!--                            <i class="fa-solid fa-reply" aria-hidden="true"></i>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="message-content sender">-->
+<!--                        <p class="message-text">Tin nhắn chính</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+            <div class="message-container-reply-message hidden" id="replyMessageContainer">
+                <hr class="line-reply"> <!-- Horizontal line to separate a reply message from the main message area -->
+                <div class="reply-user-name" id="replyUserName">
+                    <h4 class="reply-user-name-content"></h4>
+                    <i class="fa-solid fa-times close-icon close-icon-reply-button" id="closeReplyTo"></i>
+                </div>
+                <div class="reply-message-content">
+                    <p class="reply-message-text" id="replyMessageText"></p>
+                </div>
             </div>
             <div class="message-container-body-sending-area">
                 <form action="" id="messageForm" enctype="multipart/form-data">
@@ -289,15 +326,15 @@
             <div class="chats-info-features-button" id="change-display-name-button">
                 <i class="fa-solid fa-a chats-info-features-button"></i>
                 <i class="fa-solid fa-a chats-info-features-button-icon"></i>
-                <p data-i18n="chat_info.change_nickname"></p>
+                <p data-i18n="chat-info.change-nickname"></p>
             </div>
             <div class="chats-info-features-button" id="user-profile-link" onclick="">
                 <i class="fa-solid fa-circle-user chats-info-features-button-icon"></i>
-                <p href="#" data-i18n="chat_info.personal_page"></p>
+                <p href="#" data-i18n="chat-info.personal-page"></p>
             </div>
             <div class="chats-info-features-button" id="turn-off-notification-button">
                 <i id="bellIcon" class="fa-solid fa-bell-slash chats-info-features-button-icon"></i>
-                <p id="notification-state-text" data-i18n="chat_info.turn_off_notifications"></p>
+                <p id="notification-state-text" data-i18n="chat-info.turn-off-notifications"></p>
                 <input type="checkbox" id="notifyToggle" style="display: none;">
             </div>
         </div>
@@ -339,18 +376,18 @@
     <div class="modal" id="themeModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 data-i18n="settings.select_theme">Select Theme</h3>
+                <h3 data-i18n="settings.select-theme">Select Theme</h3>
                 <span class="close-modal">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="theme-options">
                     <div class="theme-option" data-theme="light">
                         <div class="theme-preview light-preview"></div>
-                        <span data-i18n="settings.light_theme">Light Theme</span>
+                        <span data-i18n="settings.light-theme">Light Theme</span>
                     </div>
                     <div class="theme-option" data-theme="dark">
                         <div class="theme-preview dark-preview"></div>
-                        <span data-i18n="settings.dark_theme">Dark Theme</span>
+                        <span data-i18n="settings.dark-theme">Dark Theme</span>
                     </div>
                 </div>
             </div>
@@ -368,7 +405,7 @@
     <script type="module" defer src="assets/js/user/notificationProcessor.js"></script>
     <script type="module" defer src="assets/js/config/socketClient.js"></script>
     <script type="module" defer src="assets/js/components/domHome.js"></script>
-    <script type="module" defer src="assets/js/components/buttonHome.js"></script>
+    <script type="module" defer src="assets/js/components/button.js"></script>
     <script type="module" defer src="assets/js/components/domProfile.js"></script>
     <script type="module" defer src="assets/js/components/domSetting.js"></script>
     <script type="module" defer src="assets/js/script.js"></script>

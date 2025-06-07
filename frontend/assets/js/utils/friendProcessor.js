@@ -1,18 +1,27 @@
 import { friend } from "../fetchers/infoFetcher.js";
+import { getBoxChatInfo } from "../fetchers/request.js";
+import { addBoxChatToList, moveChatIDToFirstInListBox } from "../chat/chatProcessor.js"
 
 window.addFriend = async function() {
     // Gửi lời mời kết bạn
     await friend(localStorage.getItem("uid"), sessionStorage.getItem("searchUID"), "friend-request");
+
     // Đưa về friend-request
     fixStatusFriend('friend-request');
 }
 
 window.acceptFriend = async function() {
     // Đồng ý kết bạn
-    await friend(localStorage.getItem("uid"), sessionStorage.getItem("searchUID"), "accept-friend");
+    const { chatID } = await friend(localStorage.getItem("uid"), sessionStorage.getItem("searchUID"), "accept-friend");
 
     // Đưa về bạn bè
     fixStatusFriend('friend');
+
+    // Thêm friend vào danh sách chat
+    const box = await getBoxChatInfo(chatID);
+
+    addBoxChatToList(box);
+    moveChatIDToFirstInListBox(chatID);
 }
 
 window.declineFriend = async function() {
@@ -25,10 +34,15 @@ window.declineFriend = async function() {
 
 window.removeFriend = async function() {
     // Xóa bạn bè
-    await friend(localStorage.getItem("uid"), sessionStorage.getItem("searchUID"), "unfriend");
+    const friendID = sessionStorage.getItem("searchUID");
+    await friend(localStorage.getItem("uid"), friendID, "unfriend");
 
     // Đưa về none
     fixStatusFriend('none');
+
+    const chatList = document.querySelector(".chats-list");
+    const chatUser = chatList.querySelector(`[id="${friendID}"]`);
+    chatUser.remove();
 }
 
 window.recallFriend = async function() {
@@ -37,6 +51,19 @@ window.recallFriend = async function() {
 
     // Đưa về none
     fixStatusFriend('none');
+}
+
+window.openChat = async function() {
+    const friendID = sessionStorage.getItem("searchUID");
+    await changeTab("Home"); // Chuyển sang tab Home
+
+    // Mở hộp chat
+    const messageContainer = document.getElementById("chatContainer");
+    const element = messageContainer.querySelector(`[id="${friendID}"]`);
+    handleUserClick(element);  // Thao tác chọn người dùng
+
+    // Xóa đi thông tin tìm kiếm
+    document.getElementById('clearButton').click();
 }
 
 function fixStatusFriend(status) {
@@ -66,8 +93,10 @@ function fixStatusFriend(status) {
         // Đã là bạn bè
         const friendButton = profileContainer.querySelector(".friend");
         const removeButton = profileContainer.querySelector(".remove-friend");
+        const openChatButton = profileContainer.querySelector(".open-chat");
         friendButton.classList.remove("hidden");
         removeButton.classList.remove("hidden");
+        openChatButton.classList.remove("hidden");
 
     } else {
         // Chưa kết bạn

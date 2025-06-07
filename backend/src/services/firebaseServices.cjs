@@ -125,14 +125,24 @@ async function createChat(userId, friendID) {
 
 // Xóa cuộc trò chuyện
 async function deleteChat(chatId) {
-    try {
-        // Xóa cuộc trò chuyện trong Firestore
-        await db.collection("chats").doc(chatId).delete();
+    const chatRef = admin.firestore().collection("chats").doc(chatId);
 
-        logger.debug("Cuộc trò chuyện đã được xóa thành công.");
+    try {
+        // Lấy danh sách subcollections
+        const subcollections = await chatRef.listCollections();
+
+        for (const subcollection of subcollections) {
+            const snapshot = await subcollection.get();
+            const deletes = snapshot.docs.map(doc => doc.ref.delete());
+            await Promise.all(deletes);
+        }
+
+        // Sau khi xóa subcollections, xóa document chính
+        await chatRef.delete();
+
+        console.log("Đã xóa hoàn toàn chat và các subcollections.");
     } catch (error) {
-        logger.error("Lỗi khi xóa cuộc trò chuyện:", error);
-        throw error;
+        console.error("Lỗi khi xóa:", error);
     }
 }
 
