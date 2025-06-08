@@ -20,3 +20,5 @@ socket.on("notifications", async (data) => {
         await window.processingNotification(notifDiv);  // Gọi hàm xử lý thông báo
     }
 });
+
+export { socket };

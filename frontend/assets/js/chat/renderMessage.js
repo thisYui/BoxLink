@@ -207,7 +207,6 @@ function addTextMessageToChatBox(messageID, textMessage, senderID, type, timeSen
     div.classList.add("message-content");
 
     if (reply !== "") {
-        console.log("reply", reply);
         addReplyToMessageContent(div, reply); // Thêm phần trả lời nếu có
     }
 

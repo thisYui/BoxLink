@@ -3,14 +3,21 @@ import { getSingleMessage } from '../fetchers/chatFetcher.js';
 import { searchFriendByID } from '../fetchers/request.js';
 import { fixMessageToChatBoxList } from '../chat/chatProcessor.js';
 import { moveChatIDToFirstInListBox, updateSeenMessageIcon } from '../chat/chatProcessor.js';
-import { convertToDate } from '../utils/renderData.js';
+import { convertToDate, formatRelativeTimeSend } from '../utils/renderData.js';
+import { socket } from '../config/socketClient.js';
 
 let turnOffNotification = false;
 let listBoxNoNotice = [];  // Danh sách các hộp chat không có thông báo
 
 window.processingNotification = async function (notification) {
     // Xử lí theo loại notification
-    const { typeNotification, srcID, text, timeSend } = notification;  // text chứa id document
+    const { typeNotification, srcID, text, timestamp, isRead } = notification;  // text chứa id document
+
+    socket.emit("cleanNotifications");  // Xóa các thông báo đã đọc
+
+    if (checkElementExistsByID(srcID)) {
+        return;
+    }
 
     // Dạng thông báo không âm thanh
     if (typeNotification === 'seen-message') {
@@ -18,7 +25,7 @@ window.processingNotification = async function (notification) {
         return;
     }
 
-    if (turnOffNotification === false) {
+    if (turnOffNotification === false && !isRead) {
         if (!listBoxNoNotice.includes(srcID)) {  // srcID là ID của người gửi thông báo
             playNotificationSound();  // Phát âm thanh thông báo
         }
@@ -52,9 +59,15 @@ window.processingNotification = async function (notification) {
             const displayName = friend.displayName; // Tên bạn bè
             const email = friend.email; // Email bạn bè
             const avatarUrl = friend.avatar; // URL ảnh đại diện bạn bè
-            const status = friend.status; // Trạng thái bạn bè
-            addFriendRequestToList(displayName, email, avatarUrl, status);  // Thêm thông báo vào danh sách thông báo
 
+            const timeSend = convertToDate(timestamp);
+
+            // timeSend có kieru date
+            if (typeNotification === "friend-request") {
+                addFriendRequestToList(srcID, displayName, email, avatarUrl, timeSend);  // Thêm thông báo vào danh sách thông báo
+            } else {
+                addFriendAcceptToList(srcID, displayName, email, avatarUrl, timeSend);  // Thêm thông báo vào danh sách thông báo
+            }
         });
     } else if (typeNotification === "update-avatar") {
         // Lấy avatar mới từ srcID
@@ -73,39 +86,191 @@ window.processingNotification = async function (notification) {
 
     } else if (typeNotification === "other") {
         // Xử lý thông báo khác: cập nhật avatars, tên hiển thị, hoặc thông báo hệ thống
-        const text = notification.text; // Lấy thông báo từ text
-        const timeSend = notification.timeSend; // Lấy thời gian gửi thông báo từ timeSend
-        addNotificationToList(text, timeSend);  // Thêm thông báo vào danh sách thông báo
+        addTextNotificationToList(text);  // Thêm thông báo vào danh sách thông báo
 
     } else {
         console.warn("Loại thông báo không xác định:", typeNotification);
     }
 }
 
+function checkElementExistsByID(id) {
+    const notificationList = document.querySelector('.notification-list');
+    const notificationItem = notificationList.querySelector(`[id="${id}"]`);
+    return notificationItem !== null;  // Trả về true nếu phần tử tồn tại, ngược lại false
+}
+
 // Thêm 1 thông báo vào danh sách thông báo, chỉ áp dụng cho thông báo dạng text
-function addNotificationToList(text, timeSend) {
-    // Thông báo phải có id để xóa
+function addTextNotificationToList(text) {
+    const notificationList = document.querySelector('.notification-list');
+    const item = document.createElement('div');
+    item.className = 'notification-item';
+    item.id = 'text';  // ID cho thông báo dạng text
 
-    updateUnreadCount();
+    const box = document.createElement('div');
+    box.className = 'notification-box';
+
+    const p = document.createElement('p');
+    p.classList.add("notification-text");
+    p.textContent = text;
+
+    box.appendChild(p);
+    item.appendChild(box);
+    notificationList.appendChild(item);
+
+    plusNotificationCount();
 }
 
-// Xóa 1 thông báo khỏi danh sách thông báo
-function removeNotificationFromList(notificationId) {
+function addFriendRequestToList(friendID, displayName, email, avatarUrl, timeSend) {
+    const notificationList = document.querySelector('.notification-list');
+    const item = document.createElement('div');
+    item.className = 'notification-item';
+    item.id = friendID;
 
+    const box = document.createElement('div');
+    box.className = 'notification-box';
+
+    addInformationFriend(box, friendID, displayName, email, avatarUrl, timeSend);  // Thêm thông tin bạn bè vào box
+
+    const divAction = document.createElement('div');
+    divAction.className = 'notification-actions';
+    const acceptButton = document.createElement('button');
+    acceptButton.className = 'btn-accept';
+    acceptButton.textContent = t('notification.accept');
+
+    // Button cho chấp nhận
+    acceptButton.onclick = async () => {
+        sessionStorage.setItem("searchUID", friendID);  // Lưu ID bạn bè vào sessionStorage
+        await window.acceptFriend();
+        const text = t('notification.accepted-request', { name: displayName });
+        fixContentAfterClickActionFriend(box, divAction, text);  // Cập nhật nội dung sau khi chấp nhận
+        subtractNotificationCount();  // Giảm số lượng thông báo
+    }
+
+    const declineButton = document.createElement('button');
+    declineButton.className = 'btn-decline';
+    declineButton.textContent = t('notification.decline');
+
+    // Button cho từ chối
+    declineButton.onclick = async () => {
+        sessionStorage.setItem("searchUID", friendID);  // Lưu ID bạn bè vào sessionStorage
+        await window.declineFriend();
+        const text = t('notification.declined-request', { name: displayName });
+        fixContentAfterClickActionFriend(box, divAction, text);  // Cập nhật nội dung sau khi từ chối
+        subtractNotificationCount();  // Giảm số lượng thông báo
+    }
+    divAction.appendChild(acceptButton);
+    divAction.appendChild(declineButton);
+
+    box.appendChild(divAction);
+
+    item.appendChild(box);
+    notificationList.appendChild(item);
+
+    plusNotificationCount();
 }
 
-function addFriendRequestToList(displayName, email, avatarUrl, status) {
-    // Thêm thông báo kết bạn vào danh sách thông báo
-    // đưa lênh thanh thông báo với dạng tựa hệt như thanh tìm kiếm
-    // Lưu lại các thông tin trên vì sẽ ko load lại
+function addFriendAcceptToList(friendID, displayName, email, avatarUrl, timeSend) {
+    const notificationList = document.querySelector('.notification-list');
+    const item = document.createElement('div');
+    item.className = 'notification-item';
+    item.id = friendID;
 
-    updateUnreadCount();
+    const box = document.createElement('div');
+    box.className = 'notification-box';
+
+    addInformationFriend(box, friendID, displayName, email, avatarUrl, timeSend);  // Thêm thông tin bạn bè vào box
+
+    const p = document.createElement('p');
+    p.classList.add("notification-text");
+    p.textContent = t('notification.friend-accepted', { name: displayName });
+
+    box.appendChild(p);
+    item.appendChild(box);
+    notificationList.appendChild(item);
+
+    plusNotificationCount();
 }
 
-// Thay đổi số lượng thông báo chưa đọc (dấu chấm đỏ trên biểu tượng thông báo)
-function updateUnreadCount(type) {
-    // type = 'more' thì tăng lên 1
-    // type = 'less' thì giảm đi 1
+function fixContentAfterClickActionFriend(box, divAction, text) {
+    box.removeChild(divAction);  // Xóa các nút hành động
+
+    const p = document.createElement('p');
+    p.classList.add("notification-text");
+    p.textContent = text;  // Thay thế bằng thông báo đã chấp nhận hoặc từ chối
+
+    box.appendChild(p);  // Thêm thông báo vào item
+}
+
+function addInformationFriend(box, friendID, displayName, email, avatarUrl, timeSend) {
+    const friendRequest = document.createElement('div');
+    friendRequest.className = 'notification-box-friend-request';
+
+    const img = document.createElement('img');
+    img.classList.add("notification-avatar");
+    img.src = avatarUrl;
+
+    const div = document.createElement('div');
+    div.className = 'notification-friend-info';
+    const name = document.createElement('p');
+    name.className = 'notification-friend-name';
+    name.textContent = displayName;
+    const emailElement = document.createElement('p');
+    emailElement.textContent = email;
+    div.appendChild(name);
+    div.appendChild(emailElement);
+
+    const time = document.createElement('span');
+    time.className = 'notification-time';
+    time.textContent = formatRelativeTimeSend(timeSend);  // Giả sử timeSend là chuỗi thời gian đã định dạng
+
+    friendRequest.appendChild(img);
+    friendRequest.appendChild(div);
+    friendRequest.appendChild(time);
+    box.appendChild(friendRequest);
+}
+
+window.resetNumberNotification = function() {
+    const badge = document.querySelector('.notification-badge');
+    if (!badge) return;
+
+    // Ngoại trừi thông báo kết bạn tất cả được đánh dấu là đã đọc
+    const notificationItems = document.querySelectorAll('.btn-accept');
+    const numberNotification = notificationItems.length;
+
+    badge.textContent = numberNotification.toString();
+    badge.style.display = 'inline-block';
+}
+
+function plusNotificationCount() {
+    const badge = document.querySelector('.notification-badge');
+    if (!badge) return;
+
+    if (badge.textContent === '99+') {
+        return;
+    }
+
+    if (badge.textContent === '') {
+        badge.textContent = '0';  // Khởi tạo nếu chưa có thông báo nào
+    }
+
+    badge.textContent = (1 + parseInt(badge.textContent)).toString();
+    badge.style.display = 'inline-block';
+}
+
+function subtractNotificationCount() {
+    const badge = document.querySelector('.notification-badge');
+    if (!badge) return;
+
+    if (badge.textContent === '0') {
+        badge.style.display = 'none';
+        return;
+    }
+
+    badge.textContent = (parseInt(badge.textContent) - 1).toString();
+    if (badge.textContent <= 0) {
+        badge.textContent = '0';
+        badge.style.display = 'none';
+    }
 }
 
 function playNotificationSound(src = 'assets/sound/level-up-191997.mp3') {
@@ -137,9 +302,6 @@ function isOnNotification(uid) {
 }
 
 export {
-    addNotificationToList,
-    removeNotificationFromList,
-    addFriendRequestToList,
     turnOnOrOffNotification,
     addToListBoxNoNotice,
     removeFromListBoxNoNotice,

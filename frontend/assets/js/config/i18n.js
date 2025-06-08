@@ -23,10 +23,18 @@ async function loadLanguage(lang = 'en') {
     // Chuyển đổi dữ liệu JSON thành đối tượng
     window.translations = await response.json();
 
-    // Hàm dịch đơn giản
-    window.t = function(key) {
-        return key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
+    // Hàm dịch
+    window.t = function(key, vars = {}) {
+        // Lấy chuỗi từ object translations bằng key dạng "a.b.c"
+        let str = key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
+
+        // Nếu không phải chuỗi (ví dụ object), trả lại key
+        if (typeof str !== 'string') return key;
+
+        // Thay thế các {{var}} trong chuỗi bằng giá trị thực tế từ vars
+        return str.replace(/{{(.*?)}}/g, (_, v) => vars[v.trim()] ?? '');
     };
+
 
     // Áp dụng bản dịch lên HTML
     document.querySelectorAll('[data-i18n]').forEach(el => {

@@ -36,7 +36,7 @@ body {
 }
 
 /* Container backgrounds */
-.search-container, .chat-container, .list-container,
+.search-container, .chat-container, .list-container, .notification-container,
 .profile-friend-container, .profile-container, .settings-container {
     background-color: #1e1e1e;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);

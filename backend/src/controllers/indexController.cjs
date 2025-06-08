@@ -1,7 +1,6 @@
 const { searchUserByEmail, searchUserByID, searchByName,
     getWebsitePreview, getLastOnlineObject, friendProfile
 } = require("../services/utilityServices.cjs");
-const { deleteNotificationSpecific } = require("../services/notificationServices.cjs");
 const { getDataBoxListChat } = require("../services/userServices.cjs")
 const logger = require("../config/logger.cjs");
 
@@ -29,19 +28,6 @@ async function searchFriendByName(req, res) {
 
     } catch (error) {
         logger.error(`Lỗi khi tìm kiếm bạn bè theo tên: ${error.message}`);
-        res.status(500).json({ message: 'Lỗi hệ thống!' });
-    }
-}
-
-// Xóa thông báo cụ thể (không phải là tin nhắn)
-async function deleteNotification(req, res) {
-    const { notification } = req.body;
-    try {
-        await deleteNotificationSpecific(notification);
-        res.status(200).json({ message: 'Xóa thông báo thành công!' });
-
-    } catch (error) {
-        logger.error(`Lỗi khi xóa thông báo: ${error.message}`);
         res.status(500).json({ message: 'Lỗi hệ thống!' });
     }
 }
@@ -105,8 +91,7 @@ async function getBoxChat(req, res) {
 
 
 module.exports = {
-    searchFriend, deleteNotification,
-    getWebsiteInfo, getFriendStatus,
-    searchFriendByName, getFriendProfile,
-    getBoxChat
+    searchFriend, getWebsiteInfo,
+    getFriendStatus, searchFriendByName,
+    getFriendProfile, getBoxChat
 }

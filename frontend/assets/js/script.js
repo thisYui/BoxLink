@@ -106,6 +106,16 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem("replyMessageID", "");
     });
 
+    // click vào avatar trong thông báo
+    document.querySelectorAll('.notification-avatar').forEach(img => {
+        img.addEventListener('click', function () {
+            const item = this.closest('.notification-item');
+
+            //
+        });
+    });
+
+
     // Set up event listeners for the profile edit buttons
     setupProfileEditButtons();
 
@@ -161,24 +171,36 @@ window.changeTab = async function (tabName) {
 
     if (tabName === "Search") {
         containers.chatContainer.classList.add('hidden');  // Ẩn đoạn chatContainer nếu nó đang hiển thị
+        containers.notificationContainer.classList.add('hidden');  // Ẩn notificationContainer nếu nó đang hiển thị
+
         if (containers.searchContainer.classList.contains('hidden')) {
             containers.searchContainer.classList.remove('hidden');
         } else {
             containers.searchContainer.classList.add('hidden')
         }
-        return;
-    }
 
-    // Toggle FriendList riêng
-    if (tabName === 'ChatList' && !containers.messageGroupContainer.classList.contains('hidden')) {
+        return;
+    } else if (tabName === "Notification") {
+        containers.chatContainer.classList.add('hidden');  // Ẩn đoạn chatContainer nếu nó đang hiển thị
+        containers.searchContainer.classList.add('hidden');  // Ẩn searchContainer nếu nó đang hiển thị
+
+        if (containers.notificationContainer.classList.contains('hidden')) {
+            containers.notificationContainer.classList.remove('hidden');
+            resetNumberNotification();  // Reset số lượng thông báo chưa đọc
+        } else {
+            containers.notificationContainer.classList.add('hidden')
+        }
+
+        return;
+    } else if (tabName === 'ChatList' && !containers.messageGroupContainer.classList.contains('hidden')) {
         containers.searchContainer.classList.add('hidden');  // Ẩn đoạn chatContainer nếu nó đang hiển thị
+        containers.notificationContainer.classList.add('hidden');  // Ẩn notificationContainer nếu nó đang hiển thị
+
         if (containers.chatContainer.classList.contains('hidden')) {
             containers.chatContainer.classList.remove('hidden');
         } else {
             containers.chatContainer.classList.add('hidden');
         }
-        return;
-    } else if (tabName === 'ChatList') {
         return;
     }
 
@@ -204,10 +226,6 @@ window.changeTab = async function (tabName) {
         Settings: {
             show: ['settingsContainer'],
             buttonId: 'Settings'
-        },
-        Notification: {
-            show: ['notificationContainer'],
-            buttonId: 'Notification'
         },
         FriendProfile: {
             show: ['friendProfileContainer'],

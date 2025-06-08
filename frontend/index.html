@@ -40,7 +40,10 @@
                 <i class="fas fa-user"></i>
             </div>
             <div class="menu-bar-button display-option" id="Notification" onclick="changeTab('Notification')">
-                <i class="fas fa-bell"></i>
+                <div class="notification-icon-wrapper">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge"></span>
+                </div>
             </div>
             <div class="menu-bar-button display-option" id="Settings" onclick="changeTab('Settings')">
                 <i class="fas fa-cog"></i>
@@ -62,6 +65,65 @@
         <hr class="line-search">  <!-- Horizontal line to separate header and results -->
         <div class="search-results" id="searchResults">
             <!-- Search results will be rendered here -->
+        </div>
+    </div>
+
+    <div class ="notification-container hidden" id="notificationContainer">
+        <div class="notification-header">
+            <h2 data-i18n="notification.title"></h2>
+        </div>
+        <div class="notification-body">
+            <div class="notification-list" id="notificationList">
+                <!-- Notifications will be rendered here -->
+<!--                <div class="notification-item" id="text">-->
+<!--                    <div class="notification-box">-->
+<!--                        <p class="notification-text">Bạn đã thay đổi ảnh đại diện thành công.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="notification-item" id="text">-->
+<!--                    <div class="notification-box">-->
+<!--                        <p class="notification-text">Bạn đã thay đổi mật khẩu thành công.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="notification-item" id="text">-->
+<!--                    <div class="notification-box">-->
+<!--                        <p class="notification-text">Bạn đã cập nhật tên hiển thị thành công.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="notification-item" id="dfsfsdfds">-->
+<!--                    <div class="notification-box">-->
+<!--                        <div class="notification-box-friend-request">-->
+<!--                            <img src="./assets/images/default-avatar.png" class="notification-avatar">-->
+<!--                            <div class="notification-friend-info">-->
+<!--                                <p class="notification-friend-name">User A</p>-->
+<!--                                <p class="notification-friend-email">a@gmail.com</p>-->
+<!--                            </div>-->
+<!--                            <span class="notification-time">2 phút trước</span>-->
+<!--                        </div>-->
+<!--                        <div class="notification-actions">-->
+<!--                            <button class="btn-accept">Chấp nhận</button>-->
+<!--                            <button class="btn-decline">Từ chối</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="notification-item" id="gsfgfd">-->
+<!--                    <div class="notification-box">-->
+<!--                        <div class="notification-box-friend-request">-->
+<!--                            <img src="./assets/images/default-avatar.png" class="notification-avatar">-->
+<!--                            <div class="notification-friend-info">-->
+<!--                                <p class="notification-friend-name">User A</p>-->
+<!--                                <p class="notification-friend-email">a@gmail.com</p>-->
+<!--                            </div>-->
+<!--                            <span class="notification-time">2 phút trước</span>-->
+<!--                        </div>-->
+<!--                        <p class="notification-text">B đã hcapsa nhận lời mới kết bạn của bạn.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
         </div>
     </div>
 
@@ -169,20 +231,6 @@
         </div>
     </div>
 
-    <div class ="notification-container hidden" id="notificationContainer">
-        <div class="notification-header">
-            <h2 data-i18n="notification.title"></h2>
-        </div>
-        <div class="notification-body">
-            <div class="notification-icon">
-                <i class="fas fa-bell"></i>
-            </div>
-            <div class="notification-list" id="notificationList">
-                <!-- Notifications will be rendered here -->
-            </div>
-        </div>
-    </div>
-
     <!-- Settings Container -->
     <div class="settings-container hidden" id="settingsContainer">
         <div class="settings-header">
@@ -257,32 +305,6 @@
         <div class="message-container-body">
             <div class="message-container-body-message-area" id="messageContainer">
                 <!-- Messages will be rendered here -->
-<!--                <div class="message-wrapper sender" id="e9UL9erfLPU2rLAgJ8Zb">-->
-<!--                    <div class="message-meta" style="align-items: flex-end;">-->
-<!--                        <div class="message-time">03/06</div>-->
-<!--                        <div class="reply-button" id="e9UL9erfLPU2rLAgJ8Zb">-->
-<!--                            <i class="fa-solid fa-reply" aria-hidden="true"></i>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="message-content sender">-->
-<!--                        <div class="message-reply-source">-->
-<!--                            <div class="vertical-line"></div>-->
-<!--                            <p>test</p>-->
-<!--                        </div>-->
-<!--                        <p class="message-text">Tin nhắn chính</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="message-wrapper sender" id="e9UL9erfLPU2rAgJ8Zb">-->
-<!--                    <div class="message-meta" style="align-items: flex-end;">-->
-<!--                        <div class="message-time">03/06</div>-->
-<!--                        <div class="reply-button" id="e9UL9erfLPU2rAgJ8Zb">-->
-<!--                            <i class="fa-solid fa-reply" aria-hidden="true"></i>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="message-content sender">-->
-<!--                        <p class="message-text">Tin nhắn chính</p>-->
-<!--                    </div>-->
-<!--                </div>-->
             </div>
             <div class="message-container-reply-message hidden" id="replyMessageContainer">
                 <hr class="line-reply"> <!-- Horizontal line to separate a reply message from the main message area -->

@@ -1,10 +1,11 @@
 const { Server } = require("socket.io");
 const { admin, db } = require("../config/firebaseConfig.cjs");
+const { deleteAllNotificationsExceptFriendRequest, updateIsReadAllNotifications } = require("./notificationServices.cjs");
 const logger = require("../config/logger.cjs");
-const { deleteMessageNotification, deleteSeenMessageNotification } = require("./notificationServices.cjs");
 
 // Đối tượng lưu trữ thông tin về tất cả các kết nối socket của user
 const userConnections = {};
+
 // Đối tượng lưu trữ các unsubscribe functions cho các listener
 const userListeners = {};
 
@@ -19,7 +20,7 @@ function listenToUserNotifications(io, userId) {
 
     // Lắng nghe thay đổi Firestore với onSnapshot
     // Lưu unsubscribe function để có thể hủy listener khi không cần thiết
-    userListeners[userId] = userDocRef.onSnapshot((doc) => {
+    userListeners[userId] = userDocRef.onSnapshot(async (doc) => {
         if (!doc.exists) {
             logger.error("User document does not exist");
             return;
@@ -27,19 +28,7 @@ function listenToUserNotifications(io, userId) {
 
         const notifications = doc.data()?.notifications || [];
 
-        deleteMessageNotification(userId).then(r => {
-            if (!r) {
-                logger.error("Error deleting message notification");
-            }
-        });
-
-        deleteSeenMessageNotification(userId).then(r => {
-            if (!r) {
-                logger.error("Error deleting seen message notification");
-            }
-        });
-
-        // Gửi thông báo cho tất cả kết nối của user này
+        // Gửi về client
         if (userConnections[userId]) {
             userConnections[userId].forEach(socketId => {
                 const socket = io.sockets.sockets.get(socketId);
@@ -77,6 +66,14 @@ module.exports = function (server) {
 
             // Log số lượng kết nối hiện tại của user
             logger.info(`User ${uid} now has ${userConnections[uid].length} active connections`);
+        });
+
+        socket.on("cleanNotifications", async () => {
+            const uid = socket.userId;
+            if (!uid) return;
+
+            await deleteAllNotificationsExceptFriendRequest(uid);
+            await updateIsReadAllNotifications(uid);
         });
 
         socket.on("disconnect", () => {
