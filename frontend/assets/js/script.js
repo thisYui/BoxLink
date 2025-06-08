@@ -115,25 +115,30 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Thêm liên kết đến
+    document.getElementById("addLinkButton").addEventListener("click",  () => {
+        const socialLinkInput = document.getElementById("addLinkInputGroup");
+        socialLinkInput.classList.remove("hidden");
 
-    // Set up event listeners for the profile edit buttons
-    setupProfileEditButtons();
+        const addLink = document.getElementById("addLinkButton");
+        addLink.classList.add("hidden");
+    });
 
-    // Set up theme toggle functionality
-    setupThemeToggle();
+    // Thêm 1 liên kết mạng xã hội
+    document.getElementById("acceptAddLinkButton").addEventListener("click", async () => {
+        const socialLinkInput = document.getElementById("newSocialLink");
+        const value = socialLinkInput.value;
+        const socialLinkContainer = document.querySelector(".profile-body-personal-info-container-edit-profile");
+        await addLinkToListAndRequest(value, socialLinkContainer);
+    });
 
-    // Set up modal closers
-    setupModalClosers();
+    // Không thêm nữa
+    document.getElementById("cancelAddLinkButton").addEventListener("click", () => {
+        const socialLinkInput = document.getElementById("addLinkInputGroup");
+        socialLinkInput.classList.add("hidden");
 
-    // Set up form submission handling
-    setupEditFormSubmission();
-
-    // Load saved theme
-    loadSavedTheme();
-
-    // Handle the main logout button
-    document.getElementById('logOutButton').addEventListener('click', function() {
-        window.location.href = 'auth.html';
+        const addLink = document.getElementById("addLinkButton");
+        addLink.classList.remove("hidden");
     });
 });
 
@@ -161,6 +166,7 @@ window.changeTab = async function (tabName) {
         chatContainer: document.getElementById('chatContainer'),
         messageGroupContainer: document.getElementById('messageGroupContainer'),
         profileContainer: document.getElementById('profileContainer'),
+        profileEditContainer: document.getElementById('profileEditContainer'),
         settingsContainer: document.getElementById('settingsContainer'),
         searchContainer: document.getElementById('searchContainer'),
         notificationContainer: document.getElementById('notificationContainer'),
@@ -223,6 +229,10 @@ window.changeTab = async function (tabName) {
             buttonId: 'Profile',
             onShow: loadProfile,
         },
+        EditProfile: {
+            show: ['profileEditContainer'],
+            buttonId: 'Profile',
+        },
         Settings: {
             show: ['settingsContainer'],
             buttonId: 'Settings'
@@ -244,192 +254,3 @@ window.changeTab = async function (tabName) {
         }
     }
 };
-
-// Show/hide dropdown boxes like logout menu
-window.showBox = function (boxId, triggerId) {
-    const box = document.getElementById(boxId);
-    const isVisible = !box.classList.contains('hidden');
-
-    // Hide all other dropdown boxes first
-    const allDropdowns = document.querySelectorAll('.logOutBox-button');
-    allDropdowns.forEach(dropdown => {
-        dropdown.classList.add('hidden');
-    });
-
-    // Toggle visibility of the selected box
-    if (isVisible) {
-        box.classList.add('hidden');
-    } else {
-        box.classList.remove('hidden');
-
-        // Position the box relative to trigger element
-        const trigger = document.getElementById(triggerId);
-        if (trigger && box) {
-            const triggerRect = trigger.getBoundingClientRect();
-            box.style.top = (triggerRect.bottom + 5) + 'px';
-            box.style.left = triggerRect.left + 'px';
-        }
-
-        // Close the box when clicking outside
-        document.addEventListener('click', function closeDropdown(e) {
-            if (!box.contains(e.target) && e.target.id !== triggerId) {
-                box.classList.add('hidden');
-                document.removeEventListener('click', closeDropdown);
-            }
-        });
-    }
-}
-
-/**CHÚ Ý:
- * Các hàm sau đây chưa đc kiểm chứng
- */
-
-
-// Handle profile edit button clicks
-window.setupProfileEditButtons = function () {
-    const editButtons = document.querySelectorAll('.edit-btn:not(.disabled)');
-
-    editButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const infoItem = this.closest('.profile-info-item');
-            const label = infoItem.querySelector('label').textContent;
-            const value = infoItem.querySelector('.profile-info-value span').textContent;
-            const fieldId = infoItem.querySelector('.profile-info-value span').id;
-
-            // Set modal title based on the field being edited
-            document.getElementById('modalTitle').textContent = 'Edit ' + label;
-
-            // Show/hide appropriate input fields based on what's being edited
-            const editInput = document.getElementById('editInput');
-            const genderGroup = document.getElementById('genderSelectGroup');
-            const dobGroup = document.getElementById('dobInputGroup');
-
-            // Reset all input groups
-            editInput.style.display = 'block';
-            genderGroup.style.display = 'none';
-            dobGroup.style.display = 'none';
-
-            // Configure specific fields
-            if (fieldId === 'profileGender') {
-                editInput.style.display = 'none';
-                genderGroup.style.display = 'block';
-                document.getElementById('genderSelect').value = value;
-            } else if (fieldId === 'profileDob') {
-                editInput.style.display = 'none';
-                dobGroup.style.display = 'block';
-                // Convert the date format for date input (assuming DD/MM/YYYY to YYYY-MM-DD)
-                const dateParts = value.split('/');
-                if (dateParts.length === 3) {
-                    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-                    document.getElementById('dobInput').value = formattedDate;
-                }
-            } else {
-                editInput.value = value;
-            }
-
-            // Store the field ID to know which field to update on save
-            document.getElementById('editForm').dataset.fieldId = fieldId;
-
-            // Show modal and overlay
-            document.getElementById('editModal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        });
-    });
-}
-
-// Handle theme toggle in settings
-window.setupThemeToggle = function () {
-    const themeToggle = document.getElementById('themeToggle');
-
-    themeToggle.addEventListener('click', function() {
-        // Show theme selection modal
-        document.getElementById('themeModal').classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-    });
-
-    // Set up theme option selection
-    const themeOptions = document.querySelectorAll('.theme-option');
-    themeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const selectedTheme = this.dataset.theme;
-            changeTheme(selectedTheme);
-
-            // Close modal after selection
-            document.getElementById('themeModal').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        });
-    });
-}
-
-// Change application theme
-window.changeTheme = function (themeName) {
-    const themeStylesheet = document.getElementById('theme-style');
-
-    // Update theme stylesheet link
-    if (themeName === 'light') {
-        themeStylesheet.href = 'assets/css/light-theme.css';
-    } else if (themeName === 'dark') {
-        themeStylesheet.href = 'assets/css/dark-theme.css';
-    }
-
-    // Save theme preference to localStorage
-    localStorage.setItem('preferred-theme', themeName);
-}
-
-// Close modals when clicking the close button or overlay
-window.setupModalClosers = function () {
-    const closeButtons = document.querySelectorAll('.close-modal');
-    const overlay = document.getElementById('overlay');
-
-    closeButtons.forEach(button => {
-        button.addEventListener('click', closeAllModals);
-    });
-
-    overlay.addEventListener('click', closeAllModals);
-}
-
-window.closeAllModals = function () {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        modal.classList.remove('active');
-    });
-    document.getElementById('overlay').classList.remove('active');
-}
-
-// Handle form submission for profile edits
-window.setupEditFormSubmission = function () {
-    const editForm = document.getElementById('editForm');
-
-    editForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const fieldId = this.dataset.fieldId;
-        let newValue;
-
-        // Get the appropriate value based on field type
-        if (fieldId === 'profileGender') {
-            newValue = document.getElementById('genderSelect').value;
-        } else if (fieldId === 'profileDob') {
-            const dateInput = document.getElementById('dobInput').value;
-            // Convert YYYY-MM-DD to DD/MM/YYYY
-            const dateParts = dateInput.split('-');
-            newValue = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-        } else {
-            newValue = document.getElementById('editInput').value;
-        }
-
-        // Update the profile field
-        document.getElementById(fieldId).textContent = newValue;
-
-        // For demo purposes, close the modal
-        closeAllModals();
-    });
-}
-
-// Load saved theme from localStorage or use default
-window.loadSavedTheme = function () {
-    const savedTheme = localStorage.getItem('preferred-theme');
-    if (savedTheme) {
-        changeTheme(savedTheme);
-    }
-}

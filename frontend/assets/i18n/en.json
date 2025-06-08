@@ -37,12 +37,12 @@
     "noBiography": "No biography available",
     "gender": "Gender",
     "noGender": "Not set",
-    "Male": "Male",
-    "Female": "Female",
-    "Gay": "Gay",
-    "Lesbian": "Lesbian",
-    "Bisexual": "Bisexual",
-    "OtherGender": "Other",
+    "male": "Male",
+    "female": "Female",
+    "gay": "Gay",
+    "lesbian": "Lesbian",
+    "bisexual": "Bisexual",
+    "other-gender": "Other",
     "displayName": "Display name",
     "email": "Email",
     "biography": "Biography",
@@ -55,7 +55,8 @@
     "statDays": "Days",
     "mutualFriends": "Mutual Friends",
     "editButton": "Edit profile",
-    "finishEdit": "Finish editing profile"
+    "saveEdit": "Save changes",
+    "finishEdit": "Finish editing"
   },
   "search": {
     "title": "Search",

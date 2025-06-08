@@ -1,5 +1,5 @@
 const sgMail = require('@sendgrid/mail');
-const { db } = require("../config/firebaseConfig.cjs");
+const { db, auth } = require("../config/firebaseConfig.cjs");
 const bcrypt = require('bcrypt');
 const logger = require('../config/logger.cjs');
 
@@ -15,6 +15,32 @@ async function checkEmailExists(email) {
         return !snapshot.empty; // Trả về true nếu có ít nhất 1 user khớp
     } catch (error) {
         logger.error("Lỗi khi kiểm tra email:", error);
+        return false;
+    }
+}
+
+// Thay đổi email
+async function changeEmail(uid, newEmail) {
+    try {
+        const user = await auth.getUser(uid);
+
+        if (user.email === newEmail) {
+            return;
+        }
+
+        // Kiểm tra xem email mới đã tồn tại chưa
+        const emailExists = await checkEmailExists(newEmail);
+        if (emailExists) {
+            throw new Error('Email đã tồn tại');
+        }
+
+        // Cập nhật email trong Firebase Authentication
+        await auth.updateUser(uid, { email: newEmail });
+
+        return true;
+
+    } catch (error) {
+        logger.error('Error changing email:', error);
         return false;
     }
 }
@@ -62,4 +88,4 @@ async function verifyOTP(hashOTP, otp) {
     }
 }
 
-module.exports = { checkEmailExists, sendOTP, verifyOTP };
+module.exports = { checkEmailExists, changeEmail, sendOTP, verifyOTP };

@@ -1,3 +1,21 @@
+const socialIconMap = {
+    "facebook.com": "fab fa-facebook",
+    "twitter.com": "fab fa-twitter",
+    "linkedin.com": "fab fa-linkedin",
+    "github.com": "fab fa-github",
+    "youtube.com": "fab fa-youtube",
+    "instagram.com": "fab fa-instagram",
+    "tiktok.com": "fab fa-tiktok",
+    "medium.com": "fab fa-medium",
+    "default": "fas fa-link"
+};
+
+function getIconClassForUrl(url) {
+    const hostname = new URL(url).hostname;
+    const domain = Object.keys(socialIconMap).find(key => hostname.includes(key));
+    return socialIconMap[domain] || socialIconMap["default"];
+}
+
 function isRichText(inputText) {
     // Regex kiểm tra URL
     const urlRegex = /https?:\/\/[^\s]+/g;
@@ -107,6 +125,14 @@ function dateToDMY(date) {
     return `${day}/${month}/${year}`;
 }
 
+function dateToYMD(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function isOnline(inputDate) {
     const now = new Date();
     const date = new Date(inputDate);
@@ -203,11 +229,13 @@ function formatRelativeTimeSend(inputDate) {
 }
 
 export {
+    getIconClassForUrl,
     isValidMessage,
     getDataFromDocument,
     convertFileToBinary,
     convertToDate,
     dateToDMY,
+    dateToYMD,
     isOnline,
     formatRelativeTimeRead,
     formatRelativeTimeOnline,

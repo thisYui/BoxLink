@@ -1,5 +1,5 @@
 const { admin } = require("../config/firebaseConfig.cjs");
-const { checkEmailExists, sendOTP , verifyOTP} = require("../services/emailServices.cjs");
+const { checkEmailExists, changeEmail, sendOTP , verifyOTP} = require("../services/emailServices.cjs");
 const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
 const logger = require('../config/logger.cjs');
@@ -47,10 +47,15 @@ async function confirmOTP(req, res) {
 // Xử lý gửi mã OTP cho người dùng
 async function requestOTP(req, res) {
     const { email } = req.body;
-    const hashOTP = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
-    otps.push({ email, hashOTP });
+    try {
+        const hashOTP = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
+        otps.push({ email, hashOTP });
+        res.status(200).json({ message: 'Mã xác thực đã được gửi!' });
 
-    res.status(200).json({ message: 'Mã xác thực đã được gửi!' });
+    } catch (error) {
+        logger.error('Lỗi khi gửi mã OTP:', error);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
 }
 
 // Xử lý đặt lại mật khẩu
@@ -69,6 +74,20 @@ async function resetPassword(req, res) {
     });
 }
 
+// Thay đổi email
+async function changeEmailHandler(req, res) {
+    const { uid, email } = req.body;
+    try {
+        const e = await changeEmail(uid, email);
+        if (!e) return res.status(400).json({ message: 'Email đã tồn tại!' });
+        res.status(200).json({ message: 'Thành công.' });
+
+    } catch (error) {
+        logger.error('Lỗi khi thay đổi email:', error);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
-    signUp, confirmOTP, requestOTP, resetPassword
+    signUp, confirmOTP, requestOTP, resetPassword, changeEmailHandler
 };

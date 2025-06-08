@@ -303,7 +303,7 @@ body {
     margin: calc(10px + 0.25 * 1.5rem) 0;
 }
 
-.profile-friend-container, .profile-container, .settings-container {
+.profile-friend-container, .profile-container, .edit-profile-container, .settings-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -1094,6 +1094,248 @@ body {
     color: #888;
 }
 
+/* Profile edit Container */
+.profile-container-div-edit-profile {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-header-edit-profile {
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.profile-body-edit-profile {
+    display: flex;
+}
+
+/* Wrapper để định vị icon */
+.profile-avatar-wrapper-edit-profile {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-avatar-edit-icon-edit-profile {
+    position: absolute;
+    bottom: 30px;
+    right: 80px;
+    background-color: var(--light-purple);
+    color: white;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    font-size: 16px;
+}
+
+.fa-camera {
+    font-size: 32px;
+}
+
+.profile-avatar-edit-icon-edit-profile:hover {
+    transform: scale(1.1);
+    background-color: var(--dark-purple);
+}
+
+.profile-body-basic-info-edit-profile {
+    display: flex;
+    flex-direction: column;
+    width: 33%;
+    text-align: center;
+    padding: 30px;
+    align-items: center;
+}
+
+.profile-body-basic-info-avatar-edit-profile {
+    width: 60%;
+    margin-bottom: 20px;
+    border-radius: 50%;
+}
+
+.profile-body-basic-info-text-edit-profile {
+    margin-bottom: 10px;
+}
+
+.profile-body-info-edit-profile {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.profile-body-personal-info-edit-profile {
+    display: block;
+}
+
+.profile-body-personal-info-container-edit-profile {
+    display: flex;
+    margin: 10px;
+    flex-direction: column;
+}
+
+.profile-body-personal-info-container-title-edit-profile {
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.profile-body-personal-info-container-input-edit-profile {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.profile-body-additional-info-edit-profile {
+    display: flex;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.profile-body-additional-info-container-edit-profile {
+    margin: 10px;
+}
+
+.profile-body-additional-info-container-text-edit-profile {
+    font-weight: 500;
+}
+
+.save-profile-button-edit-profile,
+.cancel-edit-button-edit-profile {
+    align-self: center;
+    padding: 10px 30px;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+    border: none;
+    color: white;
+}
+
+.save-profile-button-edit-profile {
+    background-color: var(--light-green);
+}
+
+.cancel-edit-button-edit-profile {
+    background-color: var(--light-purple);
+}
+
+.save-profile-button-edit-profile:hover {
+    background-color: #28a745;
+}
+
+.cancel-edit-button-edit-profile:hover {
+    background-color: #6c63ff;
+}
+
+.profile-avatar-edit-profile {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background-color: var(--light-purple);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.profile-avatar-edit-profile:hover {
+    transform: scale(1.1);
+    background-color: var(--dark-purple);
+}
+
+.social-link-item, .social-link-item-edit-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.social-link-item i, .social-link-item-edit-profile i {
+  color: var(--light-green);
+  font-size: 18px;
+}
+
+.social-link-item a, .social-link-item-edit-profile a {
+  color: #0077cc;
+  text-decoration: none;
+  flex: 1;
+}
+
+.remove-social-btn-edit-profile {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.add-social-link-wrapper-edit-profile {
+  margin-top: 10px;
+}
+
+.add-social-btn-edit-profile {
+  background: none;
+  border: none;
+  color: var(--light-green);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+#addLinkInputGroup input {
+  padding: 6px;
+  width: 60%;
+  margin-right: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#addLinkInputGroup button {
+  padding: 5px 8px;
+  margin-left: 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#addLinkInputGroup button:first-of-type {
+  background-color: var(--light-green);
+  color: white;
+}
+
+#addLinkInputGroup button:last-of-type {
+  background-color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-body-edit-profile {
+        flex-direction: column;
+    }
+
+    .profile-body-basic-info-edit-profile {
+        width: 100%;
+    }
+
+    .profile-body-info-edit-profile {
+        width: 100%;
+    }
+}
+
+
 /* Settings Container */
 .settings-body {
     display: flex;
@@ -1331,7 +1573,7 @@ body {
     }
 
     .search-container, .chat-container, .list-container, .notification-container,
-    .profile-container, .profile-friend-container, .settings-container {
+    .profile-container, .edit-profile-container, .profile-friend-container, .settings-container {
         width: 100%;
         height: calc(40% - 30px);
         margin: 5px 0;

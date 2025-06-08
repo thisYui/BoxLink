@@ -31,13 +31,10 @@
             <div class="menu-bar-button display-option" id="ChatList" onclick="changeTab('ChatList')">
                 <i class="fas fa-user-group"></i>
             </div>
-            <div class="menu-bar-button display-option" id="Search" onclick="changeTab('Search')">
-                <i class="fas fa-magnifying-glass"></i>
-            </div>
         </div>
         <div class="menu-bar">
-            <div class="menu-bar-button display-option" id="Profile" onclick="changeTab('Profile')">
-                <i class="fas fa-user"></i>
+            <div class="menu-bar-button display-option" id="Search" onclick="changeTab('Search')">
+                <i class="fas fa-magnifying-glass"></i>
             </div>
             <div class="menu-bar-button display-option" id="Notification" onclick="changeTab('Notification')">
                 <div class="notification-icon-wrapper">
@@ -45,6 +42,12 @@
                     <span class="notification-badge"></span>
                 </div>
             </div>
+        </div>
+        <div class="menu-bar">
+            <div class="menu-bar-button display-option" id="Profile" onclick="changeTab('Profile')">
+                <i class="fas fa-user"></i>
+            </div>
+
             <div class="menu-bar-button display-option" id="Settings" onclick="changeTab('Settings')">
                 <i class="fas fa-cog"></i>
             </div>
@@ -75,54 +78,6 @@
         <div class="notification-body">
             <div class="notification-list" id="notificationList">
                 <!-- Notifications will be rendered here -->
-<!--                <div class="notification-item" id="text">-->
-<!--                    <div class="notification-box">-->
-<!--                        <p class="notification-text">Bạn đã thay đổi ảnh đại diện thành công.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="notification-item" id="text">-->
-<!--                    <div class="notification-box">-->
-<!--                        <p class="notification-text">Bạn đã thay đổi mật khẩu thành công.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="notification-item" id="text">-->
-<!--                    <div class="notification-box">-->
-<!--                        <p class="notification-text">Bạn đã cập nhật tên hiển thị thành công.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="notification-item" id="dfsfsdfds">-->
-<!--                    <div class="notification-box">-->
-<!--                        <div class="notification-box-friend-request">-->
-<!--                            <img src="./assets/images/default-avatar.png" class="notification-avatar">-->
-<!--                            <div class="notification-friend-info">-->
-<!--                                <p class="notification-friend-name">User A</p>-->
-<!--                                <p class="notification-friend-email">a@gmail.com</p>-->
-<!--                            </div>-->
-<!--                            <span class="notification-time">2 phút trước</span>-->
-<!--                        </div>-->
-<!--                        <div class="notification-actions">-->
-<!--                            <button class="btn-accept">Chấp nhận</button>-->
-<!--                            <button class="btn-decline">Từ chối</button>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="notification-item" id="gsfgfd">-->
-<!--                    <div class="notification-box">-->
-<!--                        <div class="notification-box-friend-request">-->
-<!--                            <img src="./assets/images/default-avatar.png" class="notification-avatar">-->
-<!--                            <div class="notification-friend-info">-->
-<!--                                <p class="notification-friend-name">User A</p>-->
-<!--                                <p class="notification-friend-email">a@gmail.com</p>-->
-<!--                            </div>-->
-<!--                            <span class="notification-time">2 phút trước</span>-->
-<!--                        </div>-->
-<!--                        <p class="notification-text">B đã hcapsa nhận lời mới kết bạn của bạn.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
             </div>
         </div>
     </div>
@@ -159,7 +114,9 @@
                         </div>
                         <div class="profile-body-personal-info-container">
                             <h4 class="profile-body-personal-info-container-title" data-i18n="profile.socialLinkLabel"></h4>
-                            <a class="profile-body-personal-info-container-text profile-link"></a>
+                            <div class="profile-body-personal-info-container-text profile-link">
+                                <!-- Any social link will be displayed here -->
+                            </div>
                         </div>
                     </div>
                     <div class="profile-body-additional-info">
@@ -200,7 +157,9 @@
                         </div>
                         <div class="profile-body-personal-info-container">
                             <h4 class="profile-body-personal-info-container-title" data-i18n="profile.socialLinkLabel"></h4>
-                            <a class="profile-body-personal-info-container-text profile-link"></a>
+                            <div class="profile-body-personal-info-container-text profile-link-friend-profile">
+                                <!-- Any social link will be displayed here -->
+                            </div>
                         </div>
                     </div>
                     <div class="profile-body-additional-info">
@@ -227,6 +186,69 @@
                     <button class="friend-action-button recall-request hidden" data-i18n="search.recall-request" onclick="recallFriend()"></button>
                     <button class="friend-action-button open-chat hidden" data-i18n="search.open-chat" onclick="openChat()"></button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EditProfile mode -->
+    <div class="edit-profile-container hidden" id="profileEditContainer">
+        <div class="profile-container-div-edit-profile">
+            <div class="profile-body-edit-profile">
+                <div class="profile-body-basic-info-edit-profile">
+                    <div class="profile-avatar-wrapper-edit-profile">
+                        <img src="./assets/images/default-avatar.png" alt="" class="profile-body-basic-info-avatar-edit-profile">
+                        <!-- Nút chọn ảnh (ẩn input, dùng label cho icon) -->
+                        <label for="avatarInput" class="profile-avatar-edit-icon-edit-profile">
+                            <i class="fas fa-camera"></i> <!-- Dùng Font Awesome -->
+                        </label>
+                        <input type="file" id="avatarInput" class="hidden" accept="image/*" onchange="handleAvatarChange()">
+                    </div>
+
+                    <input type="text" class="profile-body-basic-info-text-edit-profile profile-name-input-edit-profile">
+                    <input type="email" class="profile-body-basic-info-text-edit-profile profile-email-input-edit-profile">
+                    <textarea class="profile-body-basic-info-text-edit-profile profile-description-input-edit-profile"></textarea>
+                </div>
+
+                <div class="profile-body-info-edit-profile">
+                    <div class="profile-body-personal-info-edit-profile">
+                        <div class="profile-body-personal-info-container-edit-profile">
+                            <h4 class="profile-body-personal-info-container-title-edit-profile" data-i18n="profile.genderLabel"></h4>
+                            <select class="profile-body-personal-info-container-input-edit-profile profile-gender-input-edit-profile">
+                                <!--  Option will be dynamically generated-->
+                            </select>
+                        </div>
+                        <div class="profile-body-personal-info-container-edit-profile">
+                            <h4 class="profile-body-personal-info-container-title-edit-profile" data-i18n="profile.birthdayLabel"></h4>
+                            <input type="date" class="profile-body-personal-info-container-input-edit-profile profile-birth-input-edit-profile">
+                        </div>
+                        <div class="profile-body-personal-info-container-edit-profile">
+                            <!-- Social links section -->
+                        </div>
+                        <div class="add-social-link-wrapper-edit-profile" id="addSocialLinkWrapper">
+                            <button class="add-social-btn-edit-profile" id="addLinkButton">+ Thêm liên kết</button>
+                            <div class="hidden" id="addLinkInputGroup">
+                              <input type="text" id="newSocialLink" placeholder="Nhập liên kết mới">
+                              <button id="acceptAddLinkButton">✔</button>
+                              <button id="cancelAddLinkButton">✖</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-body-additional-info-edit-profile">
+                    <div class="profile-body-additional-info-container-edit-profile">
+                        <h4 class="profile-body-additional-info-container-title-edit-profile" data-i18n="profile.statStartDate"></h4>
+                        <p class="profile-body-additional-info-container-text-edit-profile profile-started-day-edit-profile"></p>
+                    </div>
+
+                    <div class="profile-body-additional-info-container-edit-profile">
+                        <h4 class="profile-body-additional-info-container-title-edit-profile" data-i18n="profile.statFriends"></h4>
+                        <p class="profile-body-additional-info-container-text-edit-profile profile-friend-num-edit-profile"></p>
+                    </div>
+                </div>
+
+                <button class="save-profile-button-edit-profile" onclick="saveProfileChanges()" data-i18n="profile.save-edit"></button>
+                <button class="cancel-edit-button-edit-profile" onclick="changeTab('Profile')" data-i18n="profile.finish-edit">l</button>
             </div>
         </div>
     </div>

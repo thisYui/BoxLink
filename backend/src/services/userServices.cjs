@@ -70,6 +70,7 @@ async function getInfo(uid) {
             avatar: userData.avatar,
             friendList: friendList,
         }
+
     } catch (error) {
         logger.error("Lỗi khi lấy thông tin người dùng:", error);
         return null;
@@ -88,6 +89,7 @@ async function setPassword(userUid, newPassword) {
         await otherNotification(userUid, "Đã thay đổi mật khẩu");
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật mật khẩu:", error);
         return false;
@@ -109,6 +111,7 @@ async function setDisplayName(uid, displayName) {
         await updateUserNotification(uid, "display-name-update");
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật tên hiển thị:", error);
         return false;
@@ -136,6 +139,7 @@ async function setAvatar(uid, avatar) {
         await updateUserNotification(uid, "avatar-update");
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật ảnh đại diện:", error);
         return false;
@@ -162,8 +166,8 @@ async function removeFriend(uid, friendID) {
             friendList: admin.firestore.FieldValue.arrayRemove(uid)
         });
 
-        logger.debug("Đã hủy kết bạn thành công.");
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi hủy kết bạn:", error);
         return false;
@@ -204,6 +208,7 @@ async function acceptFriend(uid, friendID) {
         await friendAcceptNotification(uid, friendID);
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi chấp nhận lời mời kết bạn:", error);
         return false;
@@ -233,8 +238,8 @@ async function friendRequest(uid, friendID) {
         // Gửi thông báo lời mời kết bạn
         await friendRequestNotification(uid, friendID);
 
-        logger.debug("Đã gửi lời mời kết bạn thành công.");
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi gửi lời mời kết bạn:", error);
         return false;
@@ -259,6 +264,7 @@ async function cancelFriend(uid, friendID) {
         });
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi hủy lời mời kết bạn:", error);
         return false;
@@ -270,6 +276,7 @@ async function recall(uid, friendID) {
     try {
         // Hủy lời mời kết bạn từ người nhận
         return await cancelFriend(friendID, uid);
+
     } catch (error) {
         logger.error("Lỗi khi thu hồi lời mời kết bạn:", error);
         return false;
@@ -285,6 +292,7 @@ async function updateLastOnline(uid) {
         });
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật thời gian online:", error);
         return false;
@@ -323,6 +331,8 @@ async function setGender(uid, gender) {
         await db.collection("users").doc(uid).update({
             gender: gender
         });
+        return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật giới tính:", error);
         return false;
@@ -335,6 +345,8 @@ async function setBirthday(uid, birthday) {
         await db.collection("users").doc(uid).update({
             birthday: birthday
         });
+        return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật ngày sinh:", error);
         return false;
@@ -347,6 +359,8 @@ async function setBiography(uid, biography) {
         await db.collection("users").doc(uid).update({
             biography: biography // Kiểu date
         });
+        return true;
+
     } catch (error) {
         logger.error("Lỗi khi cập nhật mô tả cá nhân:", error);
         return false;
@@ -355,10 +369,12 @@ async function setBiography(uid, biography) {
 
 async function addSocialLink(uid, socialLink) {
     try {
-        // Cập nhật đường liên kết mạng xã hội mới
+        // Thêm đường liên kết mạng xã hội
         await db.collection("users").doc(uid).update({
             socialLinks: admin.firestore.FieldValue.arrayUnion(socialLink)
         });
+        return true;
+
     } catch (error) {
         logger.error("Lỗi khi thêm đường liên kết mạng xã hội:", error);
         return false;
@@ -371,6 +387,8 @@ async function removeSocialLink(uid, socialLinkId) {
         await db.collection("users").doc(uid).update({
             socialLinks: admin.firestore.FieldValue.arrayRemove(socialLinkId)
         });
+        return true;
+
     } catch (error) {
         logger.error("Lỗi khi xóa đường liên kết mạng xã hội:", error);
         return false;

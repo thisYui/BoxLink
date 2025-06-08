@@ -58,6 +58,26 @@ async function changeDisplayName(displayName) {
     return await response.json();
 }
 
+// Thay đổi email
+async function changeEmail(email) {
+    const response = await fetch(`${host}/api/auth/change-email`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            email: email
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to change email");
+    }
+
+    return await response.json();
+}
+
 // Xóa tài khoản
 async function deleteAccount() {
     const response = await fetch(`${host}/api/user/delete-account`, {
@@ -228,6 +248,7 @@ export {
     updateOnlineTime,
     changeAvatar,
     changeDisplayName,
+    changeEmail,
     deleteAccount,
     friend,
     getProfileUser,

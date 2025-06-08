@@ -1,34 +1,36 @@
 import { getMyProfile } from "../user/personalProfile.js";
-import { convertToDate, dateToDMY } from "../utils/renderData.js";
+import { getIconClassForUrl, convertToDate, dateToDMY, dateToYMD } from "../utils/renderData.js";
 import { getListGender, getValueMappingGender } from "../config/i18n.js";
-import { fixStatusFriend } from "../utils/friendProcessor.js";
+import { operaSocialLink } from "../fetchers/infoFetcher.js";
 
 let stateEdit = false; // Biến để theo dõi chế độ chỉnh sửa
 
 window.loadProfile = async function () {
+    const profileContainer = document.querySelector(".profile-container");
+    const socialLinkContainer = profileContainer.querySelector(".profile-body-personal-info-container-text.profile-link");
+    socialLinkContainer.innerHTML = ""; // Xóa tất cả các liên kết mạng xã hội hiện có
+
     const profile = await getMyProfile();
     showMyProfile(profile);
 }
 
 // Bật tắt chế độ chỉnh sửa thông tin cá nhân
-window.editProfileMode = function () {
+window.editProfileMode = async function () {
     if (stateEdit) {
         // Nếu đang ở chế độ chỉnh sửa, chuyển sang chế độ xem
+
         viewMode();
         stateEdit = false;
     } else {
         // Nếu không, chuyển sang chế độ chỉnh sửa
-        editMode();
+        await editMode();
         stateEdit = true;
     }
 }
 
 
-function editMode() {
-    // Email không thể chỉnh sửa, chỉ có thể xem
-
-    // Làm mờ các trường dữ liệu trên cho thấy có thể bị chỉnh sửa
-
+async function editMode() {
+    await changeTab("EditProfile");
 }
 
 function viewMode() {
@@ -44,6 +46,10 @@ function showMyProfile(profile) {
     const editProfileButton = profileContainer.querySelector(".edit-profile-button");
     editProfileButton.style.display = profile.countFriendMutual;
 
+    const editProfileContainer = document.querySelector(".edit-profile-container");
+    const socialLinkContainer = editProfileContainer.querySelector(".profile-body-personal-info-container-edit-profile");
+    socialLinkContainer.innerHTML = ""; // Xóa tất cả các liên kết mạng xã hội hiện có
+    setupProfileEditButtons(profile, editProfileContainer); // Chuẩn bị các dữ liệu cho edit
 }
 
 function showProfile(profile, profileContainer) {
@@ -104,23 +110,26 @@ function showProfile(profile, profileContainer) {
     if (profileLink) {
         const socialLinks = profile.socialLinks;
 
-        if (Object.keys(socialLinks).length !== 0) {
-            for (const typeLink in socialLinks) {
-                const link = socialLinks[typeLink];
+        const linkContainer = profileContainer.querySelector(".profile-body-personal-info-container-text.profile-link");
 
-                if (link) {
-                    // Tạo liên kết cho mỗi loại mạng xã hội
-                    const a = document.createElement("a");
-                    a.href = link;
-                    a.textContent = typeLink.charAt(0).toUpperCase() + typeLink.slice(1);
-                    a.target = "_blank"; // Mở liên kết trong tab mới
-                    profileLink.appendChild(a);
-                    profileLink.appendChild(document.createElement("br")); // Thêm dòng mới sau mỗi liên kết
-                }
-            }
+        if (socialLinks.length === 0) {
+            const noLinksMessage = document.createElement("p");
+            noLinksMessage.textContent = t("profile.noSocialLinks");
+
         } else {
-            profileLink.href = "#";
-            profileLink.textContent = "Chưa có liên kết";
+            socialLinks.forEach(link => {
+                const socialLinkItem = document.createElement("div");
+                socialLinkItem.className = "social-link-item";
+                console.log(link)
+                const iconClass = getIconClassForUrl(link);
+
+                socialLinkItem.innerHTML = `
+                    <i class="${iconClass}"></i>
+                    <a href="${link}" target="_blank">${link}</a>
+                `;
+
+                linkContainer.appendChild(socialLinkItem);
+            });
         }
     }
 
@@ -135,6 +144,100 @@ function showProfile(profile, profileContainer) {
     }
 }
 
+// Handle profile edit button clicks
+function setupProfileEditButtons(profile, editProfileContainer) {
+    // Các trường thông tin cá nhân
+    const avatar = editProfileContainer.querySelector(".profile-body-basic-info-avatar-edit-profile");
+    avatar.src = profile.avatar || "./assets/images/default-avatar.png";
+
+    const name = editProfileContainer.querySelector(".profile-name-input-edit-profile");
+    name.placeholder = profile.displayName || t("profile.noName");
+
+    const email = editProfileContainer.querySelector(".profile-email-input-edit-profile");
+    email.placeholder = profile.email || t("profile.noEmail");
+
+    const description = editProfileContainer.querySelector(".profile-description-input-edit-profile");
+    description.placeholder = profile.biography || t("profile.noBiography");
+
+    // Thêm các trường giới tính
+    const selectGender = editProfileContainer.querySelector(".profile-gender-input-edit-profile");
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = t("profile.gender-select");
+    option.disabled = true;
+    option.selected = true;
+    selectGender.appendChild(option);
+
+    const listGender = getListGender();
+    listGender.forEach(gender => {
+        const option = document.createElement("option");
+        option.value = gender;
+        option.textContent = gender;
+        selectGender.appendChild(option);
+    });
+
+    const birth = editProfileContainer.querySelector(".profile-birth-input-edit-profile");
+    birth.value = dateToYMD(new Date(profile.birthday)) || t("profile.noBirthday");
+    birth.placeholder = birth.value || t("profile.noBirthday");
+
+    // Các liên kết mạng xã hội
+    const socialLinkContainer = editProfileContainer.querySelector(".profile-body-personal-info-container-edit-profile");
+    const socialLinks = profile.socialLinks;
+    if (socialLinks.length === 0) {
+        socialLinkContainer.innerHTML = `<p>${t("profile.noSocialLinks")}</p>`;
+
+    } else {
+        socialLinks.forEach(link => {
+            addLinkInListSocial(link, socialLinkContainer);
+        });
+    }
+
+    // Các thông tin khác
+    const startedDay = editProfileContainer.querySelector(".profile-started-day-edit-profile");
+    const date = convertToDate(profile.createdAt);
+    startedDay.textContent = dateToDMY(date);
+
+    const friendNum = editProfileContainer.querySelector(".profile-friend-num-edit-profile");
+    friendNum.textContent = profile.countFriends?.toString() || "0";
+}
+
+function addLinkInListSocial(link, socialLinkContainer) {
+    const socialLinkItem = document.createElement("div");
+    socialLinkItem.className = "social-link-item-edit-profile";
+    const iconClass = getIconClassForUrl(link);
+
+    const i = document.createElement("i");
+    i.className = iconClass;
+    socialLinkItem.appendChild(i);
+
+    const a = document.createElement("a");
+    a.href = link.toString();
+    a.target = "_blank";
+    a.textContent = link.toString();
+    socialLinkItem.appendChild(a);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "remove-social-btn-edit-profile";
+    removeBtn.textContent = "-";
+
+    // dùng js để truyền biến đúng cách
+    removeBtn.addEventListener("click", async () => {
+        await removeLinkToListAndRequest(link, socialLinkContainer);
+    });
+
+    socialLinkItem.appendChild(removeBtn);
+    socialLinkContainer.appendChild(socialLinkItem);
+}
+
+function removeLinkInListSocial(link, socialLinkContainer) {
+    const socialLinkItem = socialLinkContainer.querySelector(`.social-link-item-edit-profile a[href="${link}"]`);
+    if (socialLinkItem) {
+        socialLinkItem.parentElement.remove();
+    }
+}
+
 export {
-    showProfile
+    showProfile,
+    addLinkInListSocial,
+    removeLinkInListSocial,
 }

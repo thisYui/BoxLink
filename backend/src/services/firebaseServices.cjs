@@ -19,7 +19,7 @@ async function createAuth(email, password, displayName) {
             biography: "",
             gender: "",
             birthday: "",
-            socialLinks: {},  // <linkName: link>
+            socialLinks: [],
             friendList: [],
             notifications: [], // <typeNotification, srcID, text>
             friendRequests: [], // <email>

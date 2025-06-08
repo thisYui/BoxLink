@@ -55,18 +55,18 @@ async function loadLanguage(lang = 'en') {
 
 function getListGender() {
     return [
-        t("profile.Male"),
-        t("profile.Female"),
-        t("profile.Gay"),
-        t("profile.Lesbian"),
-        t("profile.Bisexual"),
-        t("profile.OtherGender")
+        t("profile.male"),
+        t("profile.female"),
+        t("profile.gay"),
+        t("profile.lesbian"),
+        t("profile.bisexual"),
+        t("profile.other-gender")
     ]
 }
 
 function getValueMappingGender(value) {
     const genderList = getListGender();
-    return genderList[value] || t("profile.OtherGender");
+    return genderList[value] || t("profile.other-gender");
 }
 
 export {

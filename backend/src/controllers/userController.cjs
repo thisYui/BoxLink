@@ -253,9 +253,9 @@ async function addSocialLinkFromList(req, res) {
 
 // Xóa đường liên kết mạng xã hội
 async function removeSocialLinkFromList(req, res) {
-    const { uid, socialLinkId } = req.body;
+    const { uid, socialLink } = req.body;
     try {
-        const user = await removeSocialLink(uid, socialLinkId);
+        const user = await removeSocialLink(uid, socialLink);
         if (!user) return res.status(404).json({ message: 'Xóa đường liên kết mạng xã hội thất bại!' });
         res.status(200).json({ message: 'Đã xóa đường liên kết mạng xã hội!' });
 
