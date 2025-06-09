@@ -263,50 +263,90 @@
                 <i class="fas fa-cog"></i>
             </div>
             <div class="settings-options">
-                <div class="settings-option">
+                <div class="settings-option" id="notificationToggle">
                     <div class="settings-option-text">
                         <i class="fas fa-bell"></i>
                         <span data-i18n="settings.notifications"></span>
                     </div>
-                    <i class="fas fa-chevron-right"></i>
                 </div>
-                <div class="settings-option" id="themeToggle">
-                    <div class="settings-option-text">
-                        <i class="fas fa-moon"></i>
-                        <span data-i18n="settings.theme-mode"></span>
+                <div class="setting-item">
+                    <div class="settings-option" id="themeToggle">
+                        <div class="settings-option-text">
+                            <i class="fas fa-moon"></i>
+                            <span data-i18n="settings.theme-mode"></span>
+                        </div>
+                        <select id="themeSelect" class="settings-option-select">
+                            <!-- Options will be dynamically generated -->
+                        </select>
                     </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="settings-option">
-                    <div class="settings-option-text">
-                        <i class="fas fa-globe"></i>
-                        <span data-i18n="settings.language"></span>
+                    <div class="settings-option">
+                        <div class="settings-option-text">
+                            <i class="fas fa-globe"></i>
+                            <span data-i18n="settings.language"></span>
+                        </div>
+                        <select id="languageSelect" class="settings-option-select">
+                            <!-- Options will be dynamically generated -->
+                        </select>
                     </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="settings-option">
-                    <div class="settings-option-text">
-                        <i class="fas fa-key"></i>
-                        <span data-i18n="settings.change-password"></span>
+                    <div class="settings-option">
+                        <div class="settings-option-text">
+                            <i class="fas fa-key"></i>
+                            <span data-i18n="settings.change-password"></span>
+                        </div>
+                        <i class="fas fa-chevron-right" onclick="openModal('password')"></i>
                     </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="settings-option danger">
-                    <div class="settings-option-text">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span data-i18n="settings.logout"></span>
+                    <div class="settings-option danger">
+                        <div class="settings-option-text">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span data-i18n="settings.logout"></span>
+                        </div>
+                        <i class="fas fa-chevron-right" onclick="openModal('logout')"></i>
                     </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="settings-option danger">
-                    <div class="settings-option-text">
-                        <i class="fas fa-trash-alt"></i>
-                        <span data-i18n="settings.delete-account"></span>
+                    <div class="settings-option danger">
+                        <div class="settings-option-text">
+                            <i class="fas fa-trash-alt"></i>
+                            <span data-i18n="settings.delete-account"></span>
+                        </div>
+                        <i class="fas fa-chevron-right" onclick="openModal('deleteAccount')"></i>
                     </div>
-                    <i class="fas fa-chevron-right"></i>
                 </div>
             </div>
         </div>
+    </div>
+
+        <!-- popup đổi mật khẩu -->
+    <div class="modal hidden" id="changePasswordModal">
+      <div class="modal-content">
+        <h3 data-i18n="settings.change-password"></h3>
+        <input class="input-new-password" type="password" data-i18n-placeholder="settings.new-password">
+        <input class="confirm-new-password" type="password" data-i18n-placeholder="settings.confirm-password">
+        <div class="modal-actions">
+          <button data-i18n="settings.exit" onclick="openModal('closeModal')"></button>
+          <button data-i18n="settings.change-password" onclick="resetPassword()"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- popup xác nhận đăng xuất -->
+    <div class="modal hidden" id="logoutConfirmModal">
+      <div class="modal-content">
+        <p data-i18n="settings.confirm-logout"></p>
+        <div class="modal-actions">
+          <button data-i18n="settings.exit" onclick="openModal('closeModal')"></button>
+          <button data-i18n="settings.logout" onclick="logOut()"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- popup xác nhận xóa tài khoản -->
+    <div class="modal hidden" id="deleteAccountConfirmModal">
+      <div class="modal-content">
+        <p data-i18n="settings.confirm-delete-account"></p>
+        <div class="modal-actions">
+          <button data-i18n="settings.exit" onclick="openModal('closeModal')"></button>
+          <button data-i18n="settings.delete-account" onclick="deleteAccount()"></button>
+        </div>
+      </div>
     </div>
 
     <div class="message-container" id="messageGroupContainer">
@@ -384,62 +424,8 @@
         </div>
     </div>
 
-    <!-- Modal for editing profile information -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Edit Profile</h3>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="editForm">
-                    <div class="form-group">
-                        <label for="editInput">Value:</label>
-                        <input type="text" id="editInput" class="form-control">
-                    </div>
-                    <div class="form-group" id="genderSelectGroup" style="display: none;">
-                        <label for="genderSelect">Select Gender:</label>
-                        <select id="genderSelect" class="form-control">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                            <option value="Prefer not to say">Prefer not to say</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="dobInputGroup" style="display: none;">
-                        <label for="dobInput">Date of Birth:</label>
-                        <input type="date" id="dobInput" class="form-control">
-                    </div>
-                    <button type="submit" class="btn-save">Save</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Theme Selection Modal -->
-    <div class="modal" id="themeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 data-i18n="settings.select-theme">Select Theme</h3>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="theme-options">
-                    <div class="theme-option" data-theme="light">
-                        <div class="theme-preview light-preview"></div>
-                        <span data-i18n="settings.light-theme">Light Theme</span>
-                    </div>
-                    <div class="theme-option" data-theme="dark">
-                        <div class="theme-preview dark-preview"></div>
-                        <span data-i18n="settings.dark-theme">Dark Theme</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Overlay for modals -->
-    <div class="overlay" id="overlay"></div>
+    <div class="overlay hidden" id="overlay"></div>
 
     <!-- Scripts -->
     <script type="module" defer src="assets/js/config/i18n.js"></script>

@@ -374,9 +374,28 @@ async function deleteChatInformation(uid, friendID) {
 }
 
 
+async function deleteAllChat(uid) {
+    try {
+        // Lấy danh sách chatList của người dùng
+        const userDoc = await db.collection("users").doc(uid).get();
+        const chatList = userDoc.data().chatList || [];
+
+        // Xóa từng cuộc trò chuyện trong chatList
+        for (const chatID of chatList) {
+            await deleteChatInformation(uid, chatID);
+        }
+
+        return true;
+    } catch (error) {
+        logger.error("Lỗi khi xóa tất cả cuộc trò chuyện:", error);
+        return false;
+    }
+}
+
+
 module.exports = {
     findChat, startChat, sendMessage,
     getMessages, getSingle, loadMore,
     updateSeen, turnNotification,
-    deleteChatInformation
+    deleteChatInformation, deleteAllChat
 }

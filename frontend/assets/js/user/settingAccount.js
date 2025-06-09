@@ -1,10 +1,11 @@
-import { changeAvatar, changeBiography, changeBirthday,
-        changePassword, changeGender, changeDisplayName,
-        changeEmail, operaSocialLink, deleteAccount,
-        updateOnlineTime
+import {
+    changeAvatar, changeBiography, changeBirthday,
+    changePassword, changeGender, changeDisplayName,
+    changeEmail, operaSocialLink, deleteAccount,
+    updateOnlineTime, changeSettingLanguage
 } from '../fetchers/infoFetcher.js';
 import { addLinkInListSocial, removeLinkInListSocial } from "../components/domProfile.js";
-import { getValueMappingGender } from "../config/i18n.js";
+import { getInterGender } from "../config/i18n.js";
 
 // Danh sách các hàm thay đổi sẽ đc gọi trong hàng đợi
 const functionQueue = [];
@@ -76,7 +77,7 @@ function recordChange() {
     // Kiểm tra giới tính
     const selectGender = document.querySelector(".profile-gender-input-edit-profile");
     if (selectGender.value !== selectGender.placeholder && selectGender.value !== "") {
-        addFunctionToQueue(() => changeGender(getValueMappingGender(selectGender.value)));
+        addFunctionToQueue(() => changeGender(getInterGender(selectGender.value)));
     }
 
     // Kiểm tra ngày sinh
@@ -107,4 +108,35 @@ window.handleAvatarChange = function () {
     img.src = URL.createObjectURL(file);
 
     addFunctionToQueue(() => changeAvatar(file));
+}
+
+
+window.resetPassword = async function () {
+    const newPassword = document.querySelector(".input-new-password").value
+    const confirmNewPassword = document.querySelector(".confirm-new-password").value;
+
+    if (newPassword !== confirmNewPassword) {
+        alert(t("settings.passwords-not-match"));
+        return;
+    }
+
+    try {
+        await changePassword(newPassword);
+        alert(t("settings.password-changed-successfully"));
+        openModal('closeModal'); // Đóng modal sau khi thay đổi thành công
+
+    } catch (error) {
+        alert(t("settings.error-changing-password"));
+    }
+}
+
+window.deleteAccount = async function () {
+    try {
+        await deleteAccount();
+        alert(t("settings.account-deleted-successfully"));
+        window.logOut();
+
+    } catch (error) {
+        alert(t("settings.error-deleting-account"));
+    }
 }

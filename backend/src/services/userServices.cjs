@@ -395,6 +395,109 @@ async function removeSocialLink(uid, socialLinkId) {
     }
 }
 
+async function settingConfig(uid) {
+    try {
+        // Lấy thông tin người dùng
+        const user = await db.collection("users").doc(uid).get();
+        const userData = user.data();
+
+        return {
+            turnOnNotification: userData.turnOnNotification || true,
+            language: userData.language || "vi",
+            theme: userData.theme || 0,
+        }
+
+    } catch (error) {
+        logger.error("Lỗi khi lấy cấu hình người dùng:", error);
+        return null;
+    }
+}
+
+async function setTheme(uid, theme) {
+    try {
+        // Cập nhật theme mới
+        await db.collection("users").doc(uid).update({
+            theme: theme
+        });
+
+        return true;
+
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật theme:", error);
+        return false;
+    }
+}
+
+// Thay đổi ngôn ngữ
+async function setLanguage(uid, language) {
+    try {
+        // Cập nhật ngôn ngữ mới
+        await db.collection("users").doc(uid).update({
+            language: language
+        });
+
+        return true;
+
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật ngôn ngữ:", error);
+        return false;
+    }
+}
+
+// Thay đổi thông báo
+async function setNotification(uid, turnOnNotification) {
+    try {
+        // Cập nhật trạng thái thông báo
+        await db.collection("users").doc(uid).update({
+            turnOnNotification: turnOnNotification
+        });
+
+        return true;
+
+    } catch (error) {
+        logger.error("Lỗi khi cập nhật thông báo:", error);
+        return false;
+    }
+}
+
+async function deleteAllInformationUser(uid) {
+    try {
+        const user = await db.collection("users").doc(uid).get();
+        const userData = user.data();
+
+        // Xóa các thông báo kết bạn
+        const friendRequests = userData.friendRequests || [];
+        friendRequests.forEach(friendID => {
+           // Cancel tất cả lời mời kết bạn
+             cancelFriend(uid, friendID).catch(error => {
+                logger.error(`Lỗi khi hủy lời mời kết bạn với ${friendID}:`, error);
+              });
+        });
+
+        // Xóa các thông báo nhận kết bạn
+        const friendReceived = userData.friendReceived || [];
+        friendReceived.forEach(friendID => {
+            // Recall tất cả lời mời kết bạn
+            recall(uid, friendID).catch(error => {
+                logger.error(`Lỗi khi thu hồi lời mời kết bạn với ${friendID}:`, error);
+            });
+        });
+
+        // Xóa tất cả bạn bè và đoạn chat
+        const friendList = userData.friendList || [];
+        friendList.forEach(friendID => {
+            // Hủy kết bạn với tất cả bạn bè
+            removeFriend(uid, friendID).catch(error => {
+                logger.error(`Lỗi khi hủy kết bạn với ${friendID}:`, error);
+            });
+        });
+
+    } catch (error) {
+        logger.error("Lỗi khi xóa thông tin người dùng:", error);
+        return false;
+    }
+}
+
 module.exports = {
     getInfo, setPassword, setDisplayName,
     setAvatar, removeFriend, acceptFriend,
@@ -402,5 +505,7 @@ module.exports = {
     updateLastOnline, getProfileUser,
     setGender, setBirthday, setBiography,
     addSocialLink, removeSocialLink,
-    getDataBoxListChat
+    getDataBoxListChat, settingConfig,
+    setTheme, setLanguage, setNotification,
+    deleteAllInformationUser
 };

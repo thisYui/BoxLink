@@ -22,12 +22,15 @@ async function createAuth(email, password, displayName) {
             socialLinks: [],
             friendList: [],
             notifications: [], // <typeNotification, srcID, text>
+            turnOnNotification: true, // Bật thông báo cho người dùng
+            language: "vi", // Ngôn ngữ mặc định
+            theme: 0, // Chủ đề mặc định
             friendRequests: [], // <email>
             friendReceived: [], // <email>
             lastOnline: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        logger.log("Tạo tài khoản thành công và đã lưu Firestore.");
+        return true; // Trả về true nếu tạo thành công
     } catch (error) {
         logger.error("Lỗi khi tạo tài khoản:", error);
         throw error;
@@ -45,7 +48,7 @@ async function deleteAuth(uid) {
 
         // Xóa gửi cho bạn bè biết rằng tk ko còn tồn tại
 
-        logger.info("Xóa tài khoản thành công.");
+        return true;
     } catch (error) {
         logger.error("Lỗi khi xóa tài khoản:", error);
         throw error;
@@ -140,7 +143,8 @@ async function deleteChat(chatId) {
         // Sau khi xóa subcollections, xóa document chính
         await chatRef.delete();
 
-        console.log("Đã xóa hoàn toàn chat và các subcollections.");
+        return true;
+
     } catch (error) {
         console.error("Lỗi khi xóa:", error);
     }

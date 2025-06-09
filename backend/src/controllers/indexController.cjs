@@ -1,7 +1,9 @@
 const { searchUserByEmail, searchUserByID, searchByName,
     getWebsitePreview, getLastOnlineObject, friendProfile
 } = require("../services/utilityServices.cjs");
-const { getDataBoxListChat } = require("../services/userServices.cjs")
+const { getDataBoxListChat, settingConfig,
+    setTheme, setLanguage, setNotification
+} = require("../services/userServices.cjs")
 const logger = require("../config/logger.cjs");
 
 // Tìm kiếm bạn bè
@@ -89,9 +91,63 @@ async function getBoxChat(req, res) {
     }
 }
 
+// Lấy cấu hình cài đặt người dùng
+async function settingUser(req, res) {
+    const { uid } = req.body;
+    try {
+        const config = await settingConfig(uid);
+        if (!config) return res.status(404).json({ message: 'Cấu hình không tồn tại!' });
+        res.status(200).json(config);
+
+    } catch (error) {
+        logger.error('Lỗi khi lấy cấu hình cài đặt người dùng!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+async function setThemeUser(req, res) {
+    const { uid, theme } = req.body;
+    try {
+        const result = await setTheme(uid, theme);
+        if (!result) return res.status(404).json({ message: 'Không thể cập nhật chủ đề!' });
+        res.status(200).json({ message: 'Cập nhật chủ đề thành công!' });
+
+    } catch (error) {
+        logger.error(`Lỗi khi cập nhật chủ đề người dùng: ${error.message}`);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+async function setLanguageUser(req, res) {
+    const { uid, language } = req.body;
+    try {
+        const result = await setLanguage(uid, language);
+        if (!result) return res.status(404).json({ message: 'Không thể cập nhật ngôn ngữ!' });
+        res.status(200).json({ message: 'Cập nhật ngôn ngữ thành công!' });
+
+    } catch (error) {
+        logger.error(`Lỗi khi cập nhật ngôn ngữ người dùng: ${error.message}`);
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+async function setNotificationUser(req, res) {
+    const {uid, notification} = req.body;
+    try {
+        const result = await setNotification(uid, notification);
+        if (!result) return res.status(404).json({message: 'Không thể cập nhật thông báo!'});
+        res.status(200).json({message: 'Cập nhật thông báo thành công!'});
+
+    } catch (error) {
+        logger.error(`Lỗi khi cập nhật thông báo người dùng: ${error.message}`);
+        res.status(500).json({message: 'Lỗi hệ thống!'});
+    }
+}
 
 module.exports = {
     searchFriend, getWebsiteInfo,
     getFriendStatus, searchFriendByName,
-    getFriendProfile, getBoxChat
+    getFriendProfile, getBoxChat,
+    settingUser, setThemeUser, setLanguageUser,
+    setNotificationUser
 }

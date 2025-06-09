@@ -23,6 +23,10 @@ function transmitMessageContainer(chatID) {
     if (avatar) {
         avatarElement.src = avatar;
         avatarElement.alt = name;
+
+        avatarElement.addEventListener('click', async () => {
+            await chooseUserItem(chatID);
+        });
     }
 
     // Update display name

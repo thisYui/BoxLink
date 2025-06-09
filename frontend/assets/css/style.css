@@ -365,6 +365,10 @@ body {
     object-fit: cover;
     border: 2px solid var(--light-green);
 }
+.chat-info-avatar:hover {
+    border-color: var(--light-purple);
+    cursor: pointer;
+}
 
 /* Icon chuông */
 .chats-info-features-button-icon {
@@ -1400,6 +1404,29 @@ body {
     color: #e74c3c;
 }
 
+.fa-toggle-on {
+    color: #4CAF50;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.modal-content input {
+    width: 100%;
+    margin: 5px 0;
+    padding: 8px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
 /* Modal Styles */
 .overlay {
     position: fixed;
@@ -1419,47 +1446,97 @@ body {
     opacity: 1;
 }
 
+/* modal tổng thể */
 .modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    width: 400px;
-    background-color: var(--dark-bg);
-    border-radius: 15px;
-    z-index: 101;
-    display: none;
-    opacity: 0;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 90%;
+  max-width: 400px;
+  background-color: var(--dark-bg, #1e1e1e);
+  border-radius: 15px;
+  z-index: 101;
+  opacity: 1;
+  pointer-events: auto;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 20px;
 }
 
-.modal.active {
-    display: block;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+.modal.hidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+  pointer-events: none;
 }
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* nội dung bên trong */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.close-modal {
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+/* tiêu đề */
+.modal-content h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
 }
 
-.close-modal:hover {
-    transform: rotate(90deg);
+/* input */
+.modal-content input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.modal-body {
-    padding: 20px;
+.modal-content input:focus {
+  border-color: #4caf50;
+}
+
+/* khu vực nút */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* nút */
+.modal-actions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* nút hủy */
+.modal-actions button:first-child {
+  background-color: #444;
+  color: #fff;
+}
+
+.modal-actions button:first-child:hover {
+  background-color: #555;
+}
+
+/* nút xác nhận */
+.modal-actions button:last-child {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.modal-actions button:last-child:hover {
+  background-color: #45a049;
 }
 
 .form-group {

@@ -3,9 +3,9 @@ const { getInfo, setPassword, setAvatar,
     friendRequest, cancelFriend, recall,
     updateLastOnline, getProfileUser, setBiography,
     setBirthday, setGender, addSocialLink,
-    removeSocialLink
+    removeSocialLink, deleteAllInformationUser
 } = require("../services/userServices.cjs");
-const { deleteChatInformation } = require("../services/messageServices.cjs");
+const { deleteChatInformation, deleteAllChat } = require("../services/messageServices.cjs");
 const { deleteAuth, createChat } = require("../services/firebaseServices.cjs");
 const { deleteNotificationsFriendRequest } = require("../services/notificationServices.cjs")
 const logger = require("../config/logger.cjs");
@@ -157,8 +157,18 @@ async function resetPassword(req, res) {
 async function deleteAccount(req, res) {
     const { uid } = req.body;
     try {
-        const user = await deleteAuth(uid);
-        if (!user) return res.status(404).json({ message: 'Xóa tài khoản thất bại!' });
+        // Xóa tất cả thông tin liên quan
+        const info = await deleteAllInformationUser(uid);
+        if (!info) return res.status(404).json({ message: 'Xóa thông tin người dùng thất bại!' });
+
+        // Xóa thông tin chat
+        const chat = await deleteAllChat(uid);
+        if (!chat) return res.status(404).json({ message: 'Xóa thông tin chat thất bại!' });
+
+        // Xóa Auth
+        const au = await deleteAuth(uid);
+        if (!au) return res.status(404).json({ message: 'Xóa tài khoản thất bại!' });
+
         logger.info('Xóa tài khoản thành công!', { uid });
         res.status(200).json({ message: 'Tài khoản đã được xóa!' });
 

@@ -209,6 +209,10 @@ function addInformationFriend(box, friendID, displayName, email, avatarUrl, time
     img.classList.add("notification-avatar");
     img.src = avatarUrl;
 
+    img.addEventListener('click', async () => {
+        await chooseUserItem(friendID);
+    })
+
     const div = document.createElement('div');
     div.className = 'notification-friend-info';
     const name = document.createElement('p');

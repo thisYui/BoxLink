@@ -1,3 +1,4 @@
+// Có thể dùng thay
 function getUserLanguage() {
   // Lấy ngôn ngữ của trình duyệt (ví dụ: 'en', 'vi', 'fr', ...)
   const userLanguage = navigator.language || navigator.userLanguage;
@@ -53,6 +54,20 @@ async function loadLanguage(lang = 'en') {
     });
 }
 
+function getListLanguage() {
+    return [
+        "Tiếng Việt",
+        "English",
+    ];
+}
+
+function getThemeList() {
+    return [
+        t("settings.light-theme"),
+        t("settings.dark-theme"),
+    ];
+}
+
 function getListGender() {
     return [
         t("profile.male"),
@@ -69,9 +84,17 @@ function getValueMappingGender(value) {
     return genderList[value] || t("profile.other-gender");
 }
 
+function getInterGender(value) {
+    const genderList = getListGender();
+    return genderList.indexOf(value);
+}
+
 export {
     loadLanguage,
     getUserLanguage,
     getListGender,
-    getValueMappingGender
+    getValueMappingGender,
+    getInterGender,
+    getListLanguage,
+    getThemeList
 }

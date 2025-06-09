@@ -20,7 +20,13 @@ window.showListSearch = async function () {
     });
 }
 
-async function chooseUserItem(uid) {
+window.chooseUserItem = async function (uid) {
+    if (uid === 'CZI0ysItvIYLiedwJmNqHtvO4Ay1') {
+        // uid của tài khoản này là tài khoản mặc định, không cho phép truy cập
+        alert("Tài khoản không còn tồn tại.");
+        return;
+    }
+
     sessionStorage.setItem("searchUID", uid);
 
     await changeTab("FriendProfile");
@@ -61,6 +67,10 @@ async function search(dataString) {
 
 function addUserToListSearch(user, searchResult) {
     if (user.uid === localStorage.getItem('uid')) {
+        return;
+    }
+
+    if (user.uid === 'CZI0ysItvIYLiedwJmNqHtvO4Ay1') {
         return;
     }
 

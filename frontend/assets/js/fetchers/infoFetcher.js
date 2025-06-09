@@ -244,6 +244,103 @@ async function operaSocialLink(api, socialLink) {
     return await response.json();
 }
 
+async function settingConfig() {
+    try {
+        const response = await fetch(`${host}/api/index/setting-user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uid: localStorage.getItem("uid")
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to get setting config");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching setting config:", error);
+        throw error;
+    }
+}
+
+async function changeSettingTheme(theme) {
+    try {
+        const response = await fetch(`${host}/api/index/change-theme`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uid: localStorage.getItem("uid"),
+                theme: theme
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to change setting config");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error changing setting config:", error);
+        throw error;
+    }
+}
+
+// Thay đổi ngôn ngữ
+async function changeSettingLanguage(language) {
+    try {
+        const response = await fetch(`${host}/api/index/change-language`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uid: localStorage.getItem("uid"),
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to change language");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error changing language:", error);
+        throw error;
+    }
+}
+
+// Thay đổi thông báo
+async function changeSettingNotification(notification) {
+    try {
+        const response = await fetch(`${host}/api/index/change-notification`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uid: localStorage.getItem("uid"),
+                notification: notification
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to change notification");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error changing notification:", error);
+        throw error;
+    }
+}
+
+
 export {
     updateOnlineTime,
     changeAvatar,
@@ -256,5 +353,9 @@ export {
     changeBirthday,
     changeGender,
     changeBiography,
-    operaSocialLink
+    operaSocialLink,
+    settingConfig,
+    changeSettingTheme,
+    changeSettingLanguage,
+    changeSettingNotification
 }

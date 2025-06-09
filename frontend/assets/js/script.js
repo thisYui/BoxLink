@@ -1,12 +1,10 @@
-import { loadLanguage, getUserLanguage } from "./config/i18n.js";
-
 window.lastClickedUser = sessionStorage.getItem("lastClickedUser") || null;
 window.listChatBoxID = {}
 
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
-    // Lấy ngôn ngữ dựa trên cài đặt của người dùng
-    loadLanguage(getUserLanguage()).then();
+    // Lấy dữ liệu cho settings
+    loadSettings().then();
 
     // Lấy dữ liệu từ database
     loadPage().then();
@@ -30,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    document.getElementById("openChatInfoButton").addEventListener("click", (event) => {
+    document.getElementById("openChatInfoButton").addEventListener("click", () => {
         loadChatInfo().then();
     })
 
@@ -106,15 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem("replyMessageID", "");
     });
 
-    // click vào avatar trong thông báo
-    document.querySelectorAll('.notification-avatar').forEach(img => {
-        img.addEventListener('click', function () {
-            const item = this.closest('.notification-item');
-
-            //
-        });
-    });
-
     // Thêm liên kết đến
     document.getElementById("addLinkButton").addEventListener("click",  () => {
         const socialLinkInput = document.getElementById("addLinkInputGroup");
@@ -156,6 +145,17 @@ window.openChatInfo = function () {
     const chatInfor = document.getElementById('chatInfoContainer');
     const isHidden = window.getComputedStyle(chatInfor).display === 'none';
     chatInfor.style.display = isHidden ? "block" : "none";
+}
+
+window.logOut = function () {
+    // Xóa sessionStorage
+    sessionStorage.clear();
+
+    // Xóa uid
+    localStorage.removeItem('uid');
+
+    // Chuyển hướng về trang đăng nhập
+    window.location.href = '/auth.html';
 }
 
 // Manage tab switching functionality
