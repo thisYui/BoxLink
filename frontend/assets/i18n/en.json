@@ -10,7 +10,13 @@
     "title": "Chats",
     "search-placeholder": "Search conversations...",
     "unread": "Unread",
-    "read": "Read"
+    "read": "Read",
+    "before": "before",
+    "day": "day",
+    "hour": "hour",
+    "minute": "minute",
+    "online": "Online",
+    "is-online": "Is online"
   },
   "chat-info": {
     "title": "Chat Info",
@@ -104,7 +110,8 @@
     "send-file": "Send File",
     "send-voice": "Send Voice Message",
     "send-video": "Send Video",
-    "send-link": "Send Link"
+    "send-link": "Send Link",
+    "overflow-size-file": "File size exceeds the limit of 5MB",
   },
   "notification": {
     "title": "Notifications",

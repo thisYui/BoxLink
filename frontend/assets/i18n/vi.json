@@ -10,7 +10,13 @@
     "title": "Đoạn chat",
     "search-placeholder": "Tìm cuộc trò chuyện...",
     "unread": "Chưa xem",
-    "read": "Đã xem"
+    "read": "Đã xem",
+    "before": "Trước",
+    "day": "ngày",
+    "hour": "giờ",
+    "minute": "phút",
+    "online": "Hoạt động",
+    "is-online": "Đang hoạt động"
   },
   "chat-info": {
     "title": "Thông tin cuộc trò chuyện",
@@ -106,7 +112,8 @@
     "send-file": "Đã gửi một tệp tin",
     "send-voice": "Đã gửi một tin nhắn thoại",
     "send-video": "Đã gửi một video",
-    "send-link": "Đã gửi một liên kết"
+    "send-link": "Đã gửi một liên kết",
+    "overflow-size-file": "Kích thước tệp vượt quá giới hạn 5MB. Vui lòng chọn tệp khác"
   },
   "notification": {
     "title": "Thông báo",

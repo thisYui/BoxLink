@@ -4,15 +4,15 @@
 trường Đại Học Khoa học Tự nhiên, ĐHQG-TPHCM. Tác giả bao gồm Nguyễn Quang Duy và Văn Đình Hiếu.
 
 ## Description
-- Dự án này được xây dựng với mục đích học tập và nghiên cứu về các công nghệ web hiện đại như Node.js, Firebase, Socket.io, HTML, CSS và JavaScript.
+- Dự án này được xây dựng với mục đích học tập và nghiên cứu về các công nghệ web hiện đại như Node.js, Firebase, Socket.io sử dụng HTML, CSS và JavaScript.
 - Dự án này được xây dựng với mục đích tạo ra một ứng dụng nhắn tin đơn giản nhưng đầy đủ chức năng, giúp người dùng có thể giao tiếp và chia sẻ thông tin một cách dễ dàng và nhanh chóng.
-
 
 ## Features
 - Feature 1: Có thể tạo tài khoản và đăng nhập.
-- Feature 2: Gửi tin nhắn văn bản, tài liệu và hình ảnh.
+- Feature 2: Gửi tin nhắn văn bản, tệp và hình ảnh.
 - Feature 3: Sử dụng thời gian thực để gửi tin nhắn.
-- Feature 4: Có các chức năng tương tự một website nhắn tin như Facebook Messenger, Zalo.
+- Feature 4: Có thể truy cập web thông qua mạng LAN.
+- Feature 5: Có các chức năng tương tự một website nhắn tin như Facebook Messenger, Zalo.
 
 ## Requirements
 - Operating System: Linux / Windows
@@ -29,13 +29,18 @@ Sau đó, bạn cần cài đặt các thư viện cần thiết bằng cách ch
 - `npm install @google-cloud/storage   # for Google Cloud Storage`
 - `npm install mime-types              # for MIME type handling`
 - `npm install axios cheerio           # for web scraping`
+- `npm install ffprobe-static          # for media file analysis`
+- `npm install htmlparser2             # for HTML parsing`
+- `npm install emoji.json              # for emoji support`
+- `npm install -g ngrok                # if you want to expose your local server to the internet`
+- Lưu ý rằng bạn cần các thết bị ở trong cùng một mạng LAN để có thể truy cập vào ứng dụng này. Và đảm bảo các thiết bị này có thể `ping` lẫn nhau.
 
 ## Operating
 - Bước 1: Tải project về máy tính của bạn. 
 - Bước 2: Cài đặt Node.js vào thư mục backend.
 - Bước 3: Mở terminal và chuyển đến thư mục backend. Bắt đầu tải các thư viện cần thiết bằng lệnh `npm install`.
 - Bước 4: Chạy lệnh `node server.js` để khởi động server.
-- Bước 5: Mở file `auth.html` và chạy trong trình duyệt web.
+- Bước 5: Dựa vào địa chỉ IP và cổng mà server đang chạy, mở trình duyệt web và truy cập vào địa chỉ đó. Ví dụ: `http://192.168.0.100:3000`
 - Bước 6: Đăng nhập vào tài khoản của bạn. Nếu bạn chưa có tài khoản, hãy tạo một tài khoản mới.
 - Bước 7: Sau khi đăng nhập thành công, bạn sẽ được chuyển đến trang chính của ứng dụng. 
-- Bước 8: Tại đây, bạn có thể gửi tin nhắn văn bản, tài liệu và hình ảnh cho người dùng khác.
+- Bước 8: Tại đây, bạn có thể gửi tin nhắn văn bản, tệp và hình ảnh cho người dùng khác.

@@ -11,5 +11,4 @@ npm install axios cheerio           # for web scraping
 npm install ffprobe-static          # for media file analysis
 npm install htmlparser2             # for HTML parsing
 npm install emoji.json              # for emoji support
-
-npm install -g ngrok
+npm install -g ngrok                # if you want to expose your local server to the internet

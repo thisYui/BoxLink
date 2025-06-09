@@ -45,7 +45,7 @@ function isValidMessage(content) {
 
         if (fileName && size && data) {
             if (size > maxSize) {
-                alert("Kích thước tệp vượt quá giới hạn 5MB. Vui lòng chọn tệp khác.");
+                alert(t("message.overflow-size-file"));
                 return false;
             }
             return true;
@@ -156,7 +156,7 @@ function formatRelativeTimeRead(inputDate) {
         return `${hours}:${minutes}`;
 
     } else if (diffDays < 10) {
-        return `${Math.floor(diffDays)} ngày`;
+        return `${Math.floor(diffDays)} ${t("chat.day")}`;
 
     } else if (diffYears < 1) {
         const day = date.getDate().toString().padStart(2, '0');
@@ -181,31 +181,31 @@ function formatRelativeTimeOnline(inputDate) {
 
     // Currently active (within the last 2 minutes)
     if (diffMs < 2 * 60 * 1000) {
-        return "Đang hoạt động";
+        return t("chat.is-online");
 
     }  else if (diffHours < 1) {
-        return `Hoạt động ${diffMinutes} phút trước`;
+        return `${t("chat.online")} ${diffMinutes} `;
 
     } else if (diffHours < 24) {
         const remainingMinutes = diffMinutes % 60;
         if (remainingMinutes > 0) {
-            return `Hoạt động ${diffHours} giờ ${remainingMinutes} phút trước`;
+            return `${t("chat.online")} ${diffHours} ${t("chat.hour")} ${remainingMinutes} ${t("chat.before")}`;
         } else {
-            return `Hoạt động ${diffHours} giờ trước`;
+            return `${t("chat.online")} ${diffHours} ${diffHours} ${t("chat.before")}`;
         }
 
     } else if (diffDays < 10) {
-        return `Hoạt động ${diffDays} ngày trước`;
+        return `${t("chat.online")} ${diffDays} ${t("chat.day")} ${t("chat.before")}`;
 
     } else if (diffYears < 1) {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        return `Hoạt động ngày ${day}/${month}`;
+        return ` ${t("chat.online")} ${t("chat.day")} ${day}/${month}`;
 
     } else {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        return `Hoạt động ngày ${day}/${month}/${date.getFullYear()}`;
+        return `${t("chat.online")} ${t("chat.day")} ${day}/${month}/${date.getFullYear()}`;
     }
 }
 

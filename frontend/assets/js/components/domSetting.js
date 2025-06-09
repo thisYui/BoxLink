@@ -1,4 +1,3 @@
-import { changeLanguage } from "../user/settingClient.js";
 import { loadLanguage, getListLanguage, getThemeList } from "../config/i18n.js";
 import { settingConfig, changeSettingLanguage, changeSettingNotification, changeSettingTheme} from "../fetchers/infoFetcher.js"
 import { turnOnOrOffNotification } from "../user/notificationProcessor.js";
@@ -80,15 +79,12 @@ window.openModal = function (modalId) {
     }
 }
 
-window.chooseTheme = function (event) {
-    // Hiện các theme có sẵn
-    const themeList = ["light", "dark"];
+window.chooseTheme = async function () {
 
-    // process
 }
 
 window.resetLanguage = async function () {
-    changeLanguage().then();
+
 }
 
 async function toggleNotification(toggle) {
