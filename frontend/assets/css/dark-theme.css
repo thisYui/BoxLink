@@ -1,16 +1,41 @@
 body {
-    background-color: #121212;
+    background-image: linear-gradient(to right, #393e46,
+    #2f394b, #26334f, #1f2c52, #1b2554, #182151,
+    #161c4e, #13184b, #0e1743, #09153b, #071233,
+    #070f2b);
     color: #e0e0e0;
 }
+*::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #474F7A;
+}
 
+*::-webkit-scrollbar-track:hover {
+  background-color: #474F7A;
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: #474F7A;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #81689D;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #81689D;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #81689D;
+}
 .menu-bar {
-    background-color: #121212;
-    box-shadow: 0px 5px 15px rgba(255, 255, 255, 1);
+    box-shadow: rgba(166, 174, 177, 0.12) 0px 2px 4px 0px, rgba(244, 244, 244, 0.32) 0px 2px 16px 0px;
 }
 
 /* Menu */
 #logOutBox {
-    background-color: #1e1e1e;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -37,9 +62,9 @@ body {
 
 /* Container backgrounds */
 .search-container, .chat-container, .list-container, .notification-container,
-.profile-friend-container, .profile-container, .settings-container {
-    background-color: #1e1e1e;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+.profile-friend-container,.message-container, .profile-container, .settings-container,
+.chats-info {
+    box-shadow: rgba(212, 212, 212, 0.12) 0px 2px 4px 0px, rgba(255, 255, 255, 0.32) 0px 2px 16px 0px;
 }
 
 /* Header elements */
@@ -79,15 +104,18 @@ body {
     background-color: #1a3b37;
 }
 
-/* Message container */
-.message-container {
-    background-color: #1a3b37;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-}
 
 /* Message container header elements */
 .chat-info:hover {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chats-info-features-button i {
+    background-color: #1F2544;
+}
+
+.chats-info-features-button i:hover {
+    background-color: #474F7A;
 }
 
 .options-button:hover {
@@ -210,9 +238,6 @@ body {
     background-color: #1a5d54;
 }
 
-.chats-info {
-    background-color: #46484B;
-}
 
 .chats-list-user {
     background-color: inherit;
@@ -224,4 +249,8 @@ body {
 
 .chat-box-choosen {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-body {
+    border: 1px solid #fff;
 }

@@ -23,6 +23,13 @@ body {
     padding: 0 5px;
 }
 
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+
+}
+
 /* Menu Styles */
 .menu {
     display: flex;
@@ -158,25 +165,28 @@ body {
 /* Container chung */
 .search-body {
     position: relative;
-    width: 300px; /* hoặc điều chỉnh lại tùy layout */
+    width: 95%;
+
+    border-radius: 35px;
+    overflow: hidden;
 }
 
 .line-search {
-  border: 1px solid black;
-  height: 2px;
-  width: 95%;
-  margin: 20px 0;
+    height: 2px;
+    width: 95%;
+    margin: 20px 0;
 }
 
 /* Input chính */
 .search-body input {
     width: 100%;
-    padding: 10px 40px 10px 35px; /* Chừa chỗ cho icon trái (35px) và icon phải (40px) */
+    padding: 10px 40px 10px 35px;
     font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
     box-sizing: border-box;
+    outline: none;
+    border: none;
 }
+
 
 /* Icon kính lúp bên trái */
 .search-icon {
@@ -371,12 +381,7 @@ body {
 }
 
 /* Icon chuông */
-.chats-info-features-button-icon {
-    font-size: 24px;
-    color: #555;
-    cursor: pointer;
-    transition: color 0.3s, transform 0.3s;
-}
+
 
 /* Khi bật thông báo (fa-bell) */
 .chats-info-features-button-icon.fa-bell {
@@ -443,6 +448,7 @@ body {
     flex-direction: row;
     width: 100%;
     margin-bottom: 10px;
+    height: fit-content;
 }
 
 .message-content {
@@ -459,6 +465,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    align-self: center;
     gap: 8px;
     margin-bottom: 5px;
     font-size: 0.8rem;
@@ -477,19 +484,36 @@ body {
 
 .message-meta {
     display: flex;
-    flex-direction: column;
-    width: 100%;
+    flex-direction: row-reverse;
+    margin: 0 5px;
+    margin: 0 10px 10px;
+}
+
+.sender .message-meta {
+    display: flex;
+    flex-direction: row;
 }
 
 .message-time {
     margin-top: 5px;
     font-size: 0.8rem;
     color: gray;
+    visibility: hidden;
+    align-self: center;
+    margin: 0 10px;
 }
+
+
 
 .reply-button {
     margin-top: 5px;
     color: gray;
+    align-self: center;
+    visibility: hidden;
+}
+
+.message-wrapper:hover .message-time,.message-wrapper:hover .reply-button{
+    visibility: visible;
 }
 
 .reply-button:hover {
@@ -551,6 +575,7 @@ body {
     margin: 10px 20px;
     border-radius: 20px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    overflow-y: scroll;
 }
 
 .chats-info-header {
@@ -588,38 +613,48 @@ body {
     text-align: center;
     max-width: 90%;
     word-wrap: break-word;
+    font-size: 26px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.chats-info-header-name:hover {
+    text-decoration: underline;
 }
 
 .chats-info-header-name-state {
-
+    font-size: 15px;    
 }
 
 .chats-info-features {
+    width: 100%;
+    height: fit-content;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 10px 5%;
+    justify-content: space-evenly;
 }
 
 .chats-info-features-button {
-    padding: 5px 10px;
-    display: inline-flex;
+    width: 25%;
     align-items: center;
-    width: 70%;
-    border-radius: 20px;
+    text-align: center;
+    overflow: hidden;
 }
 
 .chats-info-features-button i {
-    width: fit-content;
-    padding: 5px;
+
+    position: relative;
+    font-size: 24px;
+    width: 42px;
+    height: 42px;
+    text-align: center;
     border-radius: 50%;
-    z-index: 1;
-    margin-right: 10px;
+    align-content: center;
 }
 
-.chats-info-features-button:hover {
-    cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.15);
-}
+
 
 @keyframes messageAppear {
     from { opacity: 0; transform: translateY(10px); }
@@ -1409,7 +1444,6 @@ body {
 }
 
 .modal-content {
-    background: white;
     padding: 20px;
     border-radius: 10px;
     width: 300px;
@@ -1680,4 +1714,9 @@ body {
         width: 100%;
         margin: 10px 0;
     }
+}
+
+/* Edit friends profile */
+.friend-action-button {
+    padding: 5px 10px;
 }

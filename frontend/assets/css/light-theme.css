@@ -1,11 +1,42 @@
 body {
-    background-color: #f5f5f5;
+    background: #F7CFD8;
+    background: linear-gradient(to right, rgba(247, 207, 216, 1) 0%, 
+                            rgba(166, 214, 214, 1) 60%, 
+                            rgba(142, 125, 190, 1) 100%);
     color: #333;
 }
 
+
+
+*::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #EEF1DA;
+}
+
+*::-webkit-scrollbar-track:hover {
+    background-color: #EEF1DA;
+}
+
+*::-webkit-scrollbar-track:active {
+    background-color: #EEF1DA;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #ADB2D4;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #ADB2D4;
+}
+
+*::-webkit-scrollbar-thumb:active {
+    background-color: #ADB2D4;
+}
+
+
 .menu-bar {
-    background-color: #ffffff;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
 
 /* Menu */
@@ -19,12 +50,12 @@ body {
 }
 
 .logOutBox-button:hover {
-    background-color: #f0f0f0;
+    background-color: #9FB3DF;
 }
 
 .menu-bar-button:hover i {
     color: #2a9d8f;
-    background-color: #f0f0f0;
+    background-color: #9FB3DF;
 }
 
 .menu-bar-button i {
@@ -37,14 +68,15 @@ body {
 
 .menu-bar-button-choosen i {
     color: #2a9d8f;
-    background-color: #e6f5f2;
+    background-color: #9FB3DF;
 }
 
 /* Container backgrounds */
 .search-container, .chat-container, .list-container,.notification-container,
-.profile-friend-container, .profile-container, .settings-container {
-    background-color: #ffffff;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+.profile-friend-container, .profile-container, .settings-container,
+.message-container {
+    
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
 
 /* Header elements */
@@ -87,11 +119,6 @@ body {
     background-color: #e6f5f2;
 }
 
-/* Message container */
-.message-container {
-    background-color: #e6f5f2;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
-}
 
 /* Message container header elements */
 .chat-info:hover {
@@ -104,8 +131,12 @@ body {
 
 /* Message styles */
 .message-content {
-    background-color: #2a9d8f;
+    background-color: #A2678A;
     color: white;
+}
+
+.sender .message-content {
+    background-color: #E19898;
 }
 
 .systemMessage {
@@ -218,7 +249,15 @@ body {
 }
 
 .chats-info {
-    background-color: #BDDDE4;
+    
+}
+
+.chats-info-features-button i {
+    background-color: #fff;
+}
+
+.chats-info-features-button i:hover {
+    background-color: #d0d0d0;
 }
 
 .chats-list-user {
@@ -231,4 +270,8 @@ body {
 
 .chat-box-choosen {
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.search-body {
+    border: 1px solid black;
 }
