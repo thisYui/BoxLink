@@ -103,3 +103,26 @@ async function toggleNotification(toggle) {
 
     turnOnOrOffNotification();  // Thay đổi trạng thái thông báo
 }
+
+function applyTheme(theme) {
+    const mappingThemes = [
+        "assets/css/light-theme.css",
+        "assets/css/dark-theme.css"
+    ];
+
+    // kiểm tra xem theme có tồn tại trong mapping
+    const themeList = getThemeList();
+    for (let i = 0; i < themeList.length; i++) {
+        if (themeList[i] === theme) {
+            document.getElementById("theme-style").href = mappingThemes[i];
+            break;
+        }
+    }
+}
+
+themeSelect.addEventListener("change", async (event) => {
+        const selectedTheme = event.target.value;
+        // await changeSettingTheme(location.getItem("uid"), th);
+        // Chuyển đổi giao diện
+        applyTheme(selectedTheme);
+    });

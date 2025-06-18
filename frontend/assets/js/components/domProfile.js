@@ -6,9 +6,7 @@ import { operaSocialLink } from "../fetchers/infoFetcher.js";
 let stateEdit = false; // Biến để theo dõi chế độ chỉnh sửa
 
 window.loadProfile = async function () {
-    const profileContainer = document.querySelector(".profile-container");
-    const socialLinkContainer = profileContainer.querySelector(".profile-body-personal-info-container-text.profile-link");
-    socialLinkContainer.innerHTML = ""; // Xóa tất cả các liên kết mạng xã hội hiện có
+    const profileContainer = document.querySelectorAll(".profile-container.personal");
 
     const profile = await getMyProfile();
     showMyProfile(profile);
@@ -39,15 +37,14 @@ function viewMode() {
 }
 
 function showMyProfile(profile) {
-    const profileContainer = document.querySelector(".profile-container");
-
+    //const profileContainer = document.querySelector(".profile-container.personal-profile");
+    const profileContainer = document.getElementById('profileContainer');
     showProfile(profile, profileContainer);
-
     const editProfileButton = profileContainer.querySelector(".edit-profile-button");
     editProfileButton.style.display = profile.countFriendMutual;
 
     const editProfileContainer = document.querySelector(".edit-profile-container");
-    const socialLinkContainer = editProfileContainer.querySelector(".profile-body-personal-info-container-edit-profile");
+    const socialLinkContainer = editProfileContainer.querySelector(".edit-profile-social-links");
     socialLinkContainer.innerHTML = ""; // Xóa tất cả các liên kết mạng xã hội hiện có
     setupProfileEditButtons(profile, editProfileContainer); // Chuẩn bị các dữ liệu cho edit
 }
@@ -80,6 +77,9 @@ function showProfile(profile, profileContainer) {
     const profileStartedDay = profileContainer.querySelector(".profile-started-day");
     const profileFriendNum = profileContainer.querySelector(".profile-friend-num");
 
+    //Xoá các liên kết sẵn có trong profileLink trước đó nếu có
+    profileLink.innerHTML = "";
+
     // Cập nhật thông tin cơ bản
     if (profileAvatar) {
         profileAvatar.src = profile.avatar || "./assets/images/default-avatar.png";
@@ -109,27 +109,26 @@ function showProfile(profile, profileContainer) {
 
     if (profileLink) {
         const socialLinks = profile.socialLinks;
-
-        const linkContainer = profileContainer.querySelector(".profile-body-personal-info-container-text.profile-link");
-
-        if (socialLinks.length === 0) {
+        if (socialLinks) {
+            if (socialLinks.length === 0) {
             const noLinksMessage = document.createElement("p");
             noLinksMessage.textContent = t("profile.noSocialLinks");
+            
+            } else {
+                socialLinks.forEach(link => {
+                    const socialLinkItem = document.createElement("div");
+                    socialLinkItem.className = "social-link-item";
+                    console.log(link)
+                    const iconClass = getIconClassForUrl(link);
 
-        } else {
-            socialLinks.forEach(link => {
-                const socialLinkItem = document.createElement("div");
-                socialLinkItem.className = "social-link-item";
-                console.log(link)
-                const iconClass = getIconClassForUrl(link);
+                    socialLinkItem.innerHTML = `
+                        <i class="${iconClass}"></i>
+                        <a href="${link}" target="_blank">${link}</a>
+                    `;
 
-                socialLinkItem.innerHTML = `
-                    <i class="${iconClass}"></i>
-                    <a href="${link}" target="_blank">${link}</a>
-                `;
-
-                linkContainer.appendChild(socialLinkItem);
-            });
+                    profileLink.appendChild(socialLinkItem);
+                });
+            }
         }
     }
 
@@ -161,6 +160,7 @@ function setupProfileEditButtons(profile, editProfileContainer) {
 
     // Thêm các trường giới tính
     const selectGender = editProfileContainer.querySelector(".profile-gender-input-edit-profile");
+    selectGender.innerHTML = "";
     const option = document.createElement("option");
     option.value = "";
     option.textContent = t("profile.gender-select");
@@ -181,7 +181,7 @@ function setupProfileEditButtons(profile, editProfileContainer) {
     birth.placeholder = birth.value || t("profile.noBirthday");
 
     // Các liên kết mạng xã hội
-    const socialLinkContainer = editProfileContainer.querySelector(".profile-body-personal-info-container-edit-profile");
+    const socialLinkContainer = editProfileContainer.querySelector(".edit-profile-social-links");
     const socialLinks = profile.socialLinks;
     if (socialLinks.length === 0) {
         socialLinkContainer.innerHTML = `<p>${t("profile.noSocialLinks")}</p>`;

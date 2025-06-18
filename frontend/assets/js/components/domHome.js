@@ -35,6 +35,7 @@ window.loadPage = async function (){
     for (const friend of friendList) {
         addBoxChatToList(friend);
     }
+    loadChat().then();
 }
 
 window.loadChat = async function () {

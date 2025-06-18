@@ -254,3 +254,20 @@ body {
 .search-body {
     border: 1px solid #fff;
 }
+
+.profile-body-edit-profile {
+    box-shadow: rgba(255, 255, 255, 0.25) 0px 54px 55px, rgba(255, 255, 255, 0.12) 0px -12px 30px, rgba(255, 255, 255, 0.12) 0px 4px 6px, rgba(255, 255, 255, 0.17) 0px 12px 13px, rgba(255, 255, 255, 0.09) 0px -3px 5px;
+}
+
+.profile-body-basic-info-text-edit-profile:focus, .profile-body-personal-info-container-input-edit-profile:focus {
+    box-shadow: rgba(255, 255, 255, 0.25) 0px 6px 12px -2px, rgba(255, 255, 255, 0.3) 0px 3px 7px -3px;
+    outline: none;
+}
+
+.social-link-item i, .social-link-item-edit-profile i {
+    color: #fff;
+}
+
+.social-link-item a, .social-link-item-edit-profile a {
+    color: #fff;
+}
