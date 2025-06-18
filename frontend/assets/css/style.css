@@ -30,6 +30,14 @@ body {
 
 }
 
+img {
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    display: block;
+}
+
 /* Menu Styles */
 .menu {
     display: flex;
@@ -981,37 +989,67 @@ body {
 .profile-container-div {
     width: 100%;
     height: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 8px;
+    overflow-y: auto;
 }
 
-.profile-header {
-    margin-bottom: 30px;
+/* .profile-body {
     width: 100%;
-}
-
-.profile-body {
-    display: flex;
-}
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 0px;
+} */
 
 .profile-body-basic-info {
-    display: flex;
-    flex-direction: column;
-    width: 33%;
-    text-align: center;
-    padding: 30px;
-    align-items: center;
+    grid-column: span 3 / span 3;
+    grid-row: span 2 / span 2;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 8px;
 }
 
 .profile-body-basic-info-avatar {
-    width: 60%;
-    margin-bottom: 20px;
+    width: 75%;
     border-radius: 50%;
+    grid-column: span 2 / span 2;
+    grid-row: span 4 / span 4;
+    margin: auto auto;
 }
 
 .profile-body-basic-info-text {
-    margin-bottom: 10px;
+    text-align: center;
+    align-self: center;
 }
-.profile-body-info {
 
+.profile-name {
+    font-size: 25px;
+    grid-column: span 3 / span 3;
+    grid-column-start: 3;
+}
+
+.profile-email {
+    font-size: 20px;
+    grid-column: span 3 / span 3;
+    grid-column-start: 3;
+    grid-row-start: 2;
+}
+
+.profile-description {
+    grid-column: span 3 / span 3;
+    grid-row: span 2 / span 2;
+    grid-column-start: 3;
+    grid-row-start: 3;
+}
+
+.profile-body-info {
+    grid-column: span 2 / span 2;
+    grid-column-start: 4;
 }
 
 .profile-body-personal-info {
@@ -1032,10 +1070,81 @@ body {
 .profile-body-additional-info {
     display: flex;
     text-align: center;
-    border-top:1px solid rgba(0, 0, 0, 0.15)
+    border-top:1px solid rgba(0, 0, 0, 0.15);
+    justify-content: space-evenly;
 }
 .profile-body-additional-info-container {
     margin: 10px;
+}
+
+.profile-body-buttons {
+    grid-column: span 2 / span 2;
+    grid-column-start: 4;
+    grid-row-start: 2;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.profile-body-images {
+    grid-column: span 5 / span 5;
+    grid-row: span 3 / span 3;
+    grid-row-start: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+
+.profile-body-images-content {
+    height: 360px;
+    width: 270px;
+    object-fit: cover;
+    cursor: pointer
+}
+
+.profile-body-images-content > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.imageModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ảnh lớn trong modal */
+.modal-content {
+    display: block;
+    max-width: 90%;
+    max-height: 90%;
+    width: auto;
+    height: auto;
+    image-rendering: auto;
+}
+
+/* Nút đóng */
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.close:hover {
+    color: #ccc;
 }
 
 .edit-profile-button {
@@ -1055,90 +1164,12 @@ body {
     color: white;
 }
 
-.profile-avatar-edit {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 40px;
-    height: 40px;
-    background-color: var(--light-purple);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.profile-avatar-edit:hover {
-    transform: scale(1.1);
-    background-color: var(--dark-purple);
-}
-
-.profile-info-section {
-    width: 100%;
-    padding: 0 20px;
-}
-
-.profile-info-item {
-    margin-bottom: 20px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
-    transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.profile-info-item:hover {
-    transform: translateX(5px);
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.profile-info-item label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #888;
-}
-
-.profile-info-value {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.edit-btn {
-    background: none;
-    border: none;
-    color: var(--light-green);
-    cursor: pointer;
-    font-size: 16px;
-    padding: 5px;
-    border-radius: 50%;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.edit-btn:hover {
-    transform: scale(1.2);
-    color: var(--light-purple);
-}
-
-.edit-btn.disabled {
-    color: #888;
-    cursor: not-allowed;
-}
-
-.edit-btn.disabled:hover {
-    transform: none;
-    color: #888;
-}
-
 /* Profile edit Container */
 .profile-container-div-edit-profile {
     width: 100%;
     height: 100%;
 }
-
+/* 
 .profile-header-edit-profile {
     margin-bottom: 30px;
     width: 100%;
@@ -1146,10 +1177,10 @@ body {
 
 .profile-body-edit-profile {
     display: flex;
-}
+} */
 
 /* Wrapper để định vị icon */
-.profile-avatar-wrapper-edit-profile {
+/* .profile-avatar-wrapper-edit-profile {
     position: relative;
     display: inline-block;
 }
@@ -1210,11 +1241,7 @@ body {
     display: block;
 }
 
-.profile-body-personal-info-container-edit-profile {
-    display: flex;
-    margin: 10px;
-    flex-direction: column;
-}
+
 
 .profile-body-personal-info-container-title-edit-profile {
     margin-bottom: 6px;
@@ -1294,23 +1321,7 @@ body {
     background-color: var(--dark-purple);
 }
 
-.social-link-item, .social-link-item-edit-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
 
-.social-link-item i, .social-link-item-edit-profile i {
-  color: var(--light-green);
-  font-size: 18px;
-}
-
-.social-link-item a, .social-link-item-edit-profile a {
-  color: #0077cc;
-  text-decoration: none;
-  flex: 1;
-}
 
 .remove-social-btn-edit-profile {
   background: none;
@@ -1359,6 +1370,11 @@ body {
   background-color: #ccc;
 }
 
+.profile-body-images {
+
+} */
+
+
 /* Responsive */
 @media (max-width: 768px) {
     .profile-body-edit-profile {
@@ -1373,7 +1389,210 @@ body {
         width: 100%;
     }
 }
+.edit-profile-container {
+    padding: 0;
+}
+.profile-body-edit-profile {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 24px;
+    border-radius: 16px;
+    height: 100%;
+    overflow-y: scroll;
+}
 
+/* Ảnh đại diện */
+.profile-avatar-wrapper-edit-profile {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+}
+
+.profile-body-basic-info-avatar-edit-profile {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+
+/* Icon chỉnh sửa ảnh */
+.profile-avatar-edit-icon-edit-profile {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #4a90e2;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    border: 2px solid white;
+}
+
+.profile-body-basic-info-text-edit-profile {
+    width: 100%;
+    padding: 10px 14px;
+    margin: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+    resize: none;
+}
+
+
+.profile-body-personal-info-container-title-edit-profile {
+    margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.profile-body-personal-info-container-input-edit-profile {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.profile-body-personal-info-container-edit-profile {
+    margin: 10px 0;
+}
+
+/* Thêm liên kết */
+.add-social-link-wrapper-edit-profile {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.add-social-btn-edit-profile {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-social-btn-edit-profile:hover {
+    background-color: #e6e6e6;
+}
+
+.social-link-item, .social-link-item-edit-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.social-link-item i, .social-link-item-edit-profile i {
+    font-size: 18px;
+}
+
+.social-link-item a, .social-link-item-edit-profile a {
+    text-decoration: none;
+    flex: 1;
+}
+
+.edit-profile-social-links {
+    display: flex;
+    margin: 10px;
+    flex-direction: column;
+    width: fit-content;
+}
+
+.remove-social-btn-edit-profile {
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    border: none;
+    outline: none;
+}
+
+.remove-social-btn-edit-profile:hover {
+    background-color: #c6c6c6;
+}
+
+#addLinkInputGroup {    
+    margin-top: 10px;
+    gap: 8px;
+    justify-content: center;
+}
+
+#newSocialLink {
+    width: 60%;
+    padding: 8px 12px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#acceptAddLinkButton,
+#cancelAddLinkButton {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#cancelAddLinkButton {
+    background-color: #e94e4e;
+}
+
+#acceptAddLinkButton:hover {
+    background-color: #3b78c4;
+}
+
+#cancelAddLinkButton:hover {
+    background-color: #d33;
+}
+
+/* Nút lưu và hủy */
+.profile-body-buttons-edit-profile {
+    margin-top: 30px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.save-profile-button-edit-profile,
+.cancel-edit-button-edit-profile {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.save-profile-button-edit-profile {
+    background-color: #4caf50;
+    color: white;
+}
+
+.cancel-edit-button-edit-profile {
+    background-color: #f44336;
+    color: white;
+}
+
+.save-profile-button-edit-profile:hover {
+    background-color: #45a049;
+}
+
+.cancel-edit-button-edit-profile:hover {
+    background-color: #e53935;
+}
 
 /* Settings Container */
 .settings-body {
@@ -1395,6 +1614,10 @@ body {
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.05);
     animation: rotateGear 10s linear infinite;
+}
+
+.settings-option-select {
+    margin-left: 10px;
 }
 
 @keyframes rotateGear {
@@ -1443,11 +1666,6 @@ body {
     color: #4CAF50;
 }
 
-.modal-content {
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-}
 
 .modal-content input {
     width: 100%;
@@ -1482,21 +1700,21 @@ body {
 
 /* modal tổng thể */
 .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(1);
-  width: 90%;
-  max-width: 400px;
-  background-color: var(--dark-bg, #1e1e1e);
-  border-radius: 15px;
-  z-index: 101;
-  opacity: 1;
-  pointer-events: auto;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  color: #fff;
-  padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    width: 90%;
+    max-width: 400px;
+    background-color: var(--dark-bg, #1e1e1e);
+    border-radius: 15px;
+    z-index: 101;
+    opacity: 1;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 20px;
 }
 
 .modal.hidden {
@@ -1718,5 +1936,6 @@ body {
 
 /* Edit friends profile */
 .friend-action-button {
-    padding: 5px 10px;
+    height: 45px;
+    padding: 0 10px;
 }
