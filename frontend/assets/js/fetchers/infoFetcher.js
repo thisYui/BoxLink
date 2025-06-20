@@ -301,6 +301,7 @@ async function changeSettingLanguage(language) {
             },
             body: JSON.stringify({
                 uid: localStorage.getItem("uid"),
+                language: language
             })
         });
 

@@ -16,6 +16,11 @@ function getIconClassForUrl(url) {
     return socialIconMap[domain] || socialIconMap["default"];
 }
 
+function isURL(inputText) {
+    const urlRegex = /^https?:\/\/[^\s]+$/;
+    return urlRegex.test(inputText);
+}
+
 function isRichText(inputText) {
     // Regex kiểm tra URL
     const urlRegex = /https?:\/\/[^\s]+/g;
@@ -59,22 +64,27 @@ function isValidMessage(content) {
 async function getDataFromDocument(typeData) {
     if (typeData === "text") {
         const content = document.getElementById("message-input").value.trim();
-        const type = isRichText(content) ? "rich-text" : "text";  // Kiểm tra xem có phải rich text hay không
+        const type = isURL(content) ? 'link' : isRichText(content) ? "rich-text" : "text";  // Kiểm tra xem có phải rich text hay không
         const replyTo = sessionStorage.getItem("replyMessageID");
 
         return { type, content, replyTo };
 
-    } else if (typeData === "file") {
+    } else if (typeData === "application") {
         const files = document.getElementById('attachment').files;
         if (files.length === 0) return;  // Kiểm tra nếu không có tệp nào được chọn
 
-        const type = files[0].type.split('/')[0];
+        let type = files[0].type.split('/')[0];
         const replyTo = sessionStorage.getItem("replyMessageID");
 
         const file = files[0];  // Giả sử bạn muốn lấy tệp đầu tiên
 
         // Chờ để đọc tệp
         const data = await convertFileToBinary(file);
+
+        if (type === 'text') {
+            // Một số tệp văn bản có thể có type là text/plain, text/html, v.v.
+            type = 'application';  // Nếu là tệp văn bản, đổi thành application
+        }
 
         return {
             type,
@@ -88,17 +98,16 @@ async function getDataFromDocument(typeData) {
     }
 }
 
-// Chuyển từ file thành binary data
+// Đọc file dưới dạng Base64
 async function convertFileToBinary(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = function(event) {
-            resolve(event.target.result);
+        reader.onload = function (event) {
+            const base64 = event.target.result.split(',')[1]; // Bỏ phần "data:...;base64,"
+            resolve(base64);
         };
-        reader.onerror = function(error) {
-            reject(error);
-        };
-        reader.readAsArrayBuffer(file);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
     });
 }
 
@@ -229,6 +238,7 @@ function formatRelativeTimeSend(inputDate) {
 }
 
 export {
+    isURL,
     getIconClassForUrl,
     isValidMessage,
     getDataFromDocument,

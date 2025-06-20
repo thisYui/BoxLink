@@ -160,7 +160,7 @@ function fixMessageToChatBoxList(chatID, message, chatOpen) {
         textMessage += "Đã gửi một ảnh.";  // Nội dung tin nhắn ảnh
     } else if (type === "video") {
         textMessage += "Đã gửi một video.";  // Nội dung tin nhắn video
-    } else if (type === "file") {
+    } else if (type === "application") {
         textMessage += "Đã gửi một tệp đính kèm.";  // Nội dung tin nhắn tệp
     } else {
         console.warn("Loại tin nhắn không xác định:", type);

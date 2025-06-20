@@ -61,6 +61,13 @@ function getListLanguage() {
     ];
 }
 
+function getKeyLanguage() {
+    return [
+        'vi',
+        'en'
+    ]
+}
+
 function getThemeList() {
     return [
         t("settings.light-theme"),
@@ -96,5 +103,6 @@ export {
     getValueMappingGender,
     getInterGender,
     getListLanguage,
+    getKeyLanguage,
     getThemeList
 }

@@ -10,6 +10,9 @@ async function createAuth(email, password, displayName) {
             password: password
         });
 
+        // Tạo post
+        await db.collection("posts").doc(userRecord.uid);
+
         // Ghi dữ liệu vào Firestore
         await db.collection("users").doc(userRecord.uid).set({
             displayName: displayName,
@@ -46,9 +49,21 @@ async function deleteAuth(uid) {
         // Xóa dữ liệu từ Firestore
         await db.collection("users").doc(uid).delete();
 
-        // Xóa gửi cho bạn bè biết rằng tk ko còn tồn tại
+        // Xóa post của người dùng
+        const postRef = db.collection("posts").doc(uid);
+        const subcollections = await postRef.listCollections();
+
+        for (const subcollection of subcollections) {
+            const snapshot = await subcollection.get();
+            const deletes = snapshot.docs.map(doc => doc.ref.delete());
+            await Promise.all(deletes);
+        }
+
+        // Sau khi xóa subcollections, xóa document chính
+        await postRef.delete();
 
         return true;
+
     } catch (error) {
         logger.error("Lỗi khi xóa tài khoản:", error);
         throw error;

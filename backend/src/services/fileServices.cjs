@@ -19,33 +19,42 @@ const downloadFolder = process.platform === 'win32'
   : path.join(process.env.HOME, 'Downloads'); // Đối với macOS/Linux
 
 // Hàm tải lên dữ liệu nhị phân trực tiếp từ data lên Firebase Storage
-async function uploadFile(data, storagePath) {
-    try {
-        // Tạo một đối tượng file blob trong Firebase Storage
-        const file = bucket.file(storagePath);
+// Upload base64 string lên Firebase Storage
+async function uploadFile(base64String, storagePath) {
+    return new Promise((resolve, reject) => {
+        try {
+            // Chuyển base64 thành Buffer
+            const bufferData = Buffer.from(base64String, 'base64');
 
-        // Tạo một stream ghi dữ liệu lên Firebase Storage
-        const blobStream = file.createWriteStream({
-            metadata: {
-                contentType: mime.lookup(storagePath),  // Xác định loại MIME từ đường dẫn
-            },
-        });
+            // Tạo đối tượng file trong Firebase Storage
+            const file = bucket.file(storagePath);
 
-        // Khi quá trình tải lên hoàn thành
-        blobStream.on('finish', () => {
-            logger.info(`${storagePath} đã được tải lên Firebase Storage thành công`);
-        });
+            // Tạo stream ghi dữ liệu
+            const blobStream = file.createWriteStream({
+                metadata: {
+                    contentType: mime.lookup(path.basename(storagePath)) || 'application/octet-stream',
+                },
+            });
 
-        // Nếu có lỗi xảy ra
-        blobStream.on('error', (error) => {
+            // Xử lý sự kiện khi hoàn tất
+            blobStream.on('finish', () => {
+                logger.info(`${storagePath} đã được tải lên Firebase Storage thành công`);
+                resolve(); // Trả Promise thành công
+            });
+
+            // Xử lý lỗi khi upload
+            blobStream.on('error', (error) => {
+                logger.error('Lỗi khi tải tệp lên:', error);
+                reject(error);
+            });
+
+            // Ghi dữ liệu vào stream
+            blobStream.end(bufferData);
+        } catch (error) {
             logger.error('Lỗi khi tải tệp lên:', error);
-        });
-
-        // Ghi dữ liệu nhị phân vào stream
-        blobStream.end(data);
-    } catch (error) {
-        logger.error('Lỗi khi tải tệp lên:', error);
-    }
+            reject(error);
+        }
+    });
 }
 
 // Hàm tải tệp từ Firebase Storage về thư mục Downloads

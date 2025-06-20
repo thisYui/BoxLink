@@ -117,15 +117,16 @@ async function formatMessage(type, content, chatID) {
     }
 
     // Chỉ còn lại các loại dữ liệu dạng file
-    const filePath = `${chatID}/${content.fileName}`;
-    await uploadFile(content.date, filePath); // Tải ảnh lên Firebase Storage
+    const filePath = `${chatID}/chat/${content.fileName}`;
+    await uploadFile(content.data, filePath); // Tải ảnh lên Firebase Storage
+    const url = await getDownloadUrl(filePath); // Lấy URL tải xuống từ Firebase Storage
 
     if (type === "image") {
 
         return {
             fileName: content.fileName,
             size: content.size,  // Lấy kích thước tệp
-            url: await getDownloadUrl(filePath), // Lấy URL tải xuống từ Firebase Storage
+            url: url, // Lấy URL tải xuống từ Firebase Storage
             storagePath: filePath, // Đường dẫn trên Firebase Storage
         };
     }
@@ -135,16 +136,17 @@ async function formatMessage(type, content, chatID) {
             fileName: content.fileName,
             size: content.size,  // Lấy kích thước tệp
             duration: await getVideoDuration(content.fileName), // Lấy thời gian video
-            url: await getDownloadUrl(filePath), // Lấy URL tải xuống từ Firebase Storage
+            url: url, // Lấy URL tải xuống từ Firebase Storage
             storagePath: filePath, // Đường dẫn trên Firebase Storage
         };
     }
 
-    if (type === "file") {
+    if (type === "application") {  // tướng ứng file
         return {
             fileName: content.fileName,
             subtype: mine.lookup(filePath), // Lấy loại mime từ tệp
             size: content.size,  // Lấy kích thước tệp
+            url: url, // Lấy URL tải xuống từ Firebase Storage
             storagePath: filePath, // Đường dẫn trên Firebase Storage
         };
     }

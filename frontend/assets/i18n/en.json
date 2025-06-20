@@ -111,7 +111,7 @@
     "send-voice": "Send Voice Message",
     "send-video": "Send Video",
     "send-link": "Send Link",
-    "overflow-size-file": "File size exceeds the limit of 5MB",
+    "overflow-size-file": "File size exceeds the limit of 5MB"
   },
   "notification": {
     "title": "Notifications",

@@ -25,7 +25,7 @@ async function getDataBoxListChat(chatId, uid) {
             text = `${friendData.displayName} đã gửi một video`;
         } else if (type === "audio") {
             text = `${friendData.displayName} đã gửi một audio`;
-        } else if (type === "file") {
+        } else if (type === "application") {
             text = `${friendData.displayName} đã gửi một tệp đính kèm`;
         }
 
@@ -303,12 +303,13 @@ async function updateLastOnline(uid) {
 async function getProfileUser(uid) {
     try {
         const user = await db.collection("users").doc(uid).get();
+        const authUser = await admin.auth().getUser(uid);
         const userData = user.data();
 
         return {
             uid: user.id,
             displayName: userData.displayName,
-            email: userData.email,
+            email: authUser.email,
             avatar: userData.avatar,
             listFriend: userData.friendList,
             countFriends: userData.friendList.length,
@@ -402,7 +403,7 @@ async function settingConfig(uid) {
         const userData = user.data();
 
         return {
-            turnOnNotification: userData.turnOnNotification || true,
+            turnOnNotification: userData.turnOnNotification,
             language: userData.language || "vi",
             theme: userData.theme || 0,
         }

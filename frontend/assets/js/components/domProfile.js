@@ -118,7 +118,6 @@ function showProfile(profile, profileContainer) {
                 socialLinks.forEach(link => {
                     const socialLinkItem = document.createElement("div");
                     socialLinkItem.className = "social-link-item";
-                    console.log(link)
                     const iconClass = getIconClassForUrl(link);
 
                     socialLinkItem.innerHTML = `
@@ -191,14 +190,6 @@ function setupProfileEditButtons(profile, editProfileContainer) {
             addLinkInListSocial(link, socialLinkContainer);
         });
     }
-
-    // Các thông tin khác
-    const startedDay = editProfileContainer.querySelector(".profile-started-day-edit-profile");
-    const date = convertToDate(profile.createdAt);
-    startedDay.textContent = dateToDMY(date);
-
-    const friendNum = editProfileContainer.querySelector(".profile-friend-num-edit-profile");
-    friendNum.textContent = profile.countFriends?.toString() || "0";
 }
 
 function addLinkInListSocial(link, socialLinkContainer) {

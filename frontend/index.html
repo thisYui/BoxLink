@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoxLink</title>
+    <link rel="faapple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+    <link rel="manifest" href="assets/favicon/site.webmanifest">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <link id="theme-style" rel="stylesheet" href="assets/css/dark-theme.css">
     <script src="https://kit.fontawesome.com/05266ada08.js" crossorigin="anonymous"></script>
@@ -44,10 +48,12 @@
             </div>
         </div>
         <div class="menu-bar">
+            <div class="menu-bar-button display-option" id="Post" onclick="changeTab('Post')">
+                <i class="fas fa-plus"></i>
+            </div>
             <div class="menu-bar-button display-option" id="Profile" onclick="changeTab('Profile')">
                 <i class="fas fa-user"></i>
             </div>
-
             <div class="menu-bar-button display-option" id="Settings" onclick="changeTab('Settings')">
                 <i class="fas fa-cog"></i>
             </div>
@@ -90,6 +96,11 @@
         <div class="chats-list">
             <!-- Chats will be rendered here -->
         </div>
+    </div>
+
+    <!-- Post Container -->
+    <div class="post-container hidden" id="postContainer">
+        <!-- Post -->
     </div>
 
     <!-- Profile Container -->
@@ -135,45 +146,6 @@
             <div class="profile-body-images">
                 <div class="profile-body-images-content">
                     <img src="./assets/images/default-avatar.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/HeapSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/inboundnewrules.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/inherit.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/Mediator.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/pic1.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/polymophysm.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/templateMethod.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/QuickSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/memberFunct.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/HeapSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/img_5terre_wide.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/pic2.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/screen.png" alt="">
                 </div>
             </div>
         </div>
@@ -297,8 +269,7 @@
 
             <input type="text" class="profile-body-basic-info-text-edit-profile profile-name-input-edit-profile">
             <input type="email" class="profile-body-basic-info-text-edit-profile profile-email-input-edit-profile">
-            <textarea class="profile-body-basic-info-text-edit-profile profile-description-input-edit-profile"></textarea> 
-
+            <textarea class="profile-body-basic-info-text-edit-profile profile-description-input-edit-profile"></textarea>
             
             <div class="profile-body-personal-info-edit-profile">
                 <div class="profile-body-personal-info-container-edit-profile">
@@ -347,46 +318,44 @@
                         <span data-i18n="settings.notifications"></span>
                     </div>
                 </div>
-                <div class="setting-item">
-                    <div class="settings-option" id="themeToggle">
-                        <div class="settings-option-text">
-                            <i class="fas fa-moon"></i>
-                            <span data-i18n="settings.theme-mode"></span>
-                        </div>
-                        <select id="themeSelect" class="settings-option-select">
-                            <!-- Options will be dynamically generated -->
-                        </select>
+                <div class="settings-option" id="themeToggle">
+                    <div class="settings-option-text">
+                        <i class="fas fa-moon"></i>
+                        <span data-i18n="settings.theme-mode"></span>
                     </div>
-                    <div class="settings-option">
-                        <div class="settings-option-text">
-                            <i class="fas fa-globe"></i>
-                            <span data-i18n="settings.language"></span>
-                        </div>
-                        <select id="languageSelect" class="settings-option-select">
-                            <!-- Options will be dynamically generated -->
-                        </select>
+                    <select id="themeSelect" class="settings-option-select">
+                        <!-- Options will be dynamically generated -->
+                    </select>
+                </div>
+                <div class="settings-option">
+                    <div class="settings-option-text">
+                        <i class="fas fa-globe"></i>
+                        <span data-i18n="settings.language"></span>
                     </div>
-                    <div class="settings-option">
-                        <div class="settings-option-text">
-                            <i class="fas fa-key"></i>
-                            <span data-i18n="settings.change-password"></span>
-                        </div>
-                        <i class="fas fa-chevron-right" onclick="openModal('password')"></i>
+                    <select id="languageSelect" class="settings-option-select">
+                        <!-- Options will be dynamically generated -->
+                    </select>
+                </div>
+                <div class="settings-option">
+                    <div class="settings-option-text">
+                        <i class="fas fa-key"></i>
+                        <span data-i18n="settings.change-password"></span>
                     </div>
-                    <div class="settings-option danger">
-                        <div class="settings-option-text">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span data-i18n="settings.logout"></span>
-                        </div>
-                        <i class="fas fa-chevron-right" onclick="openModal('logout')"></i>
+                    <i class="fas fa-chevron-right" onclick="openModal('password')"></i>
+                </div>
+                <div class="settings-option danger">
+                    <div class="settings-option-text">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span data-i18n="settings.logout"></span>
                     </div>
-                    <div class="settings-option danger">
-                        <div class="settings-option-text">
-                            <i class="fas fa-trash-alt"></i>
-                            <span data-i18n="settings.delete-account"></span>
-                        </div>
-                        <i class="fas fa-chevron-right" onclick="openModal('deleteAccount')"></i>
+                    <i class="fas fa-chevron-right" onclick="openModal('logout')"></i>
+                </div>
+                <div class="settings-option danger">
+                    <div class="settings-option-text">
+                        <i class="fas fa-trash-alt"></i>
+                        <span data-i18n="settings.delete-account"></span>
                     </div>
+                    <i class="fas fa-chevron-right" onclick="openModal('deleteAccount')"></i>
                 </div>
             </div>
         </div>
@@ -515,6 +484,10 @@
                 <input type="checkbox" id="notifyToggle" style="display: none;">
             </div>
         </div> -->
+    </div>
+
+    <div class="modal hidden" id="postModal">
+
     </div>
 
     <!-- Overlay for modals -->

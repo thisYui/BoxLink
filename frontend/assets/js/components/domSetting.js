@@ -1,6 +1,11 @@
-import { loadLanguage, getListLanguage, getThemeList } from "../config/i18n.js";
-import { settingConfig, changeSettingLanguage, changeSettingNotification, changeSettingTheme} from "../fetchers/infoFetcher.js"
+import { loadLanguage, getListLanguage, getThemeList, getKeyLanguage } from "../config/i18n.js";
+import { settingConfig, changeSettingLanguage, changeSettingNotification, changeSettingTheme } from "../fetchers/infoFetcher.js"
 import { turnOnOrOffNotification } from "../user/notificationProcessor.js";
+
+const mappingThemes = [
+        "assets/css/light-theme.css",
+        "assets/css/dark-theme.css"
+    ];
 
 window.loadSettings = async function () {
     const { theme, language, turnOnNotification } = await settingConfig();
@@ -11,10 +16,11 @@ window.loadSettings = async function () {
     const i = document.createElement("i");
 
     if (turnOnNotification) {
-        i.classList.add('fa','fa-toggle-on');
+        i.classList.add('fa', 'fa-toggle-on');
         i.addEventListener('click', async () => {
            await toggleNotification(true);
         });
+
     } else {
         i.classList.add('fa', 'fa-toggle-off');
         i.addEventListener('click', async () => {
@@ -30,6 +36,9 @@ window.loadSettings = async function () {
     optionTheme.textContent = themeList[theme]
     themeSelect.appendChild(optionTheme);
 
+    // đổi giao diện
+    document.getElementById("theme-style").href = mappingThemes[theme];
+
     themeList.forEach(th => {
         if (th !== themeList[theme]) {
             const option = document.createElement("option");
@@ -37,6 +46,15 @@ window.loadSettings = async function () {
             option.textContent = th;
             themeSelect.appendChild(option);
         }
+    });
+
+    themeSelect.addEventListener("change", async (event) => {
+        const selectedTheme = event.target.value;
+        const th = themeList.indexOf(selectedTheme);
+        await changeSettingTheme(th);
+
+        // Chuyển đổi giao diện
+        applyTheme(selectedTheme);
     });
 
     const languageSelect = document.getElementById("languageSelect");
@@ -53,6 +71,12 @@ window.loadSettings = async function () {
             option.textContent = th;
             languageSelect.appendChild(option);
         }
+    });
+
+    languageSelect.addEventListener("change", async (event) => {
+        const selectedLanguage = event.target.value;
+        // Chuyển đổi ngôn ngữ
+        await applyLanguage(selectedLanguage);
     });
 }
 
@@ -79,38 +103,25 @@ window.openModal = function (modalId) {
     }
 }
 
-window.chooseTheme = async function () {
-
-}
-
-window.resetLanguage = async function () {
-
-}
-
 async function toggleNotification(toggle) {
-    const notif = document.getElementById("toggleNotifications");
+    const notif = document.getElementById("notificationToggle");
     const i = notif.querySelector('.fa');
 
     if (toggle) {
-        i.classList.remove('fa-toggle-off');
-        i.classList.add('fa-toggle-on');
-        await changeSettingNotification(location.getItem("uid"), true);
-    } else {
         i.classList.remove('fa-toggle-on');
         i.classList.add('fa-toggle-off');
-        await changeSettingNotification(location.getItem("uid"), false);
+        await changeSettingNotification(false);
+
+    } else {
+        i.classList.remove('fa-toggle-off');
+        i.classList.add('fa-toggle-on');
+        await changeSettingNotification(true);
     }
 
     turnOnOrOffNotification();  // Thay đổi trạng thái thông báo
 }
 
 function applyTheme(theme) {
-    const mappingThemes = [
-        "assets/css/light-theme.css",
-        "assets/css/dark-theme.css"
-    ];
-
-    // kiểm tra xem theme có tồn tại trong mapping
     const themeList = getThemeList();
     for (let i = 0; i < themeList.length; i++) {
         if (themeList[i] === theme) {
@@ -120,9 +131,17 @@ function applyTheme(theme) {
     }
 }
 
-themeSelect.addEventListener("change", async (event) => {
-        const selectedTheme = event.target.value;
-        // await changeSettingTheme(location.getItem("uid"), th);
-        // Chuyển đổi giao diện
-        applyTheme(selectedTheme);
-    });
+
+async function applyLanguage(language) {
+    const languages = getListLanguage();
+    const keyLanguage = getKeyLanguage();
+
+    for (let i = 0; i < languages.length; i++) {
+        if (languages[i] === language) {
+            document.documentElement.setAttribute('lang', keyLanguage[i]);
+            await loadLanguage(keyLanguage[i]);  // Tải ngôn ngữ mới
+            await changeSettingLanguage(keyLanguage[i]);
+            break;
+        }
+    }
+}

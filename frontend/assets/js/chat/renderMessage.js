@@ -1,6 +1,6 @@
-import {getHyperlinkInfo} from '../fetchers/request.js';
-import {fixMessageToChatBoxList, moveChatIDToFirstInListBox} from './chatProcessor.js';
-import { formatRelativeTimeRead, formatRelativeTimeSend, convertToDate } from "../utils/renderData.js";
+import { getHyperlinkInfo } from '../fetchers/request.js';
+import { fixMessageToChatBoxList, moveChatIDToFirstInListBox} from './chatProcessor.js';
+import { isURL, formatRelativeTimeSend, convertToDate } from "../utils/renderData.js";
 
 // Chỉ dùng cho server
 function addMessageToChatBoxServer(message) {
@@ -24,7 +24,7 @@ function addMessageToChatBoxServer(message) {
         const duration = content.duration;  // Thời gian video
         addVideoMessageToChatBox(messageID, urlVideo, duration, senderID, timeSend, reply);  // Thêm tin nhắn video vào chat box
 
-    } else if (type === "file") {
+    } else if (type === "application") {
         const fileName = content.fileName;  // Tên tệp
         const size = content.size;  // Kích thước tệp
         const subtype = content.subtype;  // Loại tệp (file, audio)
@@ -229,7 +229,6 @@ function addTextMessageToChatBox(messageID, textMessage, senderID, type, timeSen
 }
 
 function addImageMessageToChatBox(messageID, urlImage, senderID, timeSend, reply) {
-    const messageContainer = document.querySelector('.message-container-body-message-area');
     const container = document.getElementById("messageContainer");
     const messageWrapper = document.createElement("div")
     messageWrapper.classList.add("message-wrapper");
@@ -238,11 +237,60 @@ function addImageMessageToChatBox(messageID, urlImage, senderID, timeSend, reply
     const div = document.createElement('div');
     div.classList.add('message-content', 'messageImage');
 
+    // Thêm reply nếu có
+    if (reply !== "") {
+        addReplyToMessageContent(div, reply);
+    }
+
+    // Container for responsive image sizing
+    // This allows images to be flexible while maintaining constraints
+    const imgContainer = document.createElement('div');
+    imgContainer.classList.add('image-container');
+    imgContainer.style.maxWidth = '300px'; // Maximum width to prevent oversized images
+    imgContainer.style.minWidth = '100px'; // Minimum width to ensure visibility
+    imgContainer.style.width = 'auto';
+
     const img = document.createElement('img');
     img.src = urlImage;
-    img.style.maxWidth = '200px';
+    img.style.width = '100%';
+    img.style.height = 'auto';
+    img.style.objectFit = 'contain';
+    img.style.cursor = 'pointer';
 
-    div.appendChild(img);
+    // Add click event to view image in full size
+    // This creates a modal overlay that displays the image at a larger size
+    // Users can click anywhere on the overlay to close it
+    img.addEventListener('click', () => {
+        // Create a full-screen overlay for the image
+        const fullImg = document.createElement('div');
+        fullImg.style.position = 'fixed';
+        fullImg.style.top = '0';
+        fullImg.style.left = '0';
+        fullImg.style.width = '100%';
+        fullImg.style.height = '100%';
+        fullImg.style.backgroundColor = 'rgba(0,0,0,0.8)'; // Semi-transparent black background
+        fullImg.style.display = 'flex';
+        fullImg.style.justifyContent = 'center';
+        fullImg.style.alignItems = 'center';
+        fullImg.style.zIndex = '1000'; // Ensure it appears above other elements
+
+        const largeImg = document.createElement('img');
+        largeImg.src = urlImage;
+        largeImg.style.maxWidth = '90%';
+        largeImg.style.maxHeight = '90%';
+        largeImg.style.objectFit = 'contain';
+
+        fullImg.appendChild(largeImg);
+
+        fullImg.addEventListener('click', () => {
+            document.body.removeChild(fullImg);
+        });
+
+        document.body.appendChild(fullImg);
+    });
+
+    imgContainer.appendChild(img);
+    div.appendChild(imgContainer);
 
     addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend); // Thêm messageDiv và div vào messageWrapper
 
@@ -250,13 +298,18 @@ function addImageMessageToChatBox(messageID, urlImage, senderID, timeSend, reply
 }
 
 function addVideoMessageToChatBox(messageID, urlVideo, senderID, timeSend, reply) {
-    const messageContainer = document.querySelector('.message-container-body-message-area');
+    const container = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div")
+    messageWrapper.classList.add("message-wrapper");
+    messageWrapper.id = messageID; // Thêm ID cho messageWrapper để nhận diện
 
     const div = document.createElement('div');
-    div.classList.add('message-content', 'sender', 'messageVideo');
+    div.classList.add('message-content', 'messageVideo');
 
-    // Thêm data-message-id để nhận dạng tin nhắn
-    div.setAttribute('data-message-id', messageID);
+    // Thêm reply nếu có
+    if (reply !== "") {
+        addReplyToMessageContent(div, reply);
+    }
 
     const video = document.createElement('video');
     video.src = urlVideo;
@@ -266,23 +319,26 @@ function addVideoMessageToChatBox(messageID, urlVideo, senderID, timeSend, reply
 
     div.appendChild(video);
 
-    // Thêm thông tin người gửi
-    const metaInfo = document.createElement('p');
-    metaInfo.classList.add('messageMeta');
-    metaInfo.innerHTML = `${senderID}`;
-    div.appendChild(metaInfo);
+    // Thêm wrapper
+    addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend);
 
-    messageContainer.appendChild(div);
+    // Đưa tin nhắn vào container
+    container.appendChild(messageWrapper);
 }
 
 function addFileMessageToChatBox(messageID, fileName, size, subtype, senderID, timeSend, reply) {
-    const messageContainer = document.querySelector('.message-container-body-message-area');
+    const container = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div")
+    messageWrapper.classList.add("message-wrapper");
+    messageWrapper.id = messageID; // Thêm ID cho messageWrapper để nhận diện
 
     const div = document.createElement('div');
-    div.classList.add('message-content', 'sender', 'messageFile');
+    div.classList.add('message-content', 'messageFile');
 
-    // Thêm data-message-id để nhận dạng tin nhắn
-    div.setAttribute('data-message-id', messageID);
+    // Thêm reply nếu có
+    if (reply !== "") {
+        addReplyToMessageContent(div, reply);
+    }
 
     const icon = document.createElement('i');
     icon.classList.add('fa-solid', 'fa-file-lines');
@@ -292,16 +348,10 @@ function addFileMessageToChatBox(messageID, fileName, size, subtype, senderID, t
     const fileSize = size < 1024 * 1024
         ? `${(size / 1024).toFixed(2)} KB`
         : `${(size / (1024 * 1024)).toFixed(2)} MB`;
-    p.innerHTML = `${fileName} (${subtype})<br>${fileSize}`;
+    p.innerHTML = `${fileName}<br>${fileSize}`;
 
     div.appendChild(icon);
     div.appendChild(p);
-
-    // Thêm thông tin người gửi
-    const metaInfo = document.createElement('p');
-    metaInfo.classList.add('messageMeta');
-    metaInfo.innerHTML = `${senderID}`;
-    div.appendChild(metaInfo);
 
     // Thêm sự kiện click để tải tệp về
     div.addEventListener('click', () => {
@@ -313,38 +363,83 @@ function addFileMessageToChatBox(messageID, fileName, size, subtype, senderID, t
         document.body.removeChild(link);
     });
 
-    messageContainer.appendChild(div);
+    // Thêm wrapper
+    addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend);
+
+    // Đưa tin nhắn vào container
+    container.appendChild(messageWrapper);
 }
 
 function addLinkMessageToChatBox(messageID, title, description, thumbnail, url, senderID, timeSend, reply) {
-    // Tạo một div chứa thông tin tin nhắn
+    const container = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div")
+    messageWrapper.classList.add("message-wrapper");
+    messageWrapper.id = messageID; // Thêm ID cho messageWrapper để nhận diện
+
     const div = document.createElement('div');
-    div.classList.add('message-content', 'sender', 'messageLink');
+    div.classList.add('message-content', 'messageLink');
 
-    // Thêm data-message-id để nhận dạng tin nhắn
-    div.setAttribute('data-message-id', messageID);
-
-    // Thêm thông tin về người gửi và thời gian gửi
-    const header = document.createElement('div');
-    header.classList.add('message-header');
-    const sender = document.createElement('span');
-    sender.classList.add('sender-name');
-    sender.textContent = senderID;
-    const time = document.createElement('span');
-    time.classList.add('message-time');
-    time.textContent = timeSend;
-
-    header.appendChild(sender);
-    header.appendChild(time);
-    div.appendChild(header);
+    // Thêm reply nếu có
+    if (reply !== "") {
+        addReplyToMessageContent(div, reply);
+    }
 
     // Thêm thumbnail nếu có
     if (thumbnail) {
+        // Container for responsive thumbnail sizing
+        // This allows thumbnails to be flexible in size while maintaining constraints
+        const imgContainer = document.createElement('div');
+        imgContainer.classList.add('thumbnail-container');
+        imgContainer.style.maxWidth = '250px'; // Maximum width to prevent oversized thumbnails
+        imgContainer.style.minWidth = '100px'; // Minimum width to ensure visibility
+        imgContainer.style.width = 'auto';
+        imgContainer.style.marginBottom = '8px'; // Space between thumbnail and content
+
         const img = document.createElement('img');
         img.src = thumbnail;
         img.alt = 'Thumbnail';
         img.classList.add('thumbnail');
-        div.appendChild(img);
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        img.style.objectFit = 'contain';
+        img.style.cursor = 'pointer';
+
+        // Add click event to view thumbnail in full size
+        // This creates a modal overlay that displays the thumbnail at a larger size
+        // Users can click anywhere on the overlay to close it
+        img.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent link click when clicking on thumbnail
+
+            // Create a full-screen overlay for the thumbnail
+            const fullImg = document.createElement('div');
+            fullImg.style.position = 'fixed';
+            fullImg.style.top = '0';
+            fullImg.style.left = '0';
+            fullImg.style.width = '100%';
+            fullImg.style.height = '100%';
+            fullImg.style.backgroundColor = 'rgba(0,0,0,0.8)'; // Semi-transparent black background
+            fullImg.style.display = 'flex';
+            fullImg.style.justifyContent = 'center';
+            fullImg.style.alignItems = 'center';
+            fullImg.style.zIndex = '1000'; // Ensure it appears above other elements
+
+            const largeImg = document.createElement('img');
+            largeImg.src = thumbnail;
+            largeImg.style.maxWidth = '90%';
+            largeImg.style.maxHeight = '90%';
+            largeImg.style.objectFit = 'contain';
+
+            fullImg.appendChild(largeImg);
+
+            fullImg.addEventListener('click', () => {
+                document.body.removeChild(fullImg);
+            });
+
+            document.body.appendChild(fullImg);
+        });
+
+        imgContainer.appendChild(img);
+        div.appendChild(imgContainer);
     }
 
     // Thêm tiêu đề và mô tả
@@ -366,47 +461,57 @@ function addLinkMessageToChatBox(messageID, title, description, thumbnail, url, 
     link.target = '_blank';  // Mở liên kết trong tab mới
     content.appendChild(link);
 
-    // Nếu có reply thì hiển thị phần này
-    if (reply) {
-        const replyMessage = document.createElement('div');
-        replyMessage.classList.add('reply-message');
-        replyMessage.textContent = `Reply: ${reply}`;
-        div.appendChild(replyMessage);
-    }
-
-    // Thêm tất cả vào container chat
     div.appendChild(content);
 
+    // Thêm wrapper
+    addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend);
+
     // Đưa tin nhắn vào container
-    const messageContainer = document.querySelector('.message-container-body-message-area');
-    messageContainer.appendChild(div);
+    container.appendChild(messageWrapper);
 }
 
 function addRichTextMessageToChatBox(messageID, rich_text, senderID, timeSend, reply) {
-    const messageContainer = document.querySelector('.message-container-body-message-area'); // Chọn nơi hiển thị message
+    const container = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div")
+    messageWrapper.classList.add("message-wrapper");
+    messageWrapper.id = messageID; // Thêm ID cho messageWrapper để nhận diện
 
-    // Tạo div chứa tin nhắn
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message-content', 'sender');
+    const div = document.createElement('div');
+    div.classList.add('message-content', 'messageRichText');
 
-    // Thêm data-message-id để nhận dạng tin nhắn
-    messageDiv.setAttribute('data-message-id', messageID);
+    // Thêm reply nếu có
+    if (reply !== "") {
+        addReplyToMessageContent(div, reply);
+    }
 
     // Tạo thẻ <p> chứa nội dung
     const p = document.createElement('p');
-    p.innerHTML = rich_text; // Sử dụng innerHTML để hiển thị HTML (vì chứa các thẻ <a> và emoji)
 
-    // Thêm thời gian gửi (nếu cần) vào message
-    const timeSpan = document.createElement('span');
-    timeSpan.classList.add('message-time');
-    timeSpan.textContent = timeSend; // Thời gian gửi
+    // Đưa nội dung rich text vào thẻ <p>
+    const wordsArray = rich_text.split(' ');
+    wordsArray.forEach(word => {
+        // Kiểm tra nếu từ là một liên kết
+        if (isURL(word)) {
+            const link = document.createElement('a');
+            link.href = word;
+            link.textContent = word;
+            link.target = '_blank';  // Mở liên kết trong tab mới
+            p.appendChild(link);
 
-    // Thêm mọi thứ vào messageDiv
-    messageDiv.appendChild(p);
-    messageDiv.appendChild(timeSpan);
+        } else {
+            // Nếu không phải liên kết, thêm từ vào thẻ <p>
+            const textNode = document.createTextNode(word + ' ');
+            p.appendChild(textNode);
+        }
+    });
 
-    // Thêm messageDiv vào container chat
-    messageContainer.appendChild(messageDiv);
+    div.appendChild(p);
+
+    // Thêm wrapper
+    addMessageWrapper(messageWrapper, div, messageID, senderID, timeSend);
+
+    // Đưa tin nhắn vào container
+    container.appendChild(messageWrapper);
 }
 
 function convertContentToString(content) {
@@ -440,4 +545,3 @@ export {
     addMessageToChatBoxServer,
     fixMessageToChatBoxList
 };
-

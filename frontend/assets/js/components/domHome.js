@@ -35,10 +35,17 @@ window.loadPage = async function (){
     for (const friend of friendList) {
         addBoxChatToList(friend);
     }
+
+    // Lấy user ở đầu tiên trong danh sách bạn bè
+    window.lastClickedUser = friendList.length > 0 ? friendList[0].uid : null;
     loadChat().then();
 }
 
 window.loadChat = async function () {
+    if (!window.lastClickedUser) {
+        return;
+    }
+
     const { chatID } = await startChatSession(window.lastClickedUser);
     sessionStorage.setItem('chatID', chatID);
     sessionStorage.setItem("replyMessageID", "");

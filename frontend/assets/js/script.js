@@ -171,6 +171,7 @@ window.changeTab = async function (tabName) {
         searchContainer: document.getElementById('searchContainer'),
         notificationContainer: document.getElementById('notificationContainer'),
         friendProfileContainer: document.getElementById('friendProfileContainer'),
+        postContainer: document.getElementById('postContainer'),
     };
 
     const menuButtons = document.querySelectorAll('.menu-bar-button');
@@ -240,6 +241,9 @@ window.changeTab = async function (tabName) {
         FriendProfile: {
             show: ['friendProfileContainer'],
         },
+        Post: {
+            show: ['postContainer'],
+        }
     };
 
     if (tabMap[tabName]) {
