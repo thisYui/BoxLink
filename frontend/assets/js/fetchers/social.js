@@ -1,11 +1,11 @@
-async function getSinglePost(postID) {
+async function getSinglePost(uid, postID) {
     const response = await fetch(`${host}/api/social/get-single-post`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            uid: localStorage.getItem("uid"),
+            uid: uid,
             postID: postID
         })
     });
@@ -17,14 +17,14 @@ async function getSinglePost(postID) {
     return await response.json();
 }
 
-async function getAllPost() {
+async function getAllPosts(uid) {
     const response = await fetch(`${host}/api/social/get-single-post`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            uid: localStorage.getItem("uid")
+            uid: uid,
         })
     });
 
@@ -56,7 +56,7 @@ async function upPost(listData, caption, isPublic) {
     return await response.json();
 }
 
-async function removePost(postID) {
+async function removePost() {
     const response = await fetch(`${host}/api/social/remove`, {
         method: "POST",
         headers: {
@@ -64,7 +64,7 @@ async function removePost(postID) {
         },
         body: JSON.stringify({
             uid: localStorage.getItem("uid"),
-            postID: postID
+            postID:  sessionStorage.getItem("postID")
         })
     });
 
@@ -75,7 +75,7 @@ async function removePost(postID) {
     return await response.json();
 }
 
-async function likePost(userID, postID) {
+async function likePost(userID) {
     const response = await fetch(`${host}/api/social/like`, {
         method: "POST",
         headers: {
@@ -83,7 +83,7 @@ async function likePost(userID, postID) {
         },
         body: JSON.stringify({
             uid: userID,
-            postID: postID,
+            postID:  sessionStorage.getItem("postID"),
             likeID: localStorage.getItem("uid")
         })
     });
@@ -95,7 +95,7 @@ async function likePost(userID, postID) {
     return await response.json();
 }
 
-async function unlikePost(userID, postID) {
+async function unlikePost(userID) {
     const response = await fetch(`${host}/api/social/unlike`, {
         method: "POST",
         headers: {
@@ -103,7 +103,7 @@ async function unlikePost(userID, postID) {
         },
         body: JSON.stringify({
             uid: userID,
-            postID: postID,
+            postID: sessionStorage.getItem("postID"),
             likeID: localStorage.getItem("uid")
         })
     });
@@ -117,7 +117,7 @@ async function unlikePost(userID, postID) {
 
 export {
     getSinglePost,
-    getAllPost,
+    getAllPosts,
     upPost,
     removePost,
     likePost,

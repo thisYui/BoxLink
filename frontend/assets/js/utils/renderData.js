@@ -237,6 +237,30 @@ function formatRelativeTimeSend(inputDate) {
     }
 }
 
+// Trả về một mảng các tệp đã nén dưới dạng Base64
+/**
+ * Chuyển đổi một danh sách các tệp thành mảng Base64
+ * @param files {FileList}
+ * @returns {Promise<Awaited<unknown>[]>}
+ */
+async function filesToArrayBase64(files) {
+    const fileArray = Array.from(files);
+
+    const base64Promises = fileArray.map(file =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64 = reader.result.split(',')[1]; // Lấy phần base64
+                resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        })
+    );
+
+    return Promise.all(base64Promises);
+}
+
 export {
     isURL,
     getIconClassForUrl,
@@ -249,5 +273,6 @@ export {
     isOnline,
     formatRelativeTimeRead,
     formatRelativeTimeOnline,
-    formatRelativeTimeSend
+    formatRelativeTimeSend,
+    filesToArrayBase64,
 };

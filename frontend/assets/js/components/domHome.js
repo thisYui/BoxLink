@@ -3,7 +3,7 @@ import { fetchMessages, startChatSession, updateTimestampMessage } from '../fetc
 import { addMessageToChatBoxServer } from '../chat/renderMessage.js';
 import { addBoxChatToList, transmitMessageContainer, updateSeenMessageStyle, updateOnlineStatus } from "../chat/chatProcessor.js";
 import { convertToDate, isOnline, formatRelativeTimeOnline } from "../utils/renderData.js";
-import { addToListBoxNoNotice } from "../user/notificationProcessor.js";
+import { setNotificationCount, addToListBoxNoNotice } from "../user/notificationProcessor.js";
 
 window.loadPage = async function (){
     // Tạo trang
@@ -11,6 +11,10 @@ window.loadPage = async function (){
 
     const userAvatar = document.getElementById('mainAccountAvatar');
     userAvatar.src = data.avatar;
+
+    // Hiển thị số lượng thông báo
+    const countNotifications = data.countNotifications;
+    setNotificationCount(countNotifications);
 
     const friendList = data.friendList; // danh sách bạn bè
 

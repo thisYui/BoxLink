@@ -11,7 +11,7 @@
     "search-placeholder": "Tìm cuộc trò chuyện...",
     "unread": "Chưa xem",
     "read": "Đã xem",
-    "before": "Trước",
+    "before": "trước",
     "day": "ngày",
     "hour": "giờ",
     "minute": "phút",
@@ -127,5 +127,13 @@
     "updated-avatar": "Bạn đã cập nhật ảnh đại diện",
     "updated-display-name": "Bạn đã cập nhật tên hiển thị",
     "updated-password": "Bạn đã cập nhật mật khẩu thành công"
+  },
+  "social": {
+    "title": "Tạo một bài đăng mới",
+    "post": "Đăng bài",
+    "cancel": "Hủy bỏ",
+    "caption": "Thêm nội dung của bạn...",
+    "public-mode": "Chế độ công khai",
+    "friends-mode": "Chế độ bạn bè"
   }
 }

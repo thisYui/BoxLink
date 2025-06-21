@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await sendMessage('file');
     });
 
-    document.getElementById('bellIcon').addEventListener('click', () => {
+    document.getElementById('bellIcon').addEventListener('click', async () => {
         const checkbox = document.getElementById('notifyToggle');
         const bellIcon = document.getElementById('bellIcon');
         const stateText = document.getElementById('notification-state-text');
@@ -77,11 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkbox.checked) {
             bellIcon.classList.remove('fa-bell-slash');
             bellIcon.classList.add('fa-bell');
-            stateText.textContent = t("chat_info.turn_on_notifications");
+            stateText.textContent = t("chat-info.turn-on-notifications");
+            await clickNotice('on');  // Gọi hàm clickNotice với tham số 'on')
+
         } else {
             bellIcon.classList.remove('fa-bell');
             bellIcon.classList.add('fa-bell-slash');
-            stateText.textContent = t("chat_info.turn_off_notifications");
+            stateText.textContent = t("chat-info.turn-off-notifications");
+            await clickNotice('off');  // Gọi hàm clickNotice với tham số 'off')
         }
     });
 
@@ -129,6 +132,31 @@ document.addEventListener("DOMContentLoaded", () => {
         const addLink = document.getElementById("addLinkButton");
         addLink.classList.remove("hidden");
     });
+
+    // Gắn click cho tất cả ảnh trong khung
+    document.querySelectorAll(".profile-body-images-content img").forEach(img => {
+        img.addEventListener("click", () => {
+            // 1. Hiện modal
+            document.getElementById("imageModal").style.display = "flex";
+            document.getElementById("modalImg").src = img.src;
+
+            // 2. Lưu id của thẻ cha vào sessionStorage
+            const parentDiv = img.closest(".profile-body-images-content");
+            sessionStorage.setItem("postID", parentDiv.id);
+        });
+    });
+
+    // Gắn click cho nút close
+    document.querySelector(".close").addEventListener("click", () => {
+        document.getElementById("imageModal").style.display = "none";
+    });
+
+    // Gắn click cho vùng modal (để đóng khi click ra ngoài ảnh)
+    document.getElementById("imageModal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("imageModal")) {
+            document.getElementById("imageModal").style.display = "none";
+        }
+    });
 });
 
 function debounce(fn, delay) {
@@ -139,12 +167,6 @@ function debounce(fn, delay) {
             fn.apply(this, args);
         }, delay);
     };
-}
-
-window.openChatInfo = function () {
-    const chatInfor = document.getElementById('chatInfoContainer');
-    const isHidden = window.getComputedStyle(chatInfor).display === 'none';
-    chatInfor.style.display = isHidden ? "block" : "none";
 }
 
 window.logOut = function () {
@@ -258,28 +280,3 @@ window.changeTab = async function (tabName) {
         }
     }
 };
-
-document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("imageModal");
-    const modalImg = document.getElementById("modalImg");
-    const closeBtn = document.querySelector(".close");
-
-    const images = document.querySelectorAll(".profile-body-images-content img");
-
-    images.forEach(img => {
-        img.addEventListener("click", () => {
-            modal.style.display = "flex";
-            modalImg.src = img.src;
-        });
-    });
-
-    closeBtn.addEventListener("click", () => {
-        modal.style.display = "none";
-    });
-
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-});

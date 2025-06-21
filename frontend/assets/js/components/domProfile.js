@@ -1,13 +1,10 @@
-import { getMyProfile } from "../user/personalProfile.js";
+import { getProfileUser } from '../fetchers/infoFetcher.js';
 import { getIconClassForUrl, convertToDate, dateToDMY, dateToYMD } from "../utils/renderData.js";
 import { getListGender, getValueMappingGender } from "../config/i18n.js";
-import { operaSocialLink } from "../fetchers/infoFetcher.js";
 
 let stateEdit = false; // Biến để theo dõi chế độ chỉnh sửa
 
 window.loadProfile = async function () {
-    const profileContainer = document.querySelectorAll(".profile-container.personal");
-
     const profile = await getMyProfile();
     showMyProfile(profile);
 }
@@ -16,8 +13,6 @@ window.loadProfile = async function () {
 window.editProfileMode = async function () {
     if (stateEdit) {
         // Nếu đang ở chế độ chỉnh sửa, chuyển sang chế độ xem
-
-        viewMode();
         stateEdit = false;
     } else {
         // Nếu không, chuyển sang chế độ chỉnh sửa
@@ -31,13 +26,14 @@ async function editMode() {
     await changeTab("EditProfile");
 }
 
-function viewMode() {
-    // Lưu lại các thay đổi
-    // Chuyển trang hiện tại thành dạng không thể chỉnh sửa
+// Lấy thông tin
+async function getMyProfile() {
+    const profile = await getProfileUser(localStorage.getItem("uid"));
+    profile.countFriendMutual = -1; // Trường này không khả dụng với bản thân
+    return profile;
 }
 
 function showMyProfile(profile) {
-    //const profileContainer = document.querySelector(".profile-container.personal-profile");
     const profileContainer = document.getElementById('profileContainer');
     showProfile(profile, profileContainer);
     const editProfileButton = profileContainer.querySelector(".edit-profile-button");

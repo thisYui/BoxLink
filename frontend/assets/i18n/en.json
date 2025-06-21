@@ -125,5 +125,13 @@
     "updated-avatar": "Your avatar has been updated",
     "updated-display-name": "Your display name has been updated",
     "updated-password": "Your password has been updated"
+  },
+  "social": {
+    "title": "Create new post",
+    "post": "Post",
+    "cancel": "Cancel",
+    "caption": "Write a caption...",
+    "public-mode": "Public Mode",
+    "friends-mode": "Friends Mode"
   }
 }

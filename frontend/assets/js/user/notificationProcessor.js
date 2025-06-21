@@ -69,21 +69,6 @@ window.processingNotification = async function (notification) {
                 addFriendAcceptToList(srcID, displayName, email, avatarUrl, timeSend);  // Thêm thông báo vào danh sách thông báo
             }
         });
-    } else if (typeNotification === "update-avatar") {
-        // Lấy avatar mới từ srcID
-        const { uid, avatar } = await searchFriendByID(srcID);
-
-        // Cập nhật lại avatar của srcID
-        // Tìm kiếm srcID
-        // thay src = avatarUrl
-    } else if (typeNotification === "display-name-update") {
-        // Lấy tên mới từ srcID
-        const { uid, displayName } = await searchFriendByID(srcID);
-
-        // Cập nhật lại tên của srcID
-        // Tìm kiếm srcID
-        // thay src = displayName
-
     } else if (typeNotification === "other") {
         // Xử lý thông báo khác: cập nhật avatars, tên hiển thị, hoặc thông báo hệ thống
         addTextNotificationToList(text);  // Thêm thông báo vào danh sách thông báo
@@ -235,14 +220,31 @@ function addInformationFriend(box, friendID, displayName, email, avatarUrl, time
 
 window.resetNumberNotification = function() {
     const badge = document.querySelector('.notification-badge');
-    if (!badge) return;
 
     // Ngoại trừi thông báo kết bạn tất cả được đánh dấu là đã đọc
     const notificationItems = document.querySelectorAll('.btn-accept');
     const numberNotification = notificationItems.length;
 
+    if (numberNotification === 0) {
+        badge.style.display = 'none';  // Ẩn badge nếu không có thông báo
+        return;
+    }
+
     badge.textContent = numberNotification.toString();
     badge.style.display = 'inline-block';
+}
+
+function setNotificationCount(count) {
+    const badge = document.querySelector('.notification-badge');
+    if (!badge) return;
+
+    if (count > 99) {
+        badge.textContent = '99+';
+    } else {
+        badge.textContent = count.toString();
+    }
+
+    badge.style.display = count > 0 ? 'inline-block' : 'none';
 }
 
 function plusNotificationCount() {
@@ -307,7 +309,8 @@ function isOnNotification(uid) {
 
 export {
     turnOnOrOffNotification,
+    setNotificationCount,
     addToListBoxNoNotice,
     removeFromListBoxNoNotice,
-    isOnNotification,
+    isOnNotification
 }

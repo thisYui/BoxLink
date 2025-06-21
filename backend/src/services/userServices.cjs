@@ -60,6 +60,10 @@ async function getInfo(uid) {
         const user = await db.collection("users").doc(uid).get();
         const userData = user.data();
 
+        // Đếm số thông báo không phải tin nhắn
+        const notifications = userData.notifications || [];
+        const countNotifications = notifications.filter(n => !n.type.includes("message")).length;
+
         let friendList = [];
         for (const chatId of userData.chatList) {
             const data = await getDataBoxListChat(chatId, uid);
@@ -68,6 +72,7 @@ async function getInfo(uid) {
 
         return {
             avatar: userData.avatar,
+            countNotifications: countNotifications,
             friendList: friendList,
         }
 

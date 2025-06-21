@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class ="search-container hidden" id="searchContainer">
+    <div class="search-container hidden" id="searchContainer">
         <div class="search-header">
             <h2 data-i18n="search.title"></h2>
         </div>
@@ -77,7 +77,7 @@
         </div>
     </div>
 
-    <div class ="notification-container hidden" id="notificationContainer">
+    <div class="notification-container hidden" id="notificationContainer">
         <div class="notification-header">
             <h2 data-i18n="notification.title"></h2>
         </div>
@@ -144,7 +144,7 @@
                 <button class="edit-profile-button" data-i18n="profile.editButton" onclick="editProfileMode()"></button>
             </div>
             <div class="profile-body-images">
-                <div class="profile-body-images-content">
+                <div class="profile-body-images-content" id="">
                     <img src="./assets/images/default-avatar.png" alt="">
                 </div>
             </div>
@@ -204,48 +204,7 @@
                 <button class="friend-action-button open-chat hidden" data-i18n="search.open-chat" onclick="openChat()"></button>
             </div>
             <div class="profile-body-images">
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/default-avatar.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/HeapSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/inboundnewrules.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/inherit.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/Mediator.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/pic1.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/polymophysm.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/templateMethod.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/QuickSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/memberFunct.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/HeapSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/img_5terre_wide.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/pic2.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/screen.png" alt="">
-                </div>
+                <!-- Any post-images will be displayed here -->
             </div>
         </div>
     </div>
@@ -450,40 +409,20 @@
             <p class="chats-info-header-avatar-container">
                 <img src="./assets/images/default-avatar.png" alt="" class="chats-info-header-avatar">
             </p>
-            <p class="chats-info-header-name" onclick="window.location.href='#'">qweqwe</p>
-            <p class="chats-info-header-name-state">Hoạt động 10 phút trước</p>
+            <p class="chats-info-header-name" onclick="chooseUserItem(sessionStorage.getItem('lastClickedUser'))"></p>
+            <p class="chats-info-header-name-state"></p>
         </div>
         <div class="chats-info-features">
-            <div  class="chats-info-features-button">
-                <i onclick="window.location.href='#'" class="fa-solid f a-circle-user"></i>
-                <p>Trang cá nhân</p>
+            <div class="chats-info-features-button-goto-profile">
+                <i class="fa-solid fa-circle-user" onclick="chooseUserItem(sessionStorage.getItem('lastClickedUser'))"></i>
+                <p data-i18n="chat-info.personal-page"></p>
             </div>
-            <div class="chats-info-features-button" id="turn-off-notification-button">
-                <i id="bellIcon" class="fa-solid fa-bell-slash chats-info-features-button-icon"></i>
-                <p id="notification-state-text" data-i18n="chat-info.turn-off-notifications"></p>
+            <div class="chats-info-features-button-toggle-notice" id="turn-off-notification-button">
+                <i class="fa-solid chats-info-features-button-icon" id="bellIcon" ></i>
+                <p class="notification-state-text" id="notification-state-text"></p>
                 <input type="checkbox" id="notifyToggle" style="display: none;">
-            </div>
-            <div class="chats-info-features-button">
-                <i class="fa-solid fa-a"></i>
-                <p>Thay đổi biệt danh</p>
             </div>
         </div>
-        <!-- <div class="chats-info-features">
-            <div class="chats-info-features-button" id="change-display-name-button">
-                <i class="fa-solid fa-a chats-info-features-button"></i>
-                <i class="fa-solid fa-a chats-info-features-button-icon"></i>
-                <p data-i18n="chat-info.change-nickname"></p>
-            </div>
-            <div class="chats-info-features-button" id="user-profile-link" onclick="">
-                <i class="fa-solid fa-circle-user chats-info-features-button-icon"></i>
-                <p href="#" data-i18n="chat-info.personal-page"></p>
-            </div>
-            <div class="chats-info-features-button" id="turn-off-notification-button">
-                <i id="bellIcon" class="fa-solid fa-bell-slash chats-info-features-button-icon"></i>
-                <p id="notification-state-text" data-i18n="chat-info.turn-off-notifications"></p>
-                <input type="checkbox" id="notifyToggle" style="display: none;">
-            </div>
-        </div> -->
     </div>
 
     <div class="modal hidden" id="postModal">
@@ -496,6 +435,7 @@
     <!-- Scripts -->
     <script type="module" defer src="assets/js/config/i18n.js"></script>
     <script type="module" defer src="assets/js/chat/renderMessage.js"></script>
+    <script type="module" defer src="assets/js/chat/chatInfoSetting.js"></script>
     <script type="module" defer src="assets/js/utils/searcher.js"></script>
     <script type="module" defer src="assets/js/user/settingAccount.js"></script>
     <script type="module" defer src="assets/js/user/notificationProcessor.js"></script>

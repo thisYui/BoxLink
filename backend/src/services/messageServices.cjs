@@ -311,7 +311,6 @@ async function updateSeen(uid, friendID) {
             [`seen.${uid}.lastMessageSeen`]: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-
         await seenMessageNotification(uid, friendID);
 
         return true;
