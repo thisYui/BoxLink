@@ -299,7 +299,7 @@ img {
 
 .chats-list-user-text {
     max-width: 70%;
-    height: 95%;
+    height: 1.2rem;
     overflow: hidden;
     align-items: center;
     text-overflow: ellipsis;
@@ -321,7 +321,7 @@ img {
     margin: calc(10px + 0.25 * 1.5rem) 0;
 }
 
-.profile-friend-container, .profile-container, .edit-profile-container, .settings-container {
+.profile-friend-container, .profile-container, .edit-profile-container, .settings-container, .post-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -631,7 +631,7 @@ img {
 }
 
 .chats-info-header-name-state {
-    font-size: 15px;    
+    font-size: 15px;
 }
 
 .chats-info-features {
@@ -1099,8 +1099,8 @@ img {
 .profile-body-images-content {
     height: 360px;
     width: 270px;
-    object-fit: cover;
-    cursor: pointer
+    cursor: pointer;
+    overflow: hidden;
 }
 
 .profile-body-images-content > img {
@@ -1122,14 +1122,20 @@ img {
     align-items: center;
 }
 
+.modal-inner {
+    height: 600px;
+    width: 450px;
+    transform: translateX(calc(-250px / 2));
+}
+
 /* Ảnh lớn trong modal */
-.modal-content {
+.modal-content-image {
     display: block;
-    max-width: 90%;
-    max-height: 90%;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     image-rendering: auto;
+    align-self: center;
 }
 
 /* Nút đóng */
@@ -1164,12 +1170,91 @@ img {
     color: white;
 }
 
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 48px;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 0 20px;
+    user-select: none;
+}
+
+.nav-button.left {
+    left: 0;
+}
+
+.nav-button.right {
+    right: 0;
+}
+
+.modal-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inner-arrow {
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    font-size: 12px;
+    color: #fff;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0 5px;
+    border-radius: 50%;
+    position: absolute;
+}
+.inner-arrow-left {
+    left: 5px;
+}
+
+.inner-arrow-right {
+    right: 5px;
+}
+
+.image-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    position: absolute;
+    bottom: 2px;
+}
+
+.image-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #aaa;
+    transition: background-color 0.3s;
+}
+
+.image-dots .dot.active {
+    background-color: white;
+}
+
+.modal-inner-content {
+    height: 100%;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: #fff;
+    left: 100%;
+}
+
+
 /* Profile edit Container */
 .profile-container-div-edit-profile {
     width: 100%;
     height: 100%;
 }
-/* 
+/*
 .profile-header-edit-profile {
     margin-bottom: 30px;
     width: 100%;
@@ -1373,6 +1458,285 @@ img {
 .profile-body-images {
 
 } */
+
+
+/* Post container */
+
+.post-area {
+    width: 400px;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+#postCaption.red-placeholder::placeholder {
+    color: red;
+}
+
+.post-area-header {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.post-area-header > hr {
+    margin: 5px 0;
+    border: none;
+    height: 1px;
+}
+
+.image-upload-label {
+    text-align: center;
+    width: 100%;
+    height: 400px;
+    align-content: center;
+}
+
+.image-upload-label:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.post-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.post-modal.hidden {
+    display: none;
+}
+
+.post-modal-content {
+    border-radius: 16px;
+    width: 100%;
+    max-width: 700px;
+    padding: 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Main area: ảnh + caption chia đôi */
+.post-modal-main {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+/* Ảnh preview */
+.post-modal-image-preview {
+    position: relative;
+    width: 450px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.post-modal-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: auto;
+}
+
+.post-modal-info {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+}
+
+/* Caption bên phải */
+.post-modal-caption {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    resize: none;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+
+.post-modal-caption:focus {
+    border-color: #4a90e2;
+}
+
+.post-modal-visibility {
+    width: 100%;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.post-modal-visibility label {
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.post-modal-visibility select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.post-modal-visibility select:focus {
+    border-color: #4a90e2;
+}
+
+/* Điều hướng ảnh */
+.post-modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    font-size: 22px;
+    padding: 8px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: scale(0.7);
+}
+
+.post-modal-nav-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.post-modal-prev-btn {
+    left: 10px;
+}
+
+.post-modal-next-btn {
+    right: 10px;
+}
+
+.post-modal-remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 80, 80, 0.9);
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 5px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s;
+    transform: scale(0.7);
+}
+
+.post-modal-remove-btn:hover {
+    background-color: rgba(200, 50, 50, 1);
+}
+
+.post-modal-add-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(80, 180, 255, 0.9);
+    border: none;
+    color: white;
+    font-size: 22px;
+    padding: 5px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s;
+    transform: scale(0.7);
+}
+
+.post-modal-add-btn:hover {
+    background-color: rgba(30, 140, 230, 1);
+}
+
+/* Dots */
+.post-modal-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    position: absolute;
+    bottom: -10px;
+}
+
+.post-modal-dots span {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.post-modal-dots .active {
+    background-color: #333;
+}
+
+/* Submit button */
+.post-modal-submit {
+    background-color: #0a74da;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.post-modal-submit:hover {
+    background-color: #095bb5;
+}
+
+/* Close button */
+.post-modal-close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.post-modal-close-btn:hover {
+    color: #000;
+}
+
 
 
 /* Responsive */

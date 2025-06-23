@@ -1,12 +1,13 @@
 import { getProfileUser } from '../fetchers/infoFetcher.js';
 import { getIconClassForUrl, convertToDate, dateToDMY, dateToYMD } from "../utils/renderData.js";
 import { getListGender, getValueMappingGender } from "../config/i18n.js";
+import { showAllPost } from "../utils/postProcessor.js";
 
 let stateEdit = false; // Biến để theo dõi chế độ chỉnh sửa
 
 window.loadProfile = async function () {
     const profile = await getMyProfile();
-    showMyProfile(profile);
+    await showMyProfile(profile);
 }
 
 // Bật tắt chế độ chỉnh sửa thông tin cá nhân
@@ -33,9 +34,9 @@ async function getMyProfile() {
     return profile;
 }
 
-function showMyProfile(profile) {
+async function showMyProfile(profile) {
     const profileContainer = document.getElementById('profileContainer');
-    showProfile(profile, profileContainer);
+    await showProfile(profile, profileContainer);
     const editProfileButton = profileContainer.querySelector(".edit-profile-button");
     editProfileButton.style.display = profile.countFriendMutual;
 
@@ -45,7 +46,7 @@ function showMyProfile(profile) {
     setupProfileEditButtons(profile, editProfileContainer); // Chuẩn bị các dữ liệu cho edit
 }
 
-function showProfile(profile, profileContainer) {
+async function showProfile(profile, profileContainer) {
     // displayName: userData.displayName,
     // email: userData.email,
     // avatar: userData.avatar,
@@ -136,6 +137,11 @@ function showProfile(profile, profileContainer) {
     if (profileFriendNum) {
         profileFriendNum.textContent = profile.countFriends?.toString() || "0";
     }
+
+    const profileBodyImages = profileContainer.querySelector(".profile-body-images");
+    const profileCountPosts = profileContainer.querySelector(".profile-count-posts");
+    const uid = localStorage.getItem("uid");
+    await showAllPost(profileBodyImages, profileCountPosts, uid);
 }
 
 // Handle profile edit button clicks

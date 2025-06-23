@@ -238,11 +238,6 @@ function formatRelativeTimeSend(inputDate) {
 }
 
 // Trả về một mảng các tệp đã nén dưới dạng Base64
-/**
- * Chuyển đổi một danh sách các tệp thành mảng Base64
- * @param files {FileList}
- * @returns {Promise<Awaited<unknown>[]>}
- */
 async function filesToArrayBase64(files) {
     const fileArray = Array.from(files);
 
@@ -250,8 +245,9 @@ async function filesToArrayBase64(files) {
         new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => {
-                const base64 = reader.result.split(',')[1]; // Lấy phần base64
-                resolve(base64);
+                const base64 = reader.result.split(',')[1]; // lấy phần base64
+                const type = file.type.split('/')[1]; // ví dụ: "image/png" → "png"
+                resolve({ data: base64, type });
             };
             reader.onerror = reject;
             reader.readAsDataURL(file);

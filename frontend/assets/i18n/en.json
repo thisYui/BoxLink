@@ -56,13 +56,15 @@
     "birthdayLabel": "BirthDay:",
     "noBirthday": "Not set",
     "socialLinkLabel": "Social Links",
+    "add-social-link": "Add Social Link",
     "statStartDate": "Start Date",
     "statFriends": "Friends",
     "statDays": "Days",
     "mutualFriends": "Mutual Friends",
     "editButton": "Edit profile",
     "saveEdit": "Save changes",
-    "finishEdit": "Finish editing"
+    "finishEdit": "Finish editing",
+    "count-posts": "Posts"
   },
   "search": {
     "title": "Search",
@@ -131,7 +133,10 @@
     "post": "Post",
     "cancel": "Cancel",
     "caption": "Write a caption...",
+    "caption-alert": "Caption cannot be empty",
+    "mode": "Mode",
     "public-mode": "Public Mode",
-    "friends-mode": "Friends Mode"
+    "friends-mode": "Friends Mode",
+    "choose-image": "Choose image"
   }
 }

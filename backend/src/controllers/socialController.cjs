@@ -1,10 +1,10 @@
 const { createPost,  deletePost, like,
-    unlike, getPost, getAllUrlPosts
+    unlike, getPost, getAllUrlPosts, getListLiker
 } = require('../services/socialServices.cjs');
 const { logger } = require('../config/logger.cjs');
 
 async function getSinglePost(req, res) {
-    const { uid,  postID } = req.body;
+    const { uid, postID } = req.body;
     try {
         const post = await getPost(uid, postID);
         if (!post) return res.status(404).json({ message: 'Post not found' });
@@ -21,6 +21,7 @@ async function getAllPosts(req, res) {
     try {
         const posts = await getAllUrlPosts(uid);
         res.status(200).json(posts);
+
     } catch (error) {
         logger.error(`Error fetching posts: ${error.message}`);
         res.status(500).json({ message: 'Internal server error' });
@@ -79,11 +80,25 @@ async function removePost(req, res) {
     }
 }
 
+async function getListUserLikes(req, res) {
+    const { uid, postID } = req.body;
+    try {
+        const likes = await getListLiker(uid, postID);
+        if (likes) res.status(200).json(likes);
+        else res.status(404).json({ message: 'No likes found for this post' });
+
+    } catch (error) {
+        logger.error(`Error fetching likes: ${error.message}`);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
 module.exports = {
     getSinglePost,
     getAllPosts,
     likePost,
     unlikePost,
     upPost,
-    removePost
+    removePost,
+    getListUserLikes
 }

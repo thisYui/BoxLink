@@ -101,6 +101,45 @@
     <!-- Post Container -->
     <div class="post-container hidden" id="postContainer">
         <!-- Post -->
+        <div class="post-area">
+            <div class="post-area-header">
+                <span data-i18n="social.title"></span>
+                <hr>
+            </div>
+            <input type="file" id="imageInput" accept="image/*" multiple hidden>
+            <label for="imageInput" class="image-upload-label" data-i18n="social.choose-image"></label>
+        </div>
+    </div>
+
+    <div class="post-modal hidden" id="postModal">
+        <div class="post-modal-content">
+            <span class="post-modal-close-btn" id="closePostModal">&times;</span>
+
+            <div class="post-modal-main">
+                <div class="post-modal-image-preview">
+                    <button class="post-modal-remove-btn" id="removeImageBtn">&times;</button>
+                    <button class="post-modal-add-btn" id="addMoreImageBtn">+</button>
+                    <button class="post-modal-nav-btn post-modal-prev-btn">&lt;</button>
+                    <img id="previewImage" src="" alt="Preview">
+                    <button class="post-modal-nav-btn post-modal-next-btn">&gt;</button>
+                    <div class="post-modal-dots" id="dotsContainer"></div>
+                </div>
+
+                <div class="post-modal-info">
+                    <textarea class="post-modal-caption" id="postCaption" data-i18n-placeholder="social.caption"></textarea>
+                    <div class="post-modal-visibility">
+                        <label for="visibilitySelect" data-i18n="social.mode"></label>
+                        <select id="visibilitySelect">
+                            <option value="public" data-i18n="social.public-mode"></option>
+                            <option value="friends-only" data-i18n="social.friends-mode"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="addImageInput" accept="image/*" multiple hidden>
+            <button id="submitPost" class="post-modal-submit" data-i18n="social.post"></button>
+        </div>
+
     </div>
 
     <!-- Profile Container -->
@@ -130,6 +169,10 @@
                     </div>
                 </div>
                 <div class="profile-body-additional-info">
+                     <div class="profile-body-additional-info-container">
+                        <h4 class="profile-body-additional-info-container-title" data-i18n="profile.count-posts"></h4>
+                        <p class="profile-body-additional-info-container-text profile-count-posts"></p>
+                    </div>
                     <div class="profile-body-additional-info-container">
                         <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statStartDate"></h4>
                         <p class="profile-body-additional-info-container-text profile-started-day"></p>
@@ -144,9 +187,6 @@
                 <button class="edit-profile-button" data-i18n="profile.editButton" onclick="editProfileMode()"></button>
             </div>
             <div class="profile-body-images">
-                <div class="profile-body-images-content" id="">
-                    <img src="./assets/images/default-avatar.png" alt="">
-                </div>
             </div>
         </div>
     </div>
@@ -179,6 +219,10 @@
                 </div>
                 <div class="profile-body-additional-info">
                     <div class="profile-body-additional-info-container">
+                        <h4 class="profile-body-additional-info-container-title" data-i18n="profile.count-posts"></h4>
+                        <p class="profile-body-additional-info-container-text profile-count-posts"></p>
+                    </div>
+                    <div class="profile-body-additional-info-container">
                         <h4 class="profile-body-additional-info-container-title" data-i18n="profile.statStartDate"></h4>
                         <p class="profile-body-additional-info-container-text profile-started-day"></p>
                     </div>
@@ -204,14 +248,29 @@
                 <button class="friend-action-button open-chat hidden" data-i18n="search.open-chat" onclick="openChat()"></button>
             </div>
             <div class="profile-body-images">
-                <!-- Any post-images will be displayed here -->
+
             </div>
         </div>
     </div>
 
-    <div class="imageModal" id="imageModal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImg"/>
+    <div id="imageModal" class="imageModal">
+        <span class="close" id="closeModal">&times;</span>
+
+        <!-- Nút chuyển bài đăng (nằm ngoài modal-content) -->
+        <button class="nav-button left" id="prevPostBtn">&#10094;</button>
+        <button class="nav-button right" id="nextPostBtn">&#10095;</button>
+
+        <div class="modal-inner">
+            <button class="inner-arrow inner-arrow-left" id="prevImageBtn">&#10094;</button>
+            <img id="modalImg" class="modal-content-image" />
+            <button class="inner-arrow inner-arrow-right" id="nextImageBtn">&#10095;</button>
+            <div id="imageDots" class="image-dots"></div>
+            <div class="modal-inner-content">
+                <p class="modal-inner-content-caption">
+                    Enter caption here...
+                </p>
+            </div>
+        </div>
     </div>
 
     <!-- EditProfile mode -->
@@ -229,7 +288,7 @@
             <input type="text" class="profile-body-basic-info-text-edit-profile profile-name-input-edit-profile">
             <input type="email" class="profile-body-basic-info-text-edit-profile profile-email-input-edit-profile">
             <textarea class="profile-body-basic-info-text-edit-profile profile-description-input-edit-profile"></textarea>
-            
+
             <div class="profile-body-personal-info-edit-profile">
                 <div class="profile-body-personal-info-container-edit-profile">
                     <h4 class="profile-body-personal-info-container-title-edit-profile" data-i18n="profile.genderLabel"></h4>
@@ -253,7 +312,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="profile-body-buttons-edit-profile">
                 <button class="save-profile-button-edit-profile" onclick="saveProfileChanges()" data-i18n="profile.save-edit"></button>
                 <button class="cancel-edit-button-edit-profile" onclick="changeTab('Profile')" data-i18n="profile.finish-edit"></button>
@@ -413,20 +472,16 @@
             <p class="chats-info-header-name-state"></p>
         </div>
         <div class="chats-info-features">
-            <div class="chats-info-features-button-goto-profile">
+            <div class="chats-info-features-button chats-info-features-button-goto-profile">
                 <i class="fa-solid fa-circle-user" onclick="chooseUserItem(sessionStorage.getItem('lastClickedUser'))"></i>
                 <p data-i18n="chat-info.personal-page"></p>
             </div>
-            <div class="chats-info-features-button-toggle-notice" id="turn-off-notification-button">
+            <div class="chats-info-features-button chats-info-features-button-toggle-notice" id="turn-off-notification-button">
                 <i class="fa-solid chats-info-features-button-icon" id="bellIcon" ></i>
                 <p class="notification-state-text" id="notification-state-text"></p>
                 <input type="checkbox" id="notifyToggle" style="display: none;">
             </div>
         </div>
-    </div>
-
-    <div class="modal hidden" id="postModal">
-
     </div>
 
     <!-- Overlay for modals -->
@@ -437,6 +492,7 @@
     <script type="module" defer src="assets/js/chat/renderMessage.js"></script>
     <script type="module" defer src="assets/js/chat/chatInfoSetting.js"></script>
     <script type="module" defer src="assets/js/utils/searcher.js"></script>
+    <script type="module" defer src="assets/js/utils/postProcessor.js"></script>
     <script type="module" defer src="assets/js/user/settingAccount.js"></script>
     <script type="module" defer src="assets/js/user/notificationProcessor.js"></script>
     <script type="module" defer src="assets/js/config/socketClient.js"></script>
@@ -444,6 +500,7 @@
     <script type="module" defer src="assets/js/components/button.js"></script>
     <script type="module" defer src="assets/js/components/domProfile.js"></script>
     <script type="module" defer src="assets/js/components/domSetting.js"></script>
+    <script type="module" defer src="assets/js/components/domPost.js"></script>
     <script type="module" defer src="assets/js/script.js"></script>
 
 </body>

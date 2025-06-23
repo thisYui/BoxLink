@@ -25,13 +25,13 @@ window.chooseUserItem = async function (uid) {
 
     await changeTab("FriendProfile");
     const profile = await getFriendProfile(uid);
-    showFriendProfile(profile);
+    await showFriendProfile(profile);
 }
 
-function showFriendProfile(profile) {
+async function showFriendProfile(profile) {
     const profileContainer = document.querySelector(".profile-friend-container");
 
-    showProfile(profile, profileContainer);
+    await showProfile(profile, profileContainer);
 
     const mutualCount = profileContainer.querySelector('.profile-mutual-friends')
     mutualCount.textContent = profile.countFriendMutual;

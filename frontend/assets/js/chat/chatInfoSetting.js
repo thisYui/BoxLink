@@ -10,7 +10,7 @@ window.openChatInfo = function () {
 }
 
 window.clickNotice = async function(status) {
-    const friendID = sessionStorage.getItem("lastClickedUser");
+    const friendID = window.lastClickedUser;
 
     if (status === "on") {
         removeFromListBoxNoNotice(friendID);
@@ -22,7 +22,7 @@ window.clickNotice = async function(status) {
 }
 
 function transformDate() {
-    const friendID = sessionStorage.getItem("lastClickedUser");
+    const friendID = window.lastClickedUser;
 
     // Find the chat box for this user
     const chatContainer = document.getElementById("chatContainer");

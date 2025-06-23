@@ -57,13 +57,15 @@
     "birthdayLabel": "Ngày sinh:",
     "noBirthday": "Chưa thiết lập",
     "socialLinkLabel": "Liên kết khác:",
+    "add-social-link": "Thêm liên kết",
     "statStartDate": "Từ ngày",
     "statFriends": "Bạn bè",
     "statDays": "Số ngày",
     "mutualFriends": "Bạn chung",
     "editButton": "Chỉnh sửa hồ sơ",
     "save-edit": "Lưu thay đổi",
-    "finish-edit": "Hoàn thành"
+    "finish-edit": "Hoàn thành",
+    "count-posts": "Số bài đăng"
   },
   "search": {
     "title": "Tìm kiếm",
@@ -133,7 +135,10 @@
     "post": "Đăng bài",
     "cancel": "Hủy bỏ",
     "caption": "Thêm nội dung của bạn...",
+    "caption-alert": "Vui lòng nhập nội dung cho bài đăng",
+    "mode": "Hiển thị",
     "public-mode": "Chế độ công khai",
-    "friends-mode": "Chế độ bạn bè"
+    "friends-mode": "Chế độ bạn bè",
+    "choose-image": "Chọn hình ảnh"
   }
 }

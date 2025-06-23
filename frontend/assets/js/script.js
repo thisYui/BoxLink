@@ -1,6 +1,5 @@
 window.lastClickedUser = sessionStorage.getItem("lastClickedUser") || null;
 window.listChatBoxID = {}
-
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
     // Lấy dữ liệu cho settings
@@ -65,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await sendMessage('file');
     });
 
-    document.getElementById('bellIcon').addEventListener('click', async () => {
+    document.getElementById('bellIcon').addEventListener('click', () => {
         const checkbox = document.getElementById('notifyToggle');
         const bellIcon = document.getElementById('bellIcon');
         const stateText = document.getElementById('notification-state-text');
@@ -77,14 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkbox.checked) {
             bellIcon.classList.remove('fa-bell-slash');
             bellIcon.classList.add('fa-bell');
-            stateText.textContent = t("chat-info.turn-on-notifications");
-            await clickNotice('on');  // Gọi hàm clickNotice với tham số 'on')
-
+            stateText.textContent = t("chat_info.turn_on_notifications");
         } else {
             bellIcon.classList.remove('fa-bell');
             bellIcon.classList.add('fa-bell-slash');
-            stateText.textContent = t("chat-info.turn-off-notifications");
-            await clickNotice('off');  // Gọi hàm clickNotice với tham số 'off')
+            stateText.textContent = t("chat_info.turn_off_notifications");
         }
     });
 
@@ -131,31 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const addLink = document.getElementById("addLinkButton");
         addLink.classList.remove("hidden");
-    });
-
-    // Gắn click cho tất cả ảnh trong khung
-    document.querySelectorAll(".profile-body-images-content img").forEach(img => {
-        img.addEventListener("click", () => {
-            // 1. Hiện modal
-            document.getElementById("imageModal").style.display = "flex";
-            document.getElementById("modalImg").src = img.src;
-
-            // 2. Lưu id của thẻ cha vào sessionStorage
-            const parentDiv = img.closest(".profile-body-images-content");
-            sessionStorage.setItem("postID", parentDiv.id);
-        });
-    });
-
-    // Gắn click cho nút close
-    document.querySelector(".close").addEventListener("click", () => {
-        document.getElementById("imageModal").style.display = "none";
-    });
-
-    // Gắn click cho vùng modal (để đóng khi click ra ngoài ảnh)
-    document.getElementById("imageModal").addEventListener("click", (e) => {
-        if (e.target === document.getElementById("imageModal")) {
-            document.getElementById("imageModal").style.display = "none";
-        }
     });
 });
 
@@ -265,6 +236,7 @@ window.changeTab = async function (tabName) {
         },
         Post: {
             show: ['postContainer'],
+            buttonId: 'Post'
         }
     };
 
@@ -280,3 +252,141 @@ window.changeTab = async function (tabName) {
         }
     }
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+    let currentPosts = [];      // danh sách bài đăng hiện tại trong 1 profile
+    let postIndex = 0;        // bài đăng hiện tại
+    let currentGroup = [];    // ảnh trong bài
+    let currentIndex = 0;     // ảnh trong nhóm
+
+    // Khởi tạo hiển thị ảnh đầu tiên trong mỗi bài đăng
+    const allPosts = document.querySelectorAll(".profile-body-images-content");
+    allPosts.forEach(container => {
+        const imgs = container.querySelectorAll("img");
+        imgs.forEach((img, index) => {
+            img.style.display = index === 0 ? "block" : "none";
+        });
+    });
+
+    // Hàm mở modal cho bài đăng
+    function openModalForPost(index) {
+        const post = currentPosts[index];
+        currentGroup = Array.from(post.querySelectorAll("img"));
+        currentIndex = 0;
+        document.getElementById("imageModal").style.display = "flex";
+
+        if (currentGroup.length > 1) {
+            createDots();
+        }
+        updateModalImage();
+        updateArrowVisibility();
+    }
+
+    // Cập nhật ảnh hiển thị trong modal
+    function updateModalImage() {
+        document.getElementById("modalImg").src = currentGroup[currentIndex].src;
+        updateArrowVisibility();
+        updateDots();
+    }
+
+    // Cập nhật trạng thái active của các dots
+    function updateDots() {
+        const dots = document.getElementById("imageDots").querySelectorAll(".dot");
+        dots.forEach((dot, i) => {
+            dot.classList.toggle("active", i === currentIndex);
+        });
+    }
+
+    // Tạo dots cho navigation
+    function createDots() {
+        document.getElementById("imageDots").innerHTML = "";
+        currentGroup.forEach((_, i) => {
+            const dot = document.createElement("div");
+            dot.classList.add("dot");
+            if (i === currentIndex) dot.classList.add("active");
+
+            dot.addEventListener("click", () => {
+                currentIndex = i;
+                updateModalImage();
+            });
+
+            document.getElementById("imageDots").appendChild(dot);
+        });
+    }
+
+    // Cập nhật hiển thị các nút điều hướng
+    function updateArrowVisibility() {
+        document.getElementById("prevImageBtn").style.visibility = currentIndex === 0 ? "hidden" : "visible";
+        document.getElementById("nextImageBtn").style.visibility = currentIndex === currentGroup.length - 1 ? "hidden" : "visible";
+        document.getElementById("prevPostBtn").style.visibility = postIndex === 0 ? "hidden" : "visible";
+        document.getElementById("nextPostBtn").style.visibility = postIndex === currentPosts.length - 1 ? "hidden" : "visible";
+    }
+
+    // Đóng modal
+    function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
+        document.getElementById("modalImg").src = "";
+    }
+
+    // Xử lý sự kiện click vào ảnh đầu tiên của mỗi bài đăng
+    allPosts.forEach((container) => {
+        const firstImg = container.querySelector("img");
+        firstImg.addEventListener("click", () => {
+            const profileContainer = container.closest('.profile-container, .profile-friend-container');
+            if (!profileContainer) return;
+            console.log("Profile container found:", profileContainer);
+            currentPosts = Array.from(profileContainer.querySelectorAll(".profile-body-images-content"));
+            postIndex = currentPosts.indexOf(container);
+            openModalForPost(postIndex);
+        });
+    });
+
+    // Xử lý sự kiện nút điều hướng ảnh trước
+    document.getElementById("prevImageBtn").addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateModalImage();
+        }
+    });
+
+    // Xử lý sự kiện nút điều hướng ảnh tiếp theo
+    document.getElementById("nextImageBtn").addEventListener("click", () => {
+        if (currentIndex < currentGroup.length - 1) {
+            currentIndex++;
+            updateModalImage();
+        }
+    });
+
+    // Xử lý sự kiện nút điều hướng bài đăng trước
+    document.getElementById("prevPostBtn").addEventListener("click", () => {
+        if (postIndex > 0) {
+            postIndex--;
+            openModalForPost(postIndex);
+        }
+    });
+
+    // Xử lý sự kiện nút điều hướng bài đăng tiếp theo
+    document.getElementById("nextPostBtn").addEventListener("click", () => {
+        if (postIndex < currentPosts.length - 1) {
+            postIndex++;
+            openModalForPost(postIndex);
+        }
+    });
+
+    // Xử lý sự kiện đóng modal
+    document.getElementById("closeModal").addEventListener("click", closeModal);
+
+    // Xử lý sự kiện click bên ngoài modal để đóng
+    document.getElementById("imageModal").addEventListener("click", e => {
+        if (e.target === document.getElementById("imageModal")) closeModal();
+    });
+
+    // Xử lý sự kiện phím
+    document.addEventListener("keydown", e => {
+        if (document.getElementById("imageModal").style.display === "flex") {
+            if (e.key === "ArrowRight") document.getElementById("nextImageBtn").click();
+            else if (e.key === "ArrowLeft") document.getElementById("prevImageBtn").click();
+            else if (e.key === "Escape") closeModal();
+        }
+    });
+});

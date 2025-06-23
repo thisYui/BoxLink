@@ -68,6 +68,7 @@ function sendOTP(to, subject, text, salt) {
 
         // Mã hóa OTP
         return bcrypt.hash(otp, salt);
+
     } catch (error) {
         logger.error('Error sending email: ', error);
     }
@@ -77,12 +78,8 @@ function sendOTP(to, subject, text, salt) {
 async function verifyOTP(hashOTP, otp) {
     try {
         const match = await bcrypt.compare(otp.toString(), await hashOTP);
+        return !!match;
 
-        if (match) {
-            return true;
-        } else {
-            return false;
-        }
     } catch (error) {
         logger.error('Error verifying OTP: ', error);
     }

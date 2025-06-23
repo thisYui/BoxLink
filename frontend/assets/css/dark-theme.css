@@ -63,7 +63,7 @@ body {
 /* Container backgrounds */
 .search-container, .chat-container, .list-container, .notification-container,
 .profile-friend-container,.message-container, .profile-container, .settings-container,
-.chats-info {
+.chats-info, .post-container {
     box-shadow: rgba(212, 212, 212, 0.12) 0px 2px 4px 0px, rgba(255, 255, 255, 0.32) 0px 2px 16px 0px;
 }
 
@@ -270,4 +270,21 @@ body {
 
 .social-link-item a, .social-link-item-edit-profile a {
     color: #fff;
+}
+
+.post-area {
+    background-color: #353535;
+}
+
+.post-area-header > hr {
+    background-color: #eaeaea;
+}
+
+.post-modal-content {
+    background-color: #444444;
+}
+
+.post-modal-caption {
+    background-color: #2a2a2a;
+    color: #fff
 }

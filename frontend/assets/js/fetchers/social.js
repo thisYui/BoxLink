@@ -18,7 +18,7 @@ async function getSinglePost(uid, postID) {
 }
 
 async function getAllPosts(uid) {
-    const response = await fetch(`${host}/api/social/get-single-post`, {
+    const response = await fetch(`${host}/api/social/get-all-posts`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -64,7 +64,7 @@ async function removePost() {
         },
         body: JSON.stringify({
             uid: localStorage.getItem("uid"),
-            postID:  sessionStorage.getItem("postID")
+            postID: sessionStorage.getItem("postID")
         })
     });
 
@@ -115,11 +115,32 @@ async function unlikePost(userID) {
     return await response.json();
 }
 
+async function getListUserLikes(userID) {
+    const response = await fetch(`${host}/api/social/get-list-user-likes`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: userID,
+            postID: sessionStorage.getItem("postID")
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to unlike post");
+    }
+
+    return await response.json();
+}
+
+
 export {
     getSinglePost,
     getAllPosts,
     upPost,
     removePost,
     likePost,
-    unlikePost
+    unlikePost,
+    getListUserLikes
 };
