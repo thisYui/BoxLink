@@ -74,7 +74,7 @@ body {
 /* Container backgrounds */
 .search-container, .chat-container, .list-container,.notification-container,
 .profile-friend-container, .profile-container, .settings-container,
-.message-container {
+.message-container, .post-container {
     
     box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
@@ -283,4 +283,14 @@ body {
 .profile-body-basic-info-text-edit-profile:focus, .profile-body-personal-info-container-input-edit-profile:focus {
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
     outline: none;
+}
+.post-area {
+    background-color: #f9f9f9;
+}
+
+.post-area-header > hr {
+    background-color: #444444;
+}
+.post-modal-content {
+    background-color: #f9f9f9;
 }

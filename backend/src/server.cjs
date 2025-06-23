@@ -5,7 +5,7 @@ const authRoutes = require("./routes/authRoutes.cjs");  // Import router auth
 const userRoutes = require("./routes/userRoutes.cjs");  // Import router user
 const messageRoutes = require("./routes/messageRoutes.cjs");  // Import router message
 const indexRoutes = require("./routes/indexRoutes.cjs");  // Import router index
-const socialRoutes = require("./routes/socialRoutes.js");  // Import router index
+const socialRoutes = require("./routes/socialRoutes.cjs");  // Import router index
 const http = require("http");
 const server = http.createServer(app);  // Khởi tạo server HTTP
 require("./services/socketServices.cjs")(server);  // Tích hợp Socket.IO

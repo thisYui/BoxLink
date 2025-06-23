@@ -1,6 +1,5 @@
 window.lastClickedUser = sessionStorage.getItem("lastClickedUser") || null;
 window.listChatBoxID = {}
-
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
     // Lấy dữ liệu cho settings
@@ -211,6 +210,7 @@ window.changeTab = async function (tabName) {
         return;
     }
 
+
     // Ẩn tất cả container trước
     for (const key in containers) {
         containers[key].classList.add('hidden');
@@ -243,6 +243,7 @@ window.changeTab = async function (tabName) {
         },
         Post: {
             show: ['postContainer'],
+            buttonId: 'Post'
         }
     };
 
@@ -259,27 +260,145 @@ window.changeTab = async function (tabName) {
     }
 };
 
-document.addEventListener("DOMContentLoaded", function () {
+
+document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("imageModal");
     const modalImg = document.getElementById("modalImg");
-    const closeBtn = document.querySelector(".close");
+    const closeBtn = document.getElementById("closeModal");
+    const imageDotsContainer = document.getElementById("imageDots");
 
-    const images = document.querySelectorAll(".profile-body-images-content img");
+    // Nút chuyển bài đăng
+    const prevPostBtn = document.getElementById("prevPostBtn");
+    const nextPostBtn = document.getElementById("nextPostBtn");
 
-    images.forEach(img => {
-        img.addEventListener("click", () => {
-            modal.style.display = "flex";
-            modalImg.src = img.src;
+    // Nút chuyển ảnh trong bài đăng
+    const prevImageBtn = document.getElementById("prevImageBtn");
+    const nextImageBtn = document.getElementById("nextImageBtn");
+
+    const allPosts = document.querySelectorAll(".profile-body-images-content");
+
+    let currentPosts = [];      // danh sách bài đăng hiện tại trong 1 profile
+    let postIndex = 0;        // bài đăng hiện tại
+    let currentGroup = [];    // ảnh trong bài
+    let currentIndex = 0;     // ảnh trong nhóm
+
+    allPosts.forEach(container => {
+        const imgs = container.querySelectorAll("img");
+        imgs.forEach((img, index) => {
+            img.style.display = index === 0 ? "block" : "none";
         });
     });
 
-    closeBtn.addEventListener("click", () => {
-        modal.style.display = "none";
+    allPosts.forEach((container, i) => {
+        const firstImg = container.querySelector("img");
+        firstImg.addEventListener("click", () => {
+            const profileContainer = container.closest('.profile-container, .profile-friend-container');
+            if (!profileContainer) return;
+            console.log("Profile container found:", profileContainer);
+            currentPosts = Array.from(profileContainer.querySelectorAll(".profile-body-images-content"));
+
+            postIndex = currentPosts.indexOf(container);
+            openModalForPost(postIndex);
+        });
     });
 
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.style.display = "none";
+    function openModalForPost(index) {
+        const post = currentPosts[index];
+        currentGroup = Array.from(post.querySelectorAll("img"));
+        currentIndex = 0;
+        modal.style.display = "flex";
+
+        if (currentGroup.length > 1) { 
+            createDots();
+        }
+        updateModalImage();
+        updateArrowVisibility();
+    }
+
+    
+    function updateModalImage() {
+        modalImg.src = currentGroup[currentIndex].src;
+        updateArrowVisibility();
+        updateDots(); 
+    }
+    
+    function updateDots() {
+        const dots = imageDotsContainer.querySelectorAll(".dot");
+        dots.forEach((dot, i) => {
+            dot.classList.toggle("active", i === currentIndex);
+        });
+    }
+
+    function createDots() {
+        imageDotsContainer.innerHTML = "";
+        currentGroup.forEach((_, i) => {
+            const dot = document.createElement("div");
+            dot.classList.add("dot");
+            if (i === currentIndex) dot.classList.add("active");
+
+            dot.addEventListener("click", () => {
+                currentIndex = i;
+                updateModalImage();
+            });
+
+            imageDotsContainer.appendChild(dot);
+        });
+    }
+
+    function updateArrowVisibility() {
+        prevImageBtn.style.visibility = currentIndex === 0 ? "hidden" : "visible";
+        nextImageBtn.style.visibility = currentIndex === currentGroup.length - 1 ? "hidden" : "visible";
+
+        prevPostBtn.style.visibility = postIndex === 0 ? "hidden" : "visible";
+        nextPostBtn.style.visibility = postIndex === currentPosts.length - 1 ? "hidden" : "visible";
+    }
+
+
+    function closeModal() {
+        modal.style.display = "none";
+        modalImg.src = "";
+    }
+
+    prevImageBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateModalImage();
+        }
+    });
+
+    nextImageBtn.addEventListener("click", () => {
+        if (currentIndex < currentGroup.length - 1) {
+            currentIndex++;
+            updateModalImage();
+        }
+    });
+
+    prevPostBtn.addEventListener("click", () => {
+        if (postIndex > 0) {
+            postIndex--;
+            openModalForPost(postIndex);
+        }
+    });
+
+    nextPostBtn.addEventListener("click", () => {
+        if (postIndex < currentPosts.length - 1) {
+            postIndex++;
+            openModalForPost(postIndex);
+        }
+    });
+
+
+    // Đóng modal
+    closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", e => {
+        if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", e => {
+        if (modal.style.display === "flex") {
+            if (e.key === "ArrowRight") nextImageBtn.click();
+            else if (e.key === "ArrowLeft") prevImageBtn.click();
+            else if (e.key === "Escape") closeModal();
         }
     });
 });

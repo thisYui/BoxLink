@@ -101,7 +101,50 @@
     <!-- Post Container -->
     <div class="post-container hidden" id="postContainer">
         <!-- Post -->
+        <div class="post-area">
+            <div class="post-area-header">
+                <span data-i18n="post.title"></span>
+                <hr>
+            </div>
+            <input type="file" id="imageInput" accept="image/*" multiple hidden>
+            <label for="imageInput" class="image-upload-label" data-i18n="post.choose-image">
+            </label>
+        </div>
     </div>
+
+    <div class="post-modal hidden" id="postModal">
+        <div class="post-modal-content">
+            <span class="post-modal-close-btn" id="closePostModal">&times;</span>
+
+            <div class="post-modal-main">
+                <div class="post-modal-image-preview">
+                    <button class="post-modal-remove-btn" id="removeImageBtn">&times;</button>
+                    <button class="post-modal-add-btn" id="addMoreImageBtn">+</button>
+                    <button class="post-modal-nav-btn post-modal-prev-btn">&lt;</button>
+                    <img id="previewImage" src="" alt="Preview">
+                    <button class="post-modal-nav-btn post-modal-next-btn">&gt;</button>
+                    <div class="post-modal-dots" id="dotsContainer"></div>
+                </div>
+
+                <div class="post-modal-info">
+                    <textarea class="post-modal-caption" id="postCaption" placeholder="Viết chú thích cho bài viết..."></textarea>
+                    <div class="post-modal-visibility">
+                        <label for="visibilitySelect">Chế độ hiển thị:</label>
+                        <select id="visibilitySelect">
+                            <option value="public">Công khai</option>
+                            <option value="friends-only">Chỉ bạn bè</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="addImageInput" accept="image/*" multiple hidden>
+            
+            
+            <button id="submitPost" class="post-modal-submit">Đăng bài</button>
+        </div>
+        
+    </div>
+
 
     <!-- Profile Container -->
     <div class="profile-container personal-profile hidden" id="profileContainer">
@@ -146,7 +189,29 @@
             <div class="profile-body-images">
                 <div class="profile-body-images-content">
                     <img src="./assets/images/default-avatar.png" alt="">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Fronalpstock_big.jpg/1200px-Fronalpstock_big.jpg" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Fronalpstock_big.jpg/1200px-Fronalpstock_big.jpg" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Fronalpstock_big.jpg/1200px-Fronalpstock_big.jpg" alt="">
                 </div>
+                <div class="profile-body-images-content">
+                    <img src="https://searchengineland.com/wp-content/seloads/2014/08/photos-images-pictures-ss-1920.jpg" alt="">
+                    <img src="https://media.istockphoto.com/id/814423752/photo/eye-of-model-with-colorful-art-make-up-close-up.jpg?s=612x612&w=0&k=20&c=l15OdMWjgCKycMMShP8UK94ELVlEGvt7GmB_esHWPYE=" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
+                    <img src="https://media.istockphoto.com/id/814423752/photo/eye-of-model-with-colorful-art-make-up-close-up.jpg?s=612x612&w=0&k=20&c=l15OdMWjgCKycMMShP8UK94ELVlEGvt7GmB_esHWPYE=" alt="">
+                    <img src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D" alt="">
+                    <img src="https://media.istockphoto.com/id/814423752/photo/eye-of-model-with-colorful-art-make-up-close-up.jpg?s=612x612&w=0&k=20&c=l15OdMWjgCKycMMShP8UK94ELVlEGvt7GmB_esHWPYE=" alt="">
+                </div>
+                <!-- <div class="profile-body-images-content">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Fronalpstock_big.jpg/1200px-Fronalpstock_big.jpg" alt="">
+                </div>
+                <div class="profile-body-images-content">
+                    <img src="./assets/images/default-avatar.png" alt="">
+                </div>
+                <div class="profile-body-images-content">
+                    <img src="https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/172740/Originals/background-la-gi-1.jpg" alt="">
+                </div> -->
             </div>
         </div>
     </div>
@@ -205,55 +270,48 @@
             </div>
             <div class="profile-body-images">
                 <div class="profile-body-images-content">
+                    <img src="https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/509267876_122216898890110288_3285465180317923510_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=u6WqY-3qxQgQ7kNvwEcPUvK&_nc_oc=Adm5kwwIKU5rkvrVlj6wY14hecgA1ME7XQxM_lUuSoFIoIq4clIP4RgBWb3qbrOBKdsfT5DHLwnuSIO078hGWU5M&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=ep81Pe8xIWFYMt19jrdtdg&oh=00_AfM57iJkaaqOckT_JS8uQxaympkuKb5g0RZHG2UPQHvfYw&oe=685B189B" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
+                    <img src="https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/509267876_122216898890110288_3285465180317923510_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=u6WqY-3qxQgQ7kNvwEcPUvK&_nc_oc=Adm5kwwIKU5rkvrVlj6wY14hecgA1ME7XQxM_lUuSoFIoIq4clIP4RgBWb3qbrOBKdsfT5DHLwnuSIO078hGWU5M&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=ep81Pe8xIWFYMt19jrdtdg&oh=00_AfM57iJkaaqOckT_JS8uQxaympkuKb5g0RZHG2UPQHvfYw&oe=685B189B" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
+                    <img src="https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/509267876_122216898890110288_3285465180317923510_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=u6WqY-3qxQgQ7kNvwEcPUvK&_nc_oc=Adm5kwwIKU5rkvrVlj6wY14hecgA1ME7XQxM_lUuSoFIoIq4clIP4RgBWb3qbrOBKdsfT5DHLwnuSIO078hGWU5M&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=ep81Pe8xIWFYMt19jrdtdg&oh=00_AfM57iJkaaqOckT_JS8uQxaympkuKb5g0RZHG2UPQHvfYw&oe=685B189B" alt="">
                     <img src="./assets/images/default-avatar.png" alt="">
                 </div>
                 <div class="profile-body-images-content">
-                    <img src="./assets/images/HeapSort.png" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
                 </div>
                 <div class="profile-body-images-content">
-                    <img src="./assets/images/inboundnewrules.png" alt="">
+                    <img src="https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/509267876_122216898890110288_3285465180317923510_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=u6WqY-3qxQgQ7kNvwEcPUvK&_nc_oc=Adm5kwwIKU5rkvrVlj6wY14hecgA1ME7XQxM_lUuSoFIoIq4clIP4RgBWb3qbrOBKdsfT5DHLwnuSIO078hGWU5M&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=ep81Pe8xIWFYMt19jrdtdg&oh=00_AfM57iJkaaqOckT_JS8uQxaympkuKb5g0RZHG2UPQHvfYw&oe=685B189B" alt="">
                 </div>
                 <div class="profile-body-images-content">
-                    <img src="./assets/images/inherit.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/Mediator.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/pic1.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/polymophysm.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/templateMethod.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/QuickSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/memberFunct.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/HeapSort.png" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/img_5terre_wide.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/pic2.jpg" alt="">
-                </div>
-                <div class="profile-body-images-content">
-                    <img src="./assets/images/screen.png" alt="">
+                    <img src="./assets/images/default-avatar.png" alt="">
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="imageModal" id="imageModal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImg"/>
+    <div id="imageModal" class="imageModal">
+        <span class="close" id="closeModal">&times;</span>
+
+        <!-- ✅ Nút chuyển bài đăng (nằm ngoài modal-content) -->
+        <button class="nav-button left" id="prevPostBtn">&#10094;</button>
+        <button class="nav-button right" id="nextPostBtn">&#10095;</button>
+
+        <div class="modal-inner">
+            <!-- ✅ Nút chuyển ảnh trong bài đăng -->
+            <button class="inner-arrow inner-arrow-left" id="prevImageBtn">&#10094;</button>
+            <img id="modalImg" class="modal-content-image" />
+            <button class="inner-arrow inner-arrow-right" id="nextImageBtn">&#10095;</button>
+            <div id="imageDots" class="image-dots"></div>
+            <div class="modal-inner-content">
+                <p class="modal-inner-content-caption">
+                    Enter caption here...
+                </p>
+            </div>
+        </div>
     </div>
+
+
 
     <!-- EditProfile mode -->
     <div class="edit-profile-container hidden" id="profileEditContainer">
@@ -486,10 +544,6 @@
         </div> -->
     </div>
 
-    <div class="modal hidden" id="postModal">
-
-    </div>
-
     <!-- Overlay for modals -->
     <div class="overlay hidden" id="overlay"></div>
 
@@ -497,6 +551,7 @@
     <script type="module" defer src="assets/js/config/i18n.js"></script>
     <script type="module" defer src="assets/js/chat/renderMessage.js"></script>
     <script type="module" defer src="assets/js/utils/searcher.js"></script>
+    <script type="module" defer src="assets/js/utils/postStatus.js"></script>
     <script type="module" defer src="assets/js/user/settingAccount.js"></script>
     <script type="module" defer src="assets/js/user/notificationProcessor.js"></script>
     <script type="module" defer src="assets/js/config/socketClient.js"></script>
