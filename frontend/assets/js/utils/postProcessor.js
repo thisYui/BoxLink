@@ -34,6 +34,7 @@ window.deletePost = async function () {
 }
 
 async function showAllPost(profileBodyImages, profileCountPosts, uid) {
+    profileBodyImages.innerHTML = "";  // Xóa nội dung hiện tại
     // Một array <{id, url, createdAt}> chứa các post
     const posts = await getAllPosts(uid);
 
@@ -49,7 +50,7 @@ async function showAllPost(profileBodyImages, profileCountPosts, uid) {
 
         addPostToClient(profileBodyImages, postID, url);
     })
-    initPostProcessor(); 
+    initPostProcessor(posts);  // Khởi tạo post processor để xử lý các bài đăng
 }
 
 function addPostToClient(profileBodyImages, postID, url) {
@@ -109,7 +110,7 @@ async function unlikePostHandler() {S
 
 }
 
-function initPostProcessor() {
+function initPostProcessor(posts) {
     let currentPosts = [];      // danh sách bài đăng hiện tại trong 1 profile
     let postIndex = 0;        // bài đăng hiện tại
     let currentGroup = [];    // ảnh trong bài
@@ -117,7 +118,6 @@ function initPostProcessor() {
 
     // Khởi tạo hiển thị ảnh đầu tiên trong mỗi bài đăng
     const allPosts = document.querySelectorAll(".profile-body-images-content");
-    console.log("All posts found:", allPosts);
     allPosts.forEach(container => {
         const imgs = container.querySelectorAll("img");
         imgs.forEach((img, index) => {
@@ -126,12 +126,22 @@ function initPostProcessor() {
     });
 
     // Hàm mở modal cho bài đăng
-    function openModalForPost(index) {
+    function openModalForPost(index, profileContainer) {
         const post = currentPosts[index];
         currentGroup = Array.from(post.querySelectorAll("img"));
         currentIndex = 0;
         document.getElementById("imageModal").style.display = "flex";
+        document.getElementById("postModalCaption").textContent = posts[index].caption || "";
+        document.getElementById("postModalTime").textContent = dateToDMY(posts[index].createdAt);
+        document.getElementById("postModalLikesCount").textContent = posts[index].likes || 0;
+        document.getElementById("postModalAvatar").src = profileContainer.querySelector(".profile-body-basic-info-avatar").src;
+        document.getElementById("postModalUsername").textContent = profileContainer.querySelector(".profile-body-basic-info-text.profile-name").textContent;
 
+        const publicVisibility = document.createElement("i");
+        publicVisibility.className = posts[index].isPublic ? "fa-solid fa-earth-asia" : "fa-solid fa-user-group";
+
+        document.getElementById("postModalVisibility").innerHTML = "";
+        document.getElementById("postModalVisibility").appendChild(publicVisibility);
         if (currentGroup.length > 1) {
             createDots();
         }
@@ -184,17 +194,16 @@ function initPostProcessor() {
         document.getElementById("imageModal").style.display = "none";
         document.getElementById("modalImg").src = "";
     }
-
+    
     // Xử lý sự kiện click vào ảnh đầu tiên của mỗi bài đăng
     allPosts.forEach((container) => {
         const firstImg = container.querySelector("img");
         firstImg.addEventListener("click", () => {
             const profileContainer = container.closest('.profile-container, .profile-friend-container');
             if (!profileContainer) return;
-            console.log("Profile container found:", profileContainer);
             currentPosts = Array.from(profileContainer.querySelectorAll(".profile-body-images-content"));
             postIndex = currentPosts.indexOf(container);
-            openModalForPost(postIndex);
+            openModalForPost(postIndex, profileContainer);
         });
     });
 
@@ -218,7 +227,7 @@ function initPostProcessor() {
     document.getElementById("prevPostBtn").addEventListener("click", () => {
         if (postIndex > 0) {
             postIndex--;
-            openModalForPost(postIndex);
+            openModalForPost(postIndex, profileContainer);
         }
     });
 
@@ -226,7 +235,7 @@ function initPostProcessor() {
     document.getElementById("nextPostBtn").addEventListener("click", () => {
         if (postIndex < currentPosts.length - 1) {
             postIndex++;
-            openModalForPost(postIndex);
+            openModalForPost(postIndex, profileContainer);
         }
     });
 
