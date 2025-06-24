@@ -11,6 +11,7 @@ async function createPost(id, listData, caption, isPublic) {
             isPublic: isPublic,
             createdAt: new Date().toISOString(),
             likes: [],
+            urls: [],
         }
         const p = await db.collection("posts").doc(id).collection("post").add(post);
 
@@ -25,7 +26,7 @@ async function createPost(id, listData, caption, isPublic) {
 
             // Cập nhật document post với URL của hình ảnh
             await db.collection("posts").doc(id).collection("post").doc(p.id).update({
-                [`urls.${i}`]: await getDownloadUrl(filePath)
+                urls: admin.firestore.FieldValue.arrayUnion(filePath)
             });
         }
 
@@ -106,14 +107,23 @@ async function getPost(uid, postID) {
     }
 }
 
-async function getAllUrlPosts(uid) {
+async function getAllUrlPosts(uid, searchUID) {
     try {
         const postRef = db.collection("posts").doc(uid).collection("post");
+
+        const userhRef = db.collection('users').doc(searchUID);
+        const userhData = await userhRef.get();
+        const listFriend = userhData.data().friendList || [];
+        listFriend.push(uid); // Thêm chủ sở hữu vào danh sách bạn bè
 
         const snapshot = await postRef.get();
         const results = [];
         snapshot.forEach(doc => {
             const post = doc.data();
+
+            if (post.isPublic === false && !listFriend.includes(searchUID)) {
+                return; // Bỏ qua bài viết không công khai nếu không phải chủ sở hữu
+            }
 
             results.push({
                 id: doc.id,
@@ -129,7 +139,6 @@ async function getAllUrlPosts(uid) {
         throw new Error('Error getting all posts: ' + error.message);
     }
 }
-
 
 async function getListLiker(uid, postID) {
     try {

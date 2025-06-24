@@ -264,10 +264,9 @@
         <div class="modal-inner">
             <div class="modal-inner-title">
                 <img src="" alt="" class="modal-inner-title-avatar" id="postModalAvatar">
-                <p class="modal-inner-title-name" id="postModalUsername">UserName</p>
+                <p class="modal-inner-title-name" id="postModalUsername"></p>
                 <span class="modal-inner-title-visibility" id="postModalVisibility">
                     <i class="fa-solid fa-earth-asia"></i>
-
                 </span>
                 <span class="modal-inner-title-time" id="postModalTime"></span>
             </div>
@@ -276,12 +275,10 @@
             <button class="inner-arrow inner-arrow-right" id="nextImageBtn">&#10095;</button>
             <div id="imageDots" class="image-dots"></div>
             <div class="modal-inner-content">
-                <p class="modal-inner-content-caption" id="postModalCaption">
-                    Enter caption here...
-                </p>
+                <p class="modal-inner-content-caption" id="postModalCaption"></p>
                 <div class="modal-inner-content-likes">
-                    <span class="modal-inner-content-likes-count" id="postModalLikesCount">120</span>
-                    <i class="fas fa-heart modal-inner-content-likes-icon"></i>
+                    <span class="modal-inner-content-likes-count" id="postModalLikesCount" onclick="showListUserLike()"></span>
+                    <i class="fas fa-heart modal-inner-content-likes-icon" onclick="toggleLike()"></i>
                 </div>
             </div>
         </div>

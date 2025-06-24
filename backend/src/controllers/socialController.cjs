@@ -17,9 +17,9 @@ async function getSinglePost(req, res) {
 }
 
 async function getAllPosts(req, res) {
-    const { uid } = req.body;
+    const { uid, searchUID } = req.body;
     try {
-        const posts = await getAllUrlPosts(uid);
+        const posts = await getAllUrlPosts(uid, searchUID);
         res.status(200).json(posts);
 
     } catch (error) {

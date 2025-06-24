@@ -25,6 +25,7 @@ async function getAllPosts(uid) {
         },
         body: JSON.stringify({
             uid: uid,
+            searchUID: localStorage.getItem("uid"),
         })
     });
 
