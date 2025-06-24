@@ -294,3 +294,7 @@ body {
 .post-modal-content {
     background-color: #f9f9f9;
 }
+
+.modal-inner-content, .modal-inner-title {
+    background-color: #f9f9f9;
+}

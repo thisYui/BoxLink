@@ -169,7 +169,7 @@
                     </div>
                 </div>
                 <div class="profile-body-additional-info">
-                     <div class="profile-body-additional-info-container">
+                    <div class="profile-body-additional-info-container">
                         <h4 class="profile-body-additional-info-container-title" data-i18n="profile.count-posts"></h4>
                         <p class="profile-body-additional-info-container-text profile-count-posts"></p>
                     </div>
@@ -187,6 +187,7 @@
                 <button class="edit-profile-button" data-i18n="profile.editButton" onclick="editProfileMode()"></button>
             </div>
             <div class="profile-body-images">
+
             </div>
         </div>
     </div>
@@ -261,6 +262,10 @@
         <button class="nav-button right" id="nextPostBtn">&#10095;</button>
 
         <div class="modal-inner">
+            <div class="modal-inner-title">
+                <img src="./assets/images/default-avatar.png" alt="" class="modal-inner-title-avatar">
+                <p class="modal-inner-title-name">UserName</p>
+            </div>
             <button class="inner-arrow inner-arrow-left" id="prevImageBtn">&#10094;</button>
             <img id="modalImg" class="modal-content-image" />
             <button class="inner-arrow inner-arrow-right" id="nextImageBtn">&#10095;</button>
@@ -269,6 +274,10 @@
                 <p class="modal-inner-content-caption">
                     Enter caption here...
                 </p>
+                <div class="modal-inner-content-likes">
+                    <span class="modal-inner-content-likes-count">120</span>
+                    <i class="fas fa-heart modal-inner-content-likes-icon"></i>
+                </div>
             </div>
         </div>
     </div>
