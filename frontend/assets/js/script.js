@@ -175,7 +175,6 @@ window.showListUserPopup = function (listUser, title) {
     // relationship: owner, friend, request, receive, none
 
     const relationships = t("profile.relationship");
-    console.log(relationships)
 
     const colorButton = {
         owner: "grey",
