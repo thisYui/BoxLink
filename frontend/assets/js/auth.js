@@ -1,5 +1,6 @@
 import { auth, signInWithEmailAndPassword } from "./config/firebaseConfig.js";
 import { createSession, authenticateSession } from "./fetchers/session.js"
+import { getUserLanguage, loadLanguage } from "./config/i18n.js";
 
 // Create host URL from current location
 const host = window.location.host;
@@ -13,10 +14,17 @@ if (localStorage.getItem("uid") !== null) {
 
         } else {
             localStorage.removeItem("uid");
-            localStorage.removeItem("email");
+            sessionStorage.removeItem("email");
         }
     })
 }
+
+// i18n
+const lang = getUserLanguage();
+loadLanguage(lang).then(() => {
+    // Chỉnh sửa lại i18n
+    document.querySelector(".privacy__confirmation").innerHTML = t("auth.privacy-policy");
+});
 
 /**
  * Display only the specified form and hide others
@@ -177,8 +185,8 @@ window.requestSignUp = async function(formData) {
             return false;
         }
 
-        // Save email to localStorage for confirmation step
-        localStorage.setItem("email", email);
+        // Save email to sessionStorage for confirmation step
+        sessionStorage.setItem("email", email);
         return true;
     } catch (error) {
         console.error("Registration error:", error.message);
@@ -193,8 +201,8 @@ window.requestSignUp = async function(formData) {
  * @returns {Promise<boolean>} - Success status
  */
 window.confirmCodeSignUp = async function(formData) {
-    // Get email from localStorage
-    const email = localStorage.getItem("email");
+    // Get email from sessionStorage
+    const email = sessionStorage.getItem("email");
     const code = formData.get("confirmationCode");
 
     try {
@@ -242,6 +250,11 @@ window.sendCode = async function(formData) {
         return false;
     }
 
+    sessionStorage.setItem("email", email);
+    await requestOTP(email);
+};
+
+async function requestOTP(email) {
     try {
         // Send verification request
         const response = await fetch(`http://${host}/api/auth/send-otp`, {
@@ -260,16 +273,14 @@ window.sendCode = async function(formData) {
             alert("Error: " + errorData.message);
             return false;
         }
-
-        // Save email to localStorage for next steps
-        localStorage.setItem("email", email);
         return true;
+
     } catch (error) {
         console.error("Error sending data:", error);
         alert("Connection error to server!");
         return false;
     }
-};
+}
 
 /**
  * Confirm password reset code
@@ -277,8 +288,8 @@ window.sendCode = async function(formData) {
  * @returns {Promise<boolean>} - Success status
  */
 window.confirmCode = async function(formData) {
-    // Get email from localStorage
-    const email = localStorage.getItem("email");
+    // Get email from sessionStorage
+    const email = sessionStorage.getItem("email");
     const code = formData.get("confirmationCode");
 
     try {
@@ -318,8 +329,8 @@ window.confirmCode = async function(formData) {
  * @returns {Promise<boolean>} - Success status
  */
 window.confirmResetPassword = async function(formData) {
-    // Get email from localStorage
-    const email = localStorage.getItem("email");
+    // Get email from sessionStorage
+    const email = sessionStorage.getItem("email");
     const newPassword = formData.get("newPassword");
     const confirmPassword = formData.get("confirmNewPassword");
 
@@ -359,3 +370,12 @@ window.confirmResetPassword = async function(formData) {
         return false;
     }
 };
+
+/**
+ * Resend confirmation code for email verification
+ * @returns {Promise<void>}
+ */
+window.resendCode = async function() {
+    const email = sessionStorage.getItem("email");
+    await requestOTP(email);
+}

@@ -4,8 +4,8 @@ const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
 const logger = require('../config/logger.cjs');
 
-let users = []; // (email, displayName, hashOTP)
-let otps = [];  // (email, hashOTP)
+let users = {}; // email: {displayName, hashOTP}
+let otps = {};  // email: hashOTP
 
 // Xử lý đăng ký tài khoản
 async function signUp(req, res) {
@@ -17,7 +17,7 @@ async function signUp(req, res) {
         }
 
         const hashOTP = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
-        users.push({ email, displayName, hashOTP });
+        users[email] = { displayName, hashOTP };
 
         await createAuth(email, password, displayName);
         res.status(200).json({ message: 'Chờ mã xác nhận!' });
@@ -42,7 +42,10 @@ async function confirmOTP(req, res) {
         if (!valid) return res.status(400).json({message: 'Mã xác thực không hợp lệ!'});
 
         // Xóa OTP đã dùng
-        if (type === "signUp") users.splice(users.indexOf(user), 1);
+        if (type === "signUp") {
+            delete users[email];
+        }
+
         res.status(200).json({message: 'Xác thực thành công!'});
 
     } catch (error) {
@@ -55,8 +58,7 @@ async function confirmOTP(req, res) {
 async function requestOTP(req, res) {
     const { email } = req.body;
     try {
-        const hashOTP = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
-        otps.push({ email, hashOTP });
+        otps[email] = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
         res.status(200).json({ message: 'Mã xác thực đã được gửi!' });
 
     } catch (error) {
@@ -72,7 +74,8 @@ async function resetPassword(req, res) {
         const user = await admin.auth().getUserByEmail(email);
         setPassword(user.uid, password).then(result => {
             if (result) {
-                otps = otps.filter(u => u.email !== email);
+                // Xóa OTP đã dùng
+                delete otps[email];
                 res.status(200).json({message: 'Đặt lại mật khẩu thành công!'});
 
             } else {

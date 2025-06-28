@@ -95,6 +95,7 @@ function getInterGender(value) {
     return genderList.indexOf(value);
 }
 
+
 export {
     loadLanguage,
     getUserLanguage,
