@@ -22,7 +22,6 @@ window.loadPage = async function (){
     // Lưu trữ trạng thái thông báo của bạn bè
     friendList.forEach(friend => {
         const friendID = friend.uid;
-        window.listChatBoxID[friendID] = convertToDate(friend.lastMessage.timeSend);
 
         if (friend.stateNotification === false) {
             addToListBoxNoNotice(friendID); // Thêm vào danh sách không có thông báo
@@ -41,23 +40,24 @@ window.loadPage = async function (){
     }
 
     // Lấy user ở đầu tiên trong danh sách bạn bè
-    window.lastClickedUser = friendList.length > 0 ? friendList[0].uid : null;
+    const user = friendList.length > 0 ? friendList[0].uid : null;
+    sessionStorage.setItem("lastClickedUser", user);
     loadChat().then();
 }
 
 window.loadChat = async function () {
-    if (!window.lastClickedUser) {
+    if (!sessionStorage.getItem("lastClickedUser")) {
         return;
     }
 
-    const { chatID } = await startChatSession(window.lastClickedUser);
+    const { chatID } = await startChatSession(sessionStorage.getItem("lastClickedUser"));
     sessionStorage.setItem('chatID', chatID);
     sessionStorage.setItem("replyMessageID", "");
 
     const chatData = await fetchMessages();
     const container = document.getElementById("messageContainer");
 
-    transmitMessageContainer(window.lastClickedUser);
+    transmitMessageContainer(sessionStorage.getItem("lastClickedUser"));
 
     container.innerHTML = "";
     chatData.forEach(msg => {
@@ -86,9 +86,9 @@ window.handleUserClick = function (element) {
     const elementId = element.id;
 
     // Xóa class active khỏi phần tử trước đó nếu có
-    if (window.lastClickedUser) {
+    if (sessionStorage.getItem("lastClickedUser")) {
         const chatContainer = document.getElementById("chatContainer");
-        const lastEl = chatContainer.querySelector(`[id="${window.lastClickedUser}"]`);
+        const lastEl = chatContainer.querySelector(`[id="${sessionStorage.getItem("lastClickedUser")}"]`);
         if (lastEl) lastEl.classList.remove("chat-box-choosen");
     }
 
@@ -96,7 +96,7 @@ window.handleUserClick = function (element) {
     element.classList.add("chat-box-choosen");
 
     // Cập nhật biến theo dõi
-    window.lastClickedUser = elementId;
+    sessionStorage.setItem("lastClickedUser", elementId);
     sessionStorage.setItem("lastClickedUser", elementId);
 
     loadChat().then();

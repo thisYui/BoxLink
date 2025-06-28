@@ -38,7 +38,7 @@ window.processingNotification = async function (notification) {
         moveChatIDToFirstInListBox(msg.senderID);
 
         // Đưa tin nhắn vào chat cho 2 trường hợp
-        if (msg.senderID === window.lastClickedUser) {
+        if (msg.senderID === sessionStorage.getItem("lastClickedUser")) {
             // 1. Nếu chat là chat đang mở
             fixMessageToChatBoxList(msg.senderID, msg, true);
             addMessageToChatBoxServer(msg);  // Thêm tin nhắn vào chat box

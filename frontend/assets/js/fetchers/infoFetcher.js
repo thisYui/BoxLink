@@ -341,6 +341,23 @@ async function changeSettingNotification(notification) {
     }
 }
 
+async function getListFriend(uid) {
+    const response = await fetch(`${host}/api/user/get-list-friend`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: uid
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch box chat info");
+    }
+
+    return await response.json();
+}
 
 export {
     updateOnlineTime,
@@ -358,5 +375,6 @@ export {
     settingConfig,
     changeSettingTheme,
     changeSettingLanguage,
-    changeSettingNotification
+    changeSettingNotification,
+    getListFriend,
 }

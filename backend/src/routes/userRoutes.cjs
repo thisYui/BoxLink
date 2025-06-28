@@ -5,7 +5,8 @@ const { getUserInfo, changeAvatar, resetPassword,
     recallRequest, deleteAccount, updateOnline,
     getProfile, changeBirthday, changeGender,
     changeBiography, addSocialLinkFromList,
-    removeSocialLinkFromList
+    removeSocialLinkFromList, getListFriend,
+    getMutualFriends
 } = require("../controllers/userController.cjs");
 
 const router = express.Router();
@@ -27,5 +28,7 @@ router.post("/change-gender", changeGender);
 router.post("/change-biography", changeBiography);
 router.post("/add-social-link", addSocialLinkFromList);
 router.post("/remove-social-link", removeSocialLinkFromList);
+router.post("/get-list-friend", getListFriend);
+router.post("/get-mutual-friends", getMutualFriends);
 
 module.exports = router;

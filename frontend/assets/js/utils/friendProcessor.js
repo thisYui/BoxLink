@@ -2,6 +2,34 @@ import { friend } from "../fetchers/infoFetcher.js";
 import { getBoxChatInfo } from "../fetchers/request.js";
 import { addBoxChatToList, moveChatIDToFirstInListBox } from "../chat/chatProcessor.js"
 
+window.toggleStatusFriend = async function(friendID, type) {
+    if (type === 'send') {
+        // Gửi lời mời kết bạn
+        await friend(localStorage.getItem("uid"), friendID, "friend-request");
+
+    } else if (type === 'accept') {
+        // Đồng ý kết bạn
+        const { chatID } = await friend(localStorage.getItem("uid"), friendID, "accept-friend");
+
+        // Thêm friend vào danh sách chat
+        const box = await getBoxChatInfo(chatID);
+        addBoxChatToList(box);
+        moveChatIDToFirstInListBox(chatID);
+
+    } else if (type === 'remove') {
+        // Xóa bạn bè
+        await friend(localStorage.getItem("uid"), friendID, "unfriend");
+
+        const chatList = document.querySelector(".chats-list");
+        const chatUser = chatList.querySelector(`[id="${friendID}"]`);
+        chatUser.remove();
+
+    } else if (type === 'recall') {
+        // Thu hồi lời mời kết bạn
+        await friend(localStorage.getItem("uid"), friendID, "recall-friend");
+    }
+}
+
 window.addFriend = async function() {
     // Gửi lời mời kết bạn
     await friend(localStorage.getItem("uid"), sessionStorage.getItem("searchUID"), "friend-request");

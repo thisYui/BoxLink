@@ -1,4 +1,4 @@
-import { getProfileUser } from '../fetchers/infoFetcher.js';
+import { getProfileUser, getListFriend } from '../fetchers/infoFetcher.js';
 import { getIconClassForUrl, convertToDate, dateToDMY, dateToYMD } from "../utils/renderData.js";
 import { getListGender, getValueMappingGender } from "../config/i18n.js";
 import { showAllPost } from "../utils/postProcessor.js";
@@ -21,7 +21,6 @@ window.editProfileMode = async function () {
         stateEdit = true;
     }
 }
-
 
 async function editMode() {
     await changeTab("EditProfile");
@@ -58,6 +57,10 @@ async function showProfile(profile, profileContainer) {
     // socialLinks: userData.socialLinks,
     // createdAt: userData.createdAt,
     // countFriendMutual: userData.countFriendMutual, (myprofile có giá trị -1)
+
+    const userID = profileContainer.classList.contains("profile-friend-container")
+            ? sessionStorage.getItem("searchUID")
+            : localStorage.getItem("uid");
 
     // Cập nhật thông tin cơ bản của người dùng
     const profileAvatar = profileContainer.querySelector(".profile-body-basic-info-avatar");
@@ -136,12 +139,16 @@ async function showProfile(profile, profileContainer) {
 
     if (profileFriendNum) {
         profileFriendNum.textContent = profile.countFriends?.toString() || "0";
+
+        const listFriend = await getListFriend(userID);
+        profileFriendNum.addEventListener("click", () =>
+            window.showListUserPopup(listFriend, t("profile.title-friends"))
+        );
     }
 
     const profileBodyImages = profileContainer.querySelector(".profile-body-images");
     const profileCountPosts = profileContainer.querySelector(".profile-count-posts");
-    const uid = localStorage.getItem("uid");
-    await showAllPost(profileBodyImages, profileCountPosts, uid);
+    await showAllPost(profileBodyImages, profileCountPosts, userID);
 }
 
 // Handle profile edit button clicks

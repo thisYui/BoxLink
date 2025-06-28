@@ -29,13 +29,12 @@ async function loadLanguage(lang = 'en') {
         // Lấy chuỗi từ object translations bằng key dạng "a.b.c"
         let str = key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
 
-        // Nếu không phải chuỗi (ví dụ object), trả lại key
-        if (typeof str !== 'string') return key;
+        // Nếu không phải chuỗi (ví dụ object), trả về object key
+        if (typeof str !== 'string') return str;
 
         // Thay thế các {{var}} trong chuỗi bằng giá trị thực tế từ vars
         return str.replace(/{{(.*?)}}/g, (_, v) => vars[v.trim()] ?? '');
     };
-
 
     // Áp dụng bản dịch lên HTML
     document.querySelectorAll('[data-i18n]').forEach(el => {

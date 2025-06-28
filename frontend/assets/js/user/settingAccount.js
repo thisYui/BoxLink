@@ -2,8 +2,7 @@ import {
     changeAvatar, changeBiography, changeBirthday,
     changePassword, changeGender, changeDisplayName,
     changeEmail, operaSocialLink, deleteAccount,
-    updateOnlineTime, changeSettingLanguage
-} from '../fetchers/infoFetcher.js';
+    updateOnlineTime } from '../fetchers/infoFetcher.js';
 import { addLinkInListSocial, removeLinkInListSocial } from "../components/domProfile.js";
 import { getInterGender } from "../config/i18n.js";
 

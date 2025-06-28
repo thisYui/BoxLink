@@ -7,7 +7,7 @@ window.sendMessage = async function (typeInput) {
     const { type, content, replyTo } = await getDataFromDocument(typeInput);
 
     if (isValidMessage(content)) {
-        const messageID = await sendMessages(window.lastClickedUser, type, content, replyTo); // Gửi tin nhắn đến destination
+        const messageID = await sendMessages(sessionStorage.getItem("lastClickedUser"), type, content, replyTo); // Gửi tin nhắn đến destination
         addMessageToChatBoxClient(messageID, type, content, replyTo); // Thêm tin nhắn vào chat box
     }
 

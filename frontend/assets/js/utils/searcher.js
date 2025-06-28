@@ -1,7 +1,6 @@
-import { searchFriendByEmail, searchByName, getFriendProfile } from "../fetchers/request.js";
+import { searchFriendByEmail, searchByName, getFriendProfile, getMutualFriends } from "../fetchers/request.js";
 import { fixStatusFriend } from "./friendProcessor.js";
 import { showProfile } from "../components/domProfile.js";
-
 
 window.showListSearch = async function () {
     await removeListSearch(); // Xóa danh sách tìm kiếm cũ
@@ -35,6 +34,12 @@ async function showFriendProfile(profile) {
 
     const mutualCount = profileContainer.querySelector('.profile-mutual-friends')
     mutualCount.textContent = profile.countFriendMutual;
+
+
+    const mutualFriends = await getMutualFriends(sessionStorage.getItem("searchUID"));
+    mutualCount.addEventListener('click',  () =>
+        window.showListUserPopup(mutualFriends, t("profile.title-mutual-friends"))
+    );
 
     fixStatusFriend(profile.status);
 }

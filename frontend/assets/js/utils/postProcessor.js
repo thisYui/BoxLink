@@ -225,6 +225,7 @@ function setupNavigationEvents() {
                 ? sessionStorage.getItem("searchUID")
                 : localStorage.getItem('uid');
             const fullPost = await getSinglePost(uid, prevPost.id);
+            sessionStorage.setItem("postID", prevPost.id);  // Lưu ID bài viết vào sessionStorage
             setupModal(fullPost, profileContainer, !document.getElementById('profileContainer').classList.contains("hidden"));
         }
     });
@@ -241,6 +242,7 @@ function setupNavigationEvents() {
                 ? sessionStorage.getItem("searchUID")
                 : localStorage.getItem('uid');
             const fullPost = await getSinglePost(uid, nextPost.id);
+            sessionStorage.setItem("postID", nextPost.id);  // Lưu ID bài viết vào sessionStorage
             setupModal(fullPost, profileContainer, !document.getElementById('profileContainer').classList.contains("hidden"));
         }
     });
@@ -271,7 +273,7 @@ window.showListUserLike = async function () {
             ? sessionStorage.getItem("searchUID") : localStorage.getItem('uid');
     const userLikes = await getListUserLikes(uid);
 
-    // TODO: Hiển thị danh sách người dùng đã thích bài viết
+    window.showListUserPopup(userLikes, t("social.likes"));
 }
 
 window.toggleLike = async function () {

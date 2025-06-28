@@ -177,6 +177,25 @@ async function getBoxChatInfo(chatID) {
     return await response.json();
 }
 
+async function getMutualFriends() {
+    const response = await fetch(`${host}/api/user/get-mutual-friends`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            uid: localStorage.getItem("uid"),
+            friendID: sessionStorage.getItem("searchUID")
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch box chat info");
+    }
+
+    return await response.json();
+}
+
 export {
     getUserInfo,
     searchFriendByEmail,
@@ -186,5 +205,6 @@ export {
     deleteNotification,
     getFriendStatus,
     getFriendProfile,
-    getBoxChatInfo
+    getBoxChatInfo,
+    getMutualFriends
 }

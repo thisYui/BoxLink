@@ -1,5 +1,3 @@
-window.lastClickedUser = sessionStorage.getItem("lastClickedUser") || null;
-window.listChatBoxID = {}
 // Đăng ký sự kiện click cho tất cả phần tử có class là "item"
 document.addEventListener("DOMContentLoaded", () => {
     // Lấy dữ liệu cho settings
@@ -17,6 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(() => {
         updateLastOnlineListFriend().catch(console.error);
     }, 2 * 60 * 1000);
+
+    // duy trì trạng thái session
+    setInterval(() => {
+        keepSession().catch(console.error);
+    }, 10 * 60 * 1000); // 10 phút
 
     document.getElementById("chatContainer").addEventListener("click", (event) => {
         const element = event.target.closest(".chats-list-user");
@@ -141,6 +144,9 @@ function debounce(fn, delay) {
 }
 
 window.logOut = function () {
+    // logout session
+    logoutSession().then();
+
     // Xóa sessionStorage
     sessionStorage.clear();
 
@@ -149,6 +155,108 @@ window.logOut = function () {
 
     // Chuyển hướng về trang đăng nhập
     window.location.href = '/auth.html';
+}
+
+window.closeListUser = function () {
+    const popup = document.getElementById('listUser');
+    popup.classList.remove('active'); // ẩn modal danh sách người dùng
+
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.classList.add('hidden'); // ẩn overlay nếu dùng chung
+        overlay.onclick = null; // xoá sự kiện đóng nếu đã gán trước đó
+    }
+}
+
+window.showListUserPopup = function (listUser, title) {
+    // element {
+    //      id, displayName, avatar, relationship
+    // }
+    // relationship: owner, friend, request, receive, none
+
+    const relationships = t("profile.relationship");
+    console.log(relationships)
+
+    const colorButton = {
+        owner: "grey",
+        friend: "grey",
+        request: "grey",
+        received: "blue",
+        none: "blue"
+    }
+
+    // set tiêu đề popup
+    document.getElementById('popupTitle').textContent = title;
+
+    // lấy container danh sách và xoá nội dung cũ
+    const container = document.getElementById('popupUserList');
+    container.innerHTML = '';
+
+    // render từng người dùng
+    listUser.forEach(user => {
+        const div = document.createElement('div');
+        div.id = user.id; // set id cho div để có thể lấy ra sau này
+        div.className = 'user-item';
+
+        div.innerHTML = `
+            <div class="user-info">
+                <img src="${user.avatar}" alt="">
+                <div class="user-text">
+                      <div class="username">${user.displayName}</div>
+                </div>
+            </div>
+            <button class="follow-btn">
+                ${relationships[user.relationship]}
+            </button>
+        `;
+
+        // thêm vào danh sách
+        container.appendChild(div);
+
+        // xử lý click nút Follow/Following (nếu muốn)
+        const followBtn = div.querySelector('.follow-btn');
+
+        // Thay màu nền theo mối quan hệ
+        followBtn.style.backgroundColor = colorButton[user.relationship];
+
+        followBtn.addEventListener('click', async () => {
+            const userId = div.id; // lấy id của người dùng từ div
+            let newRelationship;
+
+            if (user.relationship === 'none') {
+                await window.toggleStatusFriend(userId, 'send'); // gửi lời mời kết bạn
+                newRelationship = "request";
+
+            } else if (user.relationship === 'request') {
+                // Nếu là "Đã gửi lời mời", thu hồi lời mời kết bạn
+                await window.toggleStatusFriend(userId, 'recall');
+                newRelationship = "none";
+
+            } else if (user.relationship === 'received') {
+                // Nếu là "Xác nhận", xác nhận lời mời kết bạn
+                await window.toggleStatusFriend(userId, 'accept');
+                newRelationship = "friend";
+
+            } else if (user.relationship === 'friend') {
+                // Nếu là "Bạn bè", xoá kết bạn
+                await window.toggleStatusFriend(userId, 'remove');
+                newRelationship = "none";
+            }
+
+            followBtn.style.backgroundColor = colorButton[newRelationship]; // đổi màu nút
+            followBtn.textContent = relationships[newRelationship]; // cập nhật văn bản nút
+        });
+    });
+
+    // hiển thị popup
+    document.getElementById('listUser').classList.add('active');
+
+    // hiển thị overlay
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+        overlay.onclick = closeListUser;
+    }
 }
 
 // Manage tab switching functionality

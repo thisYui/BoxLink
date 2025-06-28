@@ -504,6 +504,71 @@ async function deleteAllInformationUser(uid) {
     }
 }
 
+async function getInformationListFriend(uid) {
+    try {
+        const userDoc = await db.collection("users").doc(uid).get();
+        const userData = userDoc.data();
+        const friendIds = userData.friendList || [];
+
+        // Lấy dữ liệu của từng bạn bè
+        const friendPromises = friendIds.map(async (friendId) => {
+            const friendDoc = await db.collection("users").doc(friendId).get();
+            const friendData = friendDoc.data();
+
+            return {
+                id: friendDoc.id,
+                displayName: friendData.displayName || "",
+                avatar: friendData.avatar || "",
+                relationship: "friend"
+            };
+        });
+
+        // Đợi tất cả promise hoàn thành
+        return await Promise.all(friendPromises);
+
+    } catch (error) {
+        logger.error("Lỗi khi lấy thông tin danh sách bạn bè:", error);
+        return null;
+    }
+}
+
+
+async function getMutualFriend(uid, friendID) {
+    try {
+        const userDoc = await db.collection("users").doc(uid).get();
+        const userData = userDoc.data();
+        const listFriend = userData.friendList || [];
+        console.log("List friend of user:", listFriend);
+
+        const friendDoc = await db.collection("users").doc(friendID).get();
+        const friendData = friendDoc.data();
+        const listFriendFriend = friendData.friendList || [];
+        console.log("List friend of friend:", listFriendFriend);
+
+        // Tìm ID bạn chung
+        const mutualFriendIds = listFriend.filter(id => listFriendFriend.includes(id));
+
+        // Lấy thông tin từng bạn chung
+        const mutualFriendPromises = mutualFriendIds.map(async (mutualId) => {
+            const mfDoc = await db.collection("users").doc(mutualId).get();
+            const mfData = mfDoc.data();
+
+            return {
+                id: mfDoc.id,
+                displayName: mfData.displayName || "",
+                avatar: mfData.avatar || "",
+                relationship: "friend"
+            };
+        });
+
+        return await Promise.all(mutualFriendPromises);
+
+    } catch (error) {
+        logger.error("Lỗi khi lấy danh sách bạn chung:", error);
+        return [];
+    }
+}
+
 module.exports = {
     getInfo, setPassword, setDisplayName,
     setAvatar, removeFriend, acceptFriend,
@@ -513,5 +578,6 @@ module.exports = {
     addSocialLink, removeSocialLink,
     getDataBoxListChat, settingConfig,
     setTheme, setLanguage, setNotification,
-    deleteAllInformationUser
+    deleteAllInformationUser,
+    getInformationListFriend, getMutualFriend
 };

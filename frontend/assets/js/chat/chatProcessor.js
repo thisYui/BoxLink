@@ -239,7 +239,7 @@ function updateSeenMessageIcon(chatID, seen) {
 
 function updateSeenMessageStyle() {
     const chatContainer = document.getElementById("messageContainer");
-    const chatID = window.lastClickedUser;
+    const chatID = sessionStorage.getItem("lastClickedUser");;
     const chatBox = chatContainer.querySelector(`[id="${chatID}"]`);
     if (!chatBox) return; // không tìm thấy thì dừng
 

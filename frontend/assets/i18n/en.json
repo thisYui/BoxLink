@@ -64,7 +64,16 @@
     "editButton": "Edit profile",
     "saveEdit": "Save changes",
     "finishEdit": "Finish editing",
-    "count-posts": "Posts"
+    "count-posts": "Posts",
+    "title-mutual-friends": "Mutual Friends",
+    "title-friends": "Friends",
+    "relationship": {
+          "owner": "Me",
+          "friend": "Friend",
+          "request": "Sent",
+          "received": "Accepted",
+          "none": "Send request"
+      }
   },
   "search": {
     "title": "Search",
@@ -137,6 +146,7 @@
     "mode": "Mode",
     "public-mode": "Public Mode",
     "friends-mode": "Friends Mode",
-    "choose-image": "Choose image"
+    "choose-image": "Choose image",
+    "likes": "Likes"
   }
 }

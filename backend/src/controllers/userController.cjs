@@ -3,7 +3,8 @@ const { getInfo, setPassword, setAvatar,
     friendRequest, cancelFriend, recall,
     updateLastOnline, getProfileUser, setBiography,
     setBirthday, setGender, addSocialLink,
-    removeSocialLink, deleteAllInformationUser
+    removeSocialLink, deleteAllInformationUser,
+    getInformationListFriend, getMutualFriend
 } = require("../services/userServices.cjs");
 const { deleteChatInformation, deleteAllChat } = require("../services/messageServices.cjs");
 const { deleteAuth, createChat } = require("../services/firebaseServices.cjs");
@@ -275,6 +276,34 @@ async function removeSocialLinkFromList(req, res) {
     }
 }
 
+// Lấy danh sách bạn bè
+async function getListFriend(req, res) {
+    const { uid } = req.body;
+    try {
+        const listFriend = await getInformationListFriend(uid);
+        if (!listFriend) return res.status(404).json({ message: 'Không tìm thấy danh sách bạn bè!' });
+        res.status(200).json(listFriend);
+
+    } catch (error) {
+        logger.error('Lỗi khi lấy danh sách bạn bè!', { uid });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
+// Lấy danh sách bạn bè chung
+async function getMutualFriends(req, res) {
+    const { uid, friendID } = req.body;
+    try {
+        const mutualFriends = await getMutualFriend(uid, friendID);
+        if (!mutualFriends) return res.status(404).json({ message: 'Không tìm thấy bạn bè chung!' });
+        res.status(200).json(mutualFriends);
+
+    } catch (error) {
+        logger.error('Lỗi khi lấy danh sách bạn bè chung!', { uid, friendID });
+        res.status(500).json({ message: 'Lỗi hệ thống!' });
+    }
+}
+
 module.exports = {
     getUserInfo, changeAvatar, resetPassword,
     changeDisplayName, unfriend, sendFriendRequest,
@@ -282,5 +311,6 @@ module.exports = {
     recallRequest, deleteAccount, updateOnline,
     getProfile, changeBiography, changeBirthday,
     changeGender, addSocialLinkFromList,
-    removeSocialLinkFromList
+    removeSocialLinkFromList,
+    getListFriend, getMutualFriends
 };
