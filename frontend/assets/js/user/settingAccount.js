@@ -25,10 +25,6 @@ window.saveProfileChanges = async function (){
     }
 
     for (const func of functionQueue) {
-        console.log(func);  // Gọi từng hàm trong hàng đợi
-    }
-
-    for (const func of functionQueue) {
         await func();  // Gọi từng hàm trong hàng đợi
     }
 

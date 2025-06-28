@@ -19,9 +19,6 @@ async function createAuth(email, password, displayName) {
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             chatList: [],
             avatar: "assets/images/default-avatar.png",
-            biography: "",
-            gender: "",
-            birthday: "",
             socialLinks: [],
             friendList: [],
             notifications: [], // <typeNotification, srcID, text>

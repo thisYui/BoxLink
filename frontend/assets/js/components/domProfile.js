@@ -104,7 +104,11 @@ async function showProfile(profile, profileContainer) {
 
     if (profileBirth) {
         // Ngày sinh có kiểu Date chuyển thành string
-        profileBirth.textContent = dateToDMY(new Date(profile.birthday)) || t("profile.noBirthday");
+        if (profile.birthday) {
+            profileBirth.textContent = dateToDMY(new Date(profile.birthday));
+        } else {
+            profileBirth.textContent = t("profile.no-birthday");
+        }
     }
 
     if (profileLink) {
@@ -112,7 +116,7 @@ async function showProfile(profile, profileContainer) {
         if (socialLinks) {
             if (socialLinks.length === 0) {
             const noLinksMessage = document.createElement("p");
-            noLinksMessage.textContent = t("profile.noSocialLinks");
+            noLinksMessage.textContent = t("profile.no-social-links");
             
             } else {
                 socialLinks.forEach(link => {
@@ -185,14 +189,18 @@ function setupProfileEditButtons(profile, editProfileContainer) {
     });
 
     const birth = editProfileContainer.querySelector(".profile-birth-input-edit-profile");
-    birth.value = dateToYMD(new Date(profile.birthday)) || t("profile.noBirthday");
-    birth.placeholder = birth.value || t("profile.noBirthday");
+    if (profile.birthday) {
+        birth.value = dateToYMD(new Date(profile.birthday));
+    } else {
+        birth.value = t("profile.no-birthday");
+    }
+    birth.placeholder = birth.value;
 
     // Các liên kết mạng xã hội
     const socialLinkContainer = editProfileContainer.querySelector(".edit-profile-social-links");
     const socialLinks = profile.socialLinks;
     if (socialLinks.length === 0) {
-        socialLinkContainer.innerHTML = `<p>${t("profile.noSocialLinks")}</p>`;
+        socialLinkContainer.innerHTML = `<p>${t("profile.no-social-links")}</p>`;
 
     } else {
         socialLinks.forEach(link => {
@@ -202,6 +210,11 @@ function setupProfileEditButtons(profile, editProfileContainer) {
 }
 
 function addLinkInListSocial(link, socialLinkContainer) {
+    const p = socialLinkContainer.querySelector("p");  // Thẻ này là thẻ p thông báo không có liên kết
+    if (p) {
+        p.remove();  // Xoá thẻ p nếu có, vì chúng ta sẽ thêm liên kết mới
+    }
+
     const socialLinkItem = document.createElement("div");
     socialLinkItem.className = "social-link-item-edit-profile";
     const iconClass = getIconClassForUrl(link);

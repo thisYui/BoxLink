@@ -17,6 +17,9 @@ window.loadPage = async function (){
     setNotificationCount(countNotifications);
 
     const friendList = data.friendList; // danh sách bạn bè
+    if (friendList.length === 0) {
+        return;
+    }
 
     // lưu trữ ID bạn bè với thời gian gửi tin nhắn
     // Lưu trữ trạng thái thông báo của bạn bè

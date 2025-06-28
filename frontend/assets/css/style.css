@@ -2223,3 +2223,7 @@ img {
 .option-item:hover {
     background-color: #f0f0f0;
 }
+
+.icon-user-popup:hover, .user-text-popup:hover {
+    cursor: pointer;
+}

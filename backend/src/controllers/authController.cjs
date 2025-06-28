@@ -4,7 +4,7 @@ const { setPassword } = require("../services/userServices.cjs");
 const { createAuth } = require("../services/firebaseServices.cjs");
 const logger = require('../config/logger.cjs');
 
-let users = {}; // email: {displayName, hashOTP}
+let users = {}; // email: hashOTP
 let otps = {};  // email: hashOTP
 
 // Xử lý đăng ký tài khoản
@@ -16,15 +16,14 @@ async function signUp(req, res) {
             return res.status(400).json({ message: 'Email đã tồn tại!' });
         }
 
-        const hashOTP = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
-        users[email] = { displayName, hashOTP };
+        users[email] = await sendOTP(email, 'Xác thực tài khoản', 'Đây là mã xác thực tài khoản của bạn', 10);
 
         await createAuth(email, password, displayName);
         res.status(200).json({ message: 'Chờ mã xác nhận!' });
 
-    } catch {
+    } catch (error) {
         logger.error('Lỗi khi tạo tài khoản:', error);
-        res.status(500).json({ message: 'Lỗi hệ thống!' });
+        res.status(500).json({ message: 'Lỗi hệ thống!', error });
     }
 }
 
@@ -35,15 +34,15 @@ async function confirmOTP(req, res) {
     try {
         const list = type === "signUp" ? users : otps;
 
-        const user = list.find(u => u.email === email);
-        if (!user) return res.status(404).json({message: 'Người dùng không tồn tại!'});
+        const hashOTP = list[email];
+        if (!hashOTP) return res.status(404).json({message: 'Người dùng không tồn tại!'});
 
-        const valid = await verifyOTP(user.hashOTP, code);
+        const valid = await verifyOTP(hashOTP, code);
         if (!valid) return res.status(400).json({message: 'Mã xác thực không hợp lệ!'});
 
         // Xóa OTP đã dùng
         if (type === "signUp") {
-            delete users[email];
+            delete list[email];
         }
 
         res.status(200).json({message: 'Xác thực thành công!'});

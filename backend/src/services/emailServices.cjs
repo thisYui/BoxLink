@@ -5,17 +5,16 @@ const logger = require('../config/logger.cjs');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Middleware để kiểm tra xem người dùng tồn tại
 async function checkEmailExists(email) {
     try {
-        const snapshot = await db.collection("users")
-            .where("email", "==", email)
-            .get();
-
-        return !snapshot.empty; // Trả về true nếu có ít nhất 1 user khớp
+        await auth.getUserByEmail(email);
+        return true; // Tìm thấy user
     } catch (error) {
+        if (error.code === 'auth/user-not-found') {
+            return false; // Không tìm thấy user là hợp lệ
+        }
         logger.error("Lỗi khi kiểm tra email:", error);
-        return false;
+        throw error; // Những lỗi khác cần được xử lý tiếp
     }
 }
 
@@ -49,6 +48,7 @@ async function changeEmail(uid, newEmail) {
 function sendOTP(to, subject, text, salt) {
     try {
         const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 số
+
         const msg = {
             to: 'nguyenquangduy048@gmail.com',        // Người nhận
             from: process.env.SENDGRID_SERVER_EMAIL,         // Địa chỉ đã xác minh ở bước Single Sender
@@ -57,14 +57,20 @@ function sendOTP(to, subject, text, salt) {
             html: `<h3>Mã OTP của bạn là: ${otp}</h3>`, // Nội dung email dạng HTML
         };
 
-        sgMail
-            .send(msg)
-            .then(() => {
-                logger.info(msg)
-            })
-            .catch((error) => {
-                logger.error('Lỗi khi gửi email:', error);
-            });
+        /**
+         * Nếu tài khoản sendgrid của bạn còn hiệu lực hãy uncomment đoạn này để gửi email
+         * Xóa console.log('OTP:', otp)
+         */
+        console.log('OTP:', otp);
+        // sgMail
+        //     .send(msg)
+        //     .then(() => {
+        //         logger.info(msg)
+        //     })
+        //     .catch((error) => {
+        //         logger.error('Lỗi khi gửi email:', error);
+        //     });
+
 
         // Mã hóa OTP
         return bcrypt.hash(otp, salt);

@@ -119,8 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("acceptAddLinkButton").addEventListener("click", async () => {
         const socialLinkInput = document.getElementById("newSocialLink");
         const value = socialLinkInput.value;
-        const socialLinkContainer = document.querySelector(".profile-body-personal-info-container-edit-profile");
+        const socialLinkContainer = document.querySelector(".profile-body-personal-info-container-edit-profile.edit-profile-social-links");
         await addLinkToListAndRequest(value, socialLinkContainer);
+
+        // Xóa nội dung ô input
+        socialLinkInput.value = '';
     });
 
     // Không thêm nữa
@@ -248,8 +251,8 @@ window.showListUserPopup = function (listUser, title) {
 
         div.innerHTML = `
             <div class="user-info">
-                <img src="${user.avatar}" alt="">
-                <div class="user-text">
+                <img class="icon-user-popup" src="${user.avatar}" alt="">
+                <div class="user-text-popup" >
                       <div class="username">${user.displayName}</div>
                 </div>
             </div>
@@ -257,6 +260,25 @@ window.showListUserPopup = function (listUser, title) {
                 ${relationships[user.relationship]}
             </button>
         `;
+
+        const img = div.querySelector('.icon-user-popup');
+        img.addEventListener('click',  async () => {
+            // Tắt popup
+            const popup = document.getElementById('listUser');
+            popup.classList.remove('active');
+
+            await window.chooseUserItem(user.id);
+        });
+
+        const name = div.querySelector('.username');
+        name.addEventListener('click', async () => {
+            // Tắt popup
+            const popup = document.getElementById('listUser');
+            popup.classList.remove('active');
+
+            // Hiển thị trang profile của người dùng
+            await window.showProfile(user.id);
+        });
 
         // thêm vào danh sách
         container.appendChild(div);

@@ -11,7 +11,6 @@ if (localStorage.getItem("uid") !== null) {
         if (r) {
             window.location.href = "/index.html";
 
-
         } else {
             localStorage.removeItem("uid");
             sessionStorage.removeItem("email");
@@ -158,11 +157,21 @@ window.requestSignUp = async function(formData) {
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
 
+    if (!email || !password || !displayName) {
+        alert("Please fill in all fields.");
+        return false;
+    }
+
     // Validate password match
     if (password !== confirmPassword) {
         alert("Passwords don't match. Please try again.");
         return false;
     }
+
+   if (password.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return false;
+   }
 
     try {
         // Send registration information to server
@@ -225,6 +234,8 @@ window.confirmCodeSignUp = async function(formData) {
             alert("Error: " + errorData.message);
             return false;
         }
+
+        alert("Email verification successful! You can now log in.");
 
         // Redirect to auth page after successful confirmation
         window.location.href = "auth.html";

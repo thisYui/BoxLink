@@ -26,6 +26,7 @@ trường Đại Học Khoa học Tự nhiên, ĐHQG-TPHCM. Tác giả bao gồm
 - Bạn cần cung cấp một số thông tin trong `frontend` và `backend` để có thể kết nối đến Firebase.
 - Tại `fronend/assets/js/_firebaseConfig.js`, bạn cần cung cấp các thông tin cụ thể trong file yêu cầu.
 - Tại `backend`, có bạn tạo 2 file `.env` (copy từ cài đặt firebase) và `serviceAccountKey.json` (lưu từ firebase) để có thể kết nối đến Firebase. Vị trí các file như sau `backend/.env` và `backend/serviceAccountKey.json`.
+- Nếu tài khoản Sendgrid của bạn còn hiệu lực vào file `backend/src/services/emailService.js`, hãy uncomment các dòng gửi email đi thay cho console.log
 
 ## Operating
 - Bước 1: Tải project về máy tính của bạn. 

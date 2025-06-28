@@ -87,7 +87,7 @@ function getListGender() {
 
 function getValueMappingGender(value) {
     const genderList = getListGender();
-    return genderList[value] || t("profile.other-gender");
+    return genderList[value] || t("profile.no-birthday");
 }
 
 function getInterGender(value) {
