@@ -23,15 +23,11 @@ window.deletePost = async function () {
 
     // Cập nhật giao diện để xóa post khỏi danh sách
     // Sắp xếp lại các post còn lại
-    const profileContainer = document.getElementById('profileContainer');
-    const profileBodyImages = profileContainer.querySelector(".profile-body-images");
-    const postID = sessionStorage.getItem("postID");  // Lấy ID của post hiện tại
-    const postElement = profileBodyImages.querySelector(`[id="${postID}"]`);
-    profileBodyImages.removeChild(postElement);  // Xóa post khỏi giao diện
+    await changeTab("Profile");  // Quay lại tab Profile
     sessionStorage.removeItem("postID");  // Xóa ID post khỏi sessionStorage
 
     // Tắt modal
-    document.getElementById("closePostModal").click(); // Đóng modal
+    document.getElementById("imageModal").click(); // Đóng modal
 }
 
 async function showAllPost(profileBodyImages, profileCountPosts, uid) {
@@ -118,8 +114,10 @@ function setupModal(post, profileContainer, owner) {
 
     if (owner) {
         document.querySelector('.fa-heart.modal-inner-content-likes-icon').style.color = post.likes?.includes(localStorage.getItem("uid")) ? "red" : "black";
+        document.getElementById("optionPost").classList.remove("hidden");  // Hiển thị nút xóa bài viết nếu là chủ sở hữu
     } else {
         document.querySelector('.fa-heart.modal-inner-content-likes-icon').style.color = post.likes?.includes(sessionStorage.getItem("searchUID")) ? "red" : "black";
+        document.getElementById("optionPost").classList.add("hidden");  // Ẩn nút xóa bài viết nếu không phải chủ sở hữu
     }
 
     const publicVisibility = document.createElement("i");
@@ -292,6 +290,21 @@ window.toggleLike = async function () {
         await likePost(uid);
         i.style.color = "red";  // Cập nhật giao diện
     }
+}
+
+window.showOptionsPost = function (element) {
+    const rect = element.getBoundingClientRect();
+
+    const listOptions = [
+        t("social.remove-post")
+    ];
+
+    const functions = [
+        async () => deletePost()
+    ];
+
+    optionsPopup(listOptions, functions, rect);
+
 }
 
 export {

@@ -23,10 +23,11 @@ async function createPost(id, listData, caption, isPublic) {
 
             // Upload file lên Firebase Storage
             await uploadFile(data.data, filePath);
+            const url = await getDownloadUrl(filePath);
 
             // Cập nhật document post với URL của hình ảnh
             await db.collection("posts").doc(id).collection("post").doc(p.id).update({
-                urls: admin.firestore.FieldValue.arrayUnion(filePath)
+                urls: admin.firestore.FieldValue.arrayUnion(url)
             });
         }
 
@@ -50,7 +51,7 @@ async function deletePost(userID, postID) {
         await db.collection("posts").doc(userID).collection("post").doc(postID).delete();
 
         // Xóa hình ảnh từ Firebase Storage
-        const filePath = `${userID}/post/${postID}`;
+        const filePath = `${userID}/posts/${postID}`;
         await bucket.deleteFiles({ prefix: filePath });
 
         return true;

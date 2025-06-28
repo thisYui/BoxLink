@@ -131,6 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const addLink = document.getElementById("addLinkButton");
         addLink.classList.remove("hidden");
     });
+
+    // three dot của post
+    document.getElementById("optionPost").addEventListener("click", (event) => {
+        const element = event.target.closest(".fa-solid.fa-ellipsis-h");
+        showOptionsPost(element);
+    });
 });
 
 function debounce(fn, delay) {
@@ -156,6 +162,49 @@ window.logOut = function () {
     // Chuyển hướng về trang đăng nhập
     window.location.href = '/auth.html';
 }
+
+window.optionsPopup = function (listOptions, optionsFunc, rect) {
+    const popup = document.getElementById('threeDotsOption');
+    const modal = popup.querySelector(".modal-content-option");
+    modal.innerHTML = ''; // Xoá nội dung cũ
+
+    // tạo và thêm các option
+    for (let i = 0; i < listOptions.length; i++) {
+        const option = listOptions[i];
+        const div = document.createElement('div');
+        div.className = 'option-item';
+        div.textContent = option;
+        div.addEventListener('click', async () => {
+            await optionsFunc[i](); // gọi xử lý
+            popup.classList.remove('active'); // ẩn popup sau khi chọn
+        });
+        modal.appendChild(div);
+
+        const hr = document.createElement('hr');
+        modal.appendChild(hr);
+    }
+
+    // lấy hr cuối cùng ra khỏi modal
+    const lastHr = modal.querySelector('hr:last-child');
+    if (lastHr) {
+        lastHr.remove(); // xoá hr cuối cùng
+    }
+
+    // đặt vị trí bên dưới icon
+    popup.style.top = `${rect.bottom + window.scrollY}px`;
+    popup.style.left = `${rect.left + window.scrollX}px`;
+    popup.classList.add('active'); // hiển thị popup
+
+    // tự ẩn khi click ra ngoài
+    setTimeout(() => {
+        document.addEventListener("click", function (e) {
+            const isInside = popup.contains(e.target);
+            if (!isInside) {
+                popup.classList.remove('active');
+            }
+        }, { once: true });
+    }, 0);
+};
 
 window.closeListUser = function () {
     const popup = document.getElementById('listUser');

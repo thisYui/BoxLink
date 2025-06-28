@@ -264,11 +264,14 @@
         <div class="modal-inner">
             <div class="modal-inner-title">
                 <img src="" alt="" class="modal-inner-title-avatar" id="postModalAvatar">
-                <p class="modal-inner-title-name" id="postModalUsername"></p>
+                <div class="modal-inner-title-wrapper">
+                    <p class="modal-inner-title-name" id="postModalUsername"></p>
+                    <span class="modal-inner-title-time" id="postModalTime"></span>
+                </div>
                 <span class="modal-inner-title-visibility" id="postModalVisibility">
                     <i class="fa-solid fa-earth-asia"></i>
                 </span>
-                <span class="modal-inner-title-time" id="postModalTime"></span>
+                <i class="fa-solid fa-ellipsis-h" id="optionPost"></i>
             </div>
             <button class="inner-arrow inner-arrow-left" id="prevImageBtn">&#10094;</button>
             <img id="modalImg" class="modal-content-image" />
@@ -496,8 +499,8 @@
     </div>
 
     <!-- Popup List user -->
-    <div class="modal-level-2" id="listUser">
-        <div class="modal-content-user"> <!-- đổi tên class -->
+    <div class="modal-level-2 modal-list-user" id="listUser">
+        <div class="modal-content-user">
             <div class="modal-header">
                 <h2 id="popupTitle"></h2>
                 <button class="close-btn" onclick="closeListUser()">×</button>
@@ -505,6 +508,13 @@
             <div id="popupUserList" class="modal-body">
               <!-- Danh sách người dùng sẽ được thêm vào đây -->
             </div>
+        </div>
+    </div>
+
+    <!-- Popup option three dots -->
+    <div class="modal-level-2" id="threeDotsOption">
+        <div class="modal-content-option">
+            <!-- Generated options will be inserted here -->
         </div>
     </div>
 
